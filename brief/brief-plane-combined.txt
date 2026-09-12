@@ -1,0 +1,315 @@
+# PLANE IMPLEMENTATION BRIEF – HỆ THỐNG QUẢN LÝ CÔNG VIỆC NỘI BỘ
+
+## 1. Mục tiêu
+
+Fork và customize mã nguồn mở Plane để xây dựng một hệ thống quản lý công việc nội bộ cho doanh nghiệp. Sản phẩm không cần giữ ngữ cảnh khách sạn; hãy ưu tiên mô hình quản lý công việc tổng quát, có thể dùng cho nhiều phòng ban và nhiều loại doanh nghiệp.
+
+Mục tiêu là tái sử dụng tối đa các chức năng sẵn có của Plane, không viết lại một task-management engine mới. Chỉ custom những phần thật sự cần thiết để đáp ứng các yêu cầu bên dưới.
+
+Tên sản phẩm, nhãn giao diện và nội dung hiển thị phải được Việt hóa. Trong mã nguồn, có thể giữ tên entity/technical term của Plane nếu giúp giảm rủi ro và giảm phạm vi thay đổi.
+
+## 2. Nguyên tắc bắt buộc khi customize Plane
+
+1. Trước khi sửa, hãy đọc cấu trúc repository, tài liệu kiến trúc, AGENTS.md và các hướng dẫn coding có sẵn trong repo.
+2. Xác định chính xác phiên bản/branch Plane đang sử dụng; không giả định model hoặc API của phiên bản khác.
+3. Giữ lại các tính năng nền tảng đã có của Plane nếu không xung đột với yêu cầu: authentication, workspace, project, work item, state, view, list/table, board, filter, search, comment, activity, notification, API, background jobs và Docker deployment.
+4. Không tạo một bảng task độc lập nếu có thể mở rộng Work Item của Plane.
+5. Ưu tiên cấu hình, custom property, work item type, permission layer và UI hiện có trước khi sửa sâu vào core.
+6. Không xóa vội các module Plane chưa dùng. Trước mắt chỉ ẩn khỏi giao diện hoặc tắt bằng feature flag để vẫn giữ khả năng mở rộng và giảm rủi ro merge/update.
+7. Mọi thay đổi database phải có migration. Mọi API mới phải có validation, authorization và test.
+8. Mọi thao tác CRUD đều phải được kiểm tra quyền ở backend; không chỉ ẩn nút trên frontend.
+9. Giữ nguyên các thông báo bản quyền/license của Plane và kiểm tra nghĩa vụ của AGPL-3.0 trước khi phân phối hoặc cung cấp SaaS thương mại.
+
+## 3. Mapping Plane sang sản phẩm mới
+
+| Plane | Tên nghiệp vụ hiển thị | Ý nghĩa |
+|---|---|---|
+| Workspace | Công ty/Đơn vị | Không gian cấp cao nhất của doanh nghiệp |
+| Project | Phòng ban / Notebook | Mỗi phòng ban là một notebook độc lập |
+| Work Item | Công việc | Đơn vị công việc cần theo dõi |
+| State | Trạng thái | Trạng thái xử lý của công việc |
+| Work Item Type | Loại công việc | Công việc vận hành hoặc Công việc khác |
+| Member/Assignee | Nhân sự/Người phụ trách | Người được giao thực hiện |
+| Comment/Activity | Trao đổi/Lịch sử | Ghi chú, bình luận và nhật ký thay đổi |
+| Custom Property | Trường nghiệp vụ | Phòng, loại công việc hoặc dữ liệu mở rộng |
+| View | Màn hình xem | Bảng, danh sách, kanban, lịch hoặc bộ lọc |
+
+Mapping trên là lớp nghiệp vụ/UI. Không đổi tên entity trong backend nếu việc đó làm tăng phạm vi thay đổi không cần thiết.
+
+## 4. Phạm vi chức năng chính
+
+### 4.1. Xác thực và bảo mật
+
+- Có đầy đủ login/logout và quản lý phiên đăng nhập.
+- Sử dụng cơ chế authentication/JWT hiện có của Plane nếu phù hợp với kiến trúc phiên bản đang fork.
+- Mật khẩu phải được hash an toàn; không lưu mật khẩu dạng plain text.
+- Bảo vệ API bằng authentication, authorization, input validation, rate limiting phù hợp và chống truy cập trái phép giữa các workspace/project.
+- Không để lộ dữ liệu của notebook/phòng ban mà người dùng không được cấp quyền.
+- Các thao tác nhạy cảm như tạo tài khoản, thay đổi vai trò, thay đổi quyền và xóa dữ liệu phải được ghi vào activity/audit log.
+
+### 4.2. Người dùng, vai trò và RBAC
+
+#### SuperAdmin
+
+- Có một tài khoản SuperAdmin mặc định được khởi tạo trong code hoặc bootstrap command khi triển khai lần đầu.
+- Chỉ cho phép tạo SuperAdmin theo cơ chế có chủ đích, không tự động tạo thêm SuperAdmin qua UI thông thường.
+- SuperAdmin có toàn quyền hệ thống, bao gồm quản lý tài khoản, vai trò, quyền, workspace, phòng ban/notebook và cấu hình hệ thống.
+- Bắt buộc có cơ chế đổi mật khẩu SuperAdmin sau lần đăng nhập đầu tiên.
+
+#### Quản lý role/permission
+
+Xây dựng RBAC có thể mở rộng, không chỉ dựa vào hai role cố định. Tối thiểu cần các entity/khái niệm:
+
+- Role: tên, mã, mô tả, trạng thái hoạt động.
+- Permission: resource, action, mô tả.
+- RolePermission: liên kết role với permission.
+- UserRole: liên kết người dùng với một hoặc nhiều role nếu kiến trúc cho phép.
+- Project/Notebook membership: quyền tham gia theo từng phòng ban.
+- Có thể bổ sung permission override/delegation cho từng người dùng hoặc admin khi cần.
+
+Các permission tối thiểu:
+
+- Account: view, create, update, delete, assign-role.
+- Role: view, create, update, delete.
+- Permission: view, create, update, delete hoặc quản trị thông qua role.
+- Department/Notebook: view, create, update, delete, manage-members.
+- Task/Work Item: view, create, update, delete, assign, reassign, change-status, comment, add-supporter.
+- Audit/Settings: view, manage.
+
+Yêu cầu quan trọng:
+
+- Quyền phải được kiểm tra ở backend cho mọi endpoint và mutation.
+- Người dùng chỉ được xem notebook/phòng ban mà họ có quyền truy cập.
+- Có thể cấp quyền khác nhau theo từng phòng ban/notebook.
+- Không cho phép admin tự nâng quyền vượt quá quyền mà họ được cấp.
+- Nếu một admin được ủy quyền chỉnh sửa tài khoản, quyền đó phải được biểu diễn bằng permission cụ thể và được ghi log.
+- UI quản trị phải hiển thị rõ role, permission và phạm vi áp dụng.
+
+### 4.3. Phòng ban / Notebook
+
+- Mỗi Department tương ứng với một Project của Plane và được hiển thị như một Notebook.
+- Department có CRUD đầy đủ: tạo, xem, sửa, xóa hoặc archive.
+- Một workspace/công ty có thể có nhiều department/notebook.
+- Mỗi notebook có danh sách thành viên và quyền riêng.
+- User chỉ nhìn thấy notebook mà mình được cấp quyền; SuperAdmin có thể xem tất cả.
+- Không cho xóa notebook nếu còn dữ liệu mà chưa có cảnh báo/xác nhận phù hợp. Ưu tiên archive/soft delete.
+- Tên hiển thị mẫu: Nhân sự, Kế toán, Kinh doanh, Vận hành, Kỹ thuật, Chăm sóc khách hàng...
+
+### 4.4. Công việc / Work Item
+
+Mỗi công việc phải hỗ trợ các trường nghiệp vụ sau:
+
+- Task Name / Tên công việc: bắt buộc.
+- Department / Phòng ban: liên kết notebook hiện tại.
+- Task Description / Mô tả công việc.
+- Task Status / Trạng thái.
+- Assignee / Người phụ trách chính: tối đa một người hoặc theo giới hạn của Plane, nhưng phải hiển thị rõ.
+- Supporters / Người hỗ trợ: nhiều người, không giới hạn ở một supporter duy nhất.
+- Notes / Ghi chú.
+- Room / Phòng: số nguyên, có thể để trống; giữ kiểu nullable integer nếu trường này được bật.
+- Creator / Người tạo.
+- Created at, Updated at, Completed at.
+- Activity/audit history.
+
+Không tạo model Task mới nếu Work Item hiện có đã đáp ứng phần lớn các trường. Ưu tiên:
+
+- dùng field có sẵn của Work Item cho name, description, state, assignee, creator và timestamps;
+- dùng Work Item Type cho loại công việc;
+- dùng custom property cho Room nếu phù hợp;
+- tạo quan hệ supporters rõ ràng nếu watcher/member hiện có không đáp ứng đúng semantic “người hỗ trợ”.
+
+### 4.5. Hai loại công việc và business rule
+
+Bắt buộc có hai loại:
+
+1. Công việc vận hành (Operational Task)
+2. Công việc khác (Other Task)
+
+Quy tắc:
+
+- Công việc vận hành là công việc phát sinh hằng ngày, được thực hiện trong ngày.
+- Khi user bình thường tự tạo một công việc, hệ thống tự động đặt loại là Công việc vận hành.
+- User bình thường không được tự ý đổi loại sang Công việc khác nếu không có permission.
+- Công việc khác là công việc được nhận từ cấp trên/quản lý hoặc người có quyền giao việc.
+- Công việc khác có thể được giao lại cho người khác nếu người nhận có permission reassign hoặc được policy cho phép.
+- Khi cấp trên tạo và giao việc cho nhân sự, hệ thống đặt mặc định là Công việc khác, trừ khi người tạo chủ động chọn loại khác và có quyền.
+- Mọi thay đổi loại công việc, người phụ trách hoặc người hỗ trợ phải có activity log.
+
+Có thể triển khai bằng Work Item Type của Plane:
+
+- `operational` / `Công việc vận hành`
+- `other` / `Công việc khác`
+
+Nếu phiên bản Plane đang dùng chưa hỗ trợ Work Item Type ở phạm vi cần thiết, dùng custom property có type enum nhưng vẫn phải giữ rule backend tương đương.
+
+### 4.6. Trạng thái công việc
+
+Tối thiểu phải có các trạng thái tiếng Việt sau:
+
+- Chưa bắt đầu (Not Started)
+- Chờ xử lý (Pending)
+- Đang thực hiện (In Progress)
+- Hoàn thành (Completed)
+
+Yêu cầu:
+
+- Trạng thái có CRUD hoặc cơ chế cấu hình tương đương của Plane.
+- Mỗi notebook/project có thể dùng workflow phù hợp.
+- Có thể kéo thả hoặc đổi trạng thái theo quyền.
+- Không cho user chuyển trạng thái nếu transition đó bị policy cấm.
+- Khi chuyển sang Hoàn thành, lưu thời điểm hoàn thành và người thực hiện thao tác.
+- Hiển thị màu sắc/trạng thái nhất quán trên list, table, board và màn hình chi tiết.
+
+### 4.7. Giao diện bảng kiểu Excel
+
+Màn hình chính của mỗi notebook phải ưu tiên dạng list/table/spreadsheet, không bắt người dùng mở từng task để xem dữ liệu cơ bản.
+
+Các cột tối thiểu:
+
+- Tên công việc
+- Loại công việc
+- Phòng ban
+- Trạng thái
+- Người phụ trách
+- Người hỗ trợ
+- Phòng
+- Người tạo
+- Ngày tạo
+- Hạn xử lý nếu sử dụng field deadline của Plane
+
+Yêu cầu UX:
+
+- Có sắp xếp, lọc, tìm kiếm và chọn cột hiển thị.
+- Có chỉnh sửa nhanh inline cho các trường được cấp quyền.
+- Có bulk action cho các thao tác an toàn như đổi trạng thái, gán người phụ trách hoặc archive.
+- Có phân trang/virtualization phù hợp để không chậm khi số lượng task tăng.
+- Có thể chuyển qua List, Table/Spreadsheet, Board và Calendar nếu Plane đã có sẵn.
+- Không rớt chữ, không tràn cột; responsive ở kích thước màn hình desktop phổ biến.
+- Nút thao tác phải bị ẩn hoặc disabled theo permission, nhưng backend vẫn luôn kiểm tra quyền.
+
+### 4.8. Màn hình đề xuất
+
+- Dashboard: tổng quan công việc, công việc quá hạn, đang xử lý, hoàn thành.
+- Công việc của tôi: các task user là assignee hoặc supporter.
+- Tất cả công việc: dữ liệu trong các notebook mà user có quyền xem.
+- Phòng ban/Notebook: danh sách notebook được cấp quyền.
+- Công việc vận hành: lọc theo loại operational.
+- Công việc khác: lọc theo loại other.
+- Chi tiết công việc: mô tả, trạng thái, người phụ trách, supporters, room, notes, comment và activity.
+- Quản trị tài khoản: user, role, permission, trạng thái tài khoản.
+- Quản trị phòng ban: notebook, thành viên và quyền.
+- Quản trị trạng thái/workflow.
+
+Các chức năng Plane không cần cho MVP có thể ẩn khỏi navigation bằng feature flag, ví dụ roadmap/initiative/epic/cycle/module nếu không dùng trong nghiệp vụ hiện tại. Không xóa code ở phase đầu.
+
+## 5. API, dữ liệu và migration
+
+- Tận dụng API hiện có của Plane cho workspace, project, work item, state, member, comment và activity.
+- Bổ sung API tối thiểu cho role, permission, user-role, notebook membership, supporters, task type và room nếu chưa có.
+- Tất cả API phải có schema validation, mã lỗi nhất quán và kiểm tra quyền.
+- Không trả dữ liệu nhạy cảm hoặc dữ liệu của project khác phạm vi user.
+- Thêm index cho các trường thường lọc: project/notebook, state, task type, assignee, creator, created_at.
+- Migration phải có khả năng chạy trên database hiện tại mà không làm mất dữ liệu.
+- Nếu cần seed dữ liệu, tạo command/script idempotent và không ghi đè dữ liệu production.
+
+## 6. Việt hóa và thương hiệu
+
+- Việt hóa toàn bộ text người dùng nhìn thấy trong các màn hình thuộc MVP.
+- Dùng thuật ngữ nhất quán: Công ty, Phòng ban, Notebook, Công việc, Người phụ trách, Người hỗ trợ, Trạng thái, Ghi chú, Phòng.
+- Không Việt hóa tên biến/database/API nếu không cần thiết.
+- Có cơ chế quản lý translation key, không hard-code rải rác trong component.
+- Thay logo, favicon, tên sản phẩm và màu thương hiệu bằng cấu hình/theme riêng sau khi chức năng ổn định.
+- Giữ giao diện sạch, ưu tiên thao tác nhanh và dữ liệu dạng bảng.
+
+## 7. Kế hoạch triển khai theo phase
+
+### Phase 0 – Khảo sát repository
+
+- Đọc architecture, AGENTS.md, package scripts và Docker compose.
+- Xác định nơi chứa model Work Item, Project, Member, Permission, API, frontend store và table/list view.
+- Lập mapping file/module trước khi code.
+- Chạy được Plane nguyên bản bằng Docker hoặc local dev.
+
+### Phase 1 – Chạy Plane nguyên bản và cấu hình MVP
+
+- Chạy authentication, workspace, project, work item, state và table/list view.
+- Tạo workspace mẫu và các notebook mẫu.
+- Cấu hình bốn trạng thái tiếng Việt.
+- Cấu hình hai loại công việc nếu phiên bản hỗ trợ.
+- Ẩn các menu chưa dùng bằng feature flag.
+
+### Phase 2 – Domain công việc
+
+- Bổ sung task type operational/other.
+- Bổ sung room nullable integer.
+- Bổ sung supporters nhiều người.
+- Bổ sung notes nếu field hiện tại chưa đủ.
+- Thực hiện business rule tự động gán loại công việc ở backend.
+- Thêm activity log cho các thay đổi quan trọng.
+
+### Phase 3 – RBAC chi tiết
+
+- Hoàn thiện role, permission, role-permission và user-role.
+- Áp dụng middleware/permission check cho toàn bộ API CRUD.
+- Giới hạn truy cập theo notebook/project.
+- Xây UI quản trị role, permission, account và notebook membership.
+- Seed SuperAdmin an toàn.
+
+### Phase 4 – UI/UX và Việt hóa
+
+- Tối ưu spreadsheet/table view.
+- Việt hóa MVP.
+- Thêm dashboard, bộ lọc theo loại công việc và màn hình Công việc của tôi.
+- Ẩn các tính năng Plane không dùng khỏi navigation.
+- Thay branding/theme.
+
+### Phase 5 – Test, bảo mật và đóng gói
+
+- Unit test cho business rule task type.
+- API/integration test cho RBAC và notebook isolation.
+- Frontend test cho các luồng CRUD chính.
+- Test migration trên database có dữ liệu mẫu.
+- Kiểm tra Docker build và triển khai clean environment.
+- Kiểm tra security: truy cập trái phép, privilege escalation, IDOR, CSRF/CORS, lộ dữ liệu và xóa dữ liệu.
+- Cập nhật tài liệu cài đặt, cấu hình và vận hành.
+
+## 8. Tiêu chí nghiệm thu MVP
+
+MVP chỉ được xem là đạt khi tất cả điều kiện sau đúng:
+
+1. Người dùng đăng nhập được và bị từ chối khi không có authentication hợp lệ.
+2. SuperAdmin tồn tại sau bootstrap, có toàn quyền và có thể quản trị role/permission.
+3. Tạo được tài khoản và gán role theo permission.
+4. Tạo, sửa, archive/xóa được department/notebook theo quyền.
+5. User chỉ thấy các notebook được cấp quyền.
+6. Tạo được task với tên, mô tả, status, assignee, nhiều supporters, notes và room nullable.
+7. User bình thường tự tạo task thì task tự động là Công việc vận hành.
+8. Công việc do cấp trên giao được nhận diện là Công việc khác và có rule giao lại phù hợp.
+9. Có đủ bốn trạng thái: Chưa bắt đầu, Chờ xử lý, Đang thực hiện, Hoàn thành.
+10. Table/spreadsheet view hiển thị đúng các cột nghiệp vụ và hỗ trợ sort/filter/search.
+11. Không thể vượt quyền bằng cách gọi API trực tiếp.
+12. Các thay đổi quan trọng xuất hiện trong activity/audit log.
+13. Có migration, test cơ bản và Docker setup để chạy lại từ môi trường sạch.
+14. Tài liệu cài đặt và hướng dẫn sử dụng MVP được cập nhật bằng tiếng Việt.
+
+## 9. Cách AI coding agent phải làm việc
+
+- Trước mỗi nhóm thay đổi, mô tả ngắn các file/module sẽ sửa và lý do.
+- Không sửa hàng loạt khi chưa hiểu dependency giữa backend, API, frontend store và UI.
+- Mỗi phase phải chạy lint/type-check/test/build liên quan trước khi chuyển phase.
+- Khi gặp điểm không chắc về API/model của Plane, kiểm tra source hiện tại rồi mới quyết định; không tự bịa endpoint hoặc schema.
+- Ưu tiên các PR/commit nhỏ theo từng mục: task domain, RBAC, UI, test.
+- Không phá các tính năng cốt lõi đang chạy chỉ để đạt một yêu cầu UI nhỏ.
+- Nếu một yêu cầu xung đột với giới hạn của Plane hoặc license AGPL-3.0, phải báo rõ rủi ro và đề xuất phương án trước khi triển khai thương mại.
+
+## 10. Kết quả mong muốn
+
+Hệ thống sau khi customize phải là một phần mềm quản lý công việc nội bộ tổng quát, trong đó:
+
+- Công ty có nhiều phòng ban/notebook.
+- Mỗi phòng ban có danh sách công việc dạng bảng dễ thao tác.
+- User chỉ truy cập dữ liệu theo role và phạm vi notebook được cấp.
+- Công việc có người phụ trách, nhiều người hỗ trợ, trạng thái, loại công việc, ghi chú và phòng tùy chọn.
+- Các quy tắc Công việc vận hành/Công việc khác được enforced ở backend.
+- Nền tảng Plane, API, workflow, activity, comment và khả năng self-hosting được tận dụng tối đa.
+- Codebase vẫn có thể nâng cấp, bảo trì và tiếp tục được AI hỗ trợ trong các phase sau.
