@@ -105,7 +105,7 @@ services:
 
   plane-minio:
     container_name: bwp_notebook_plane_minio
-    image: minio/minio:latest
+    image: quay.io/minio/minio:latest
     restart: unless-stopped
     command: server /export --console-address ":9090"
     environment:
