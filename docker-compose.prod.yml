@@ -231,6 +231,8 @@ services:
     container_name: bwp_notebook_plane_web
     image: makeplane/plane-frontend:${APP_RELEASE:-v1.4.2}
     restart: unless-stopped
+    volumes:
+      - ./custom_frontend/build/client:/usr/share/nginx/html
     networks:
       - bwp_notebook_net
     depends_on:
