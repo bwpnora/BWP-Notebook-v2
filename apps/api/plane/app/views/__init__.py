@@ -60,6 +60,7 @@ from .workspace.member import (
     WorkspaceProjectMemberEndpoint,
     WorkspaceMemberUserViewsEndpoint,
 )
+from .workspace.direct_member import DirectMemberCreateEndpoint
 from .workspace.invite import (
     WorkspaceInvitationsViewset,
     WorkspaceJoinEndpoint,
