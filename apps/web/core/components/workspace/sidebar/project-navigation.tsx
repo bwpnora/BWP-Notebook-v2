@@ -87,7 +87,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         href: `/${wSlug}/projects/${pId}/cycles`,
         icon: CycleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        shouldRender: false, // BWP Notebook MVP - Code by IT Leon
+        shouldRender: false, // BWP Notebook MVP
         sortOrder: 2,
       },
       {
@@ -97,7 +97,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         href: `/${wSlug}/projects/${pId}/modules`,
         icon: ModuleIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        shouldRender: false, // BWP Notebook MVP - Code by IT Leon
+        shouldRender: false, // BWP Notebook MVP
         sortOrder: 3,
       },
       {
@@ -117,7 +117,7 @@ export const ProjectNavigation = observer(function ProjectNavigation(props: TPro
         href: `/${wSlug}/projects/${pId}/pages`,
         icon: PageIcon,
         access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-        shouldRender: false, // BWP Notebook MVP - Code by IT Leon
+        shouldRender: false, // BWP Notebook MVP
         sortOrder: 5,
       },
       {

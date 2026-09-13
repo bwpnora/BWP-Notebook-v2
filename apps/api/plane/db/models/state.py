@@ -20,7 +20,7 @@ class StateGroup(models.TextChoices):
     TRIAGE = "triage", "Triage"
 
 
-# Default states for BWP Notebook - Code & Architecture by IT Leon
+# Default states for BWP Notebook
 DEFAULT_STATES = [
     {
         "name": "Chưa bắt đầu",

@@ -36,8 +36,8 @@ import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wgh
 import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
 /* oxlint-enable eslint-plugin-import/no-unassigned-import */
-// BWP Notebook Branding - Code & Architecture by IT Leon
-const APP_TITLE = "BWP Notebook - Sổ tay công việc | Code & Architecture by IT Leon";
+// BWP Notebook Branding
+const APP_TITLE = "BWP Notebook - Sổ tay công việc";
 
 export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },

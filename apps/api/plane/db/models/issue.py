@@ -168,7 +168,7 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         null=True,
         blank=True,
     )
-    # BWP-Notebook-v2 extensions - Code by IT Leon
+    # BWP-Notebook-v2 extensions
     supporters = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,
@@ -378,7 +378,7 @@ class IssueAssignee(ProjectBaseModel):
         return f"{self.issue.name} {self.assignee.email}"
 
 
-# BWP-Notebook-v2 extension - Code by IT Leon
+# BWP-Notebook-v2 extension
 class IssueSupporter(ProjectBaseModel):
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_supporter")
     supporter = models.ForeignKey(

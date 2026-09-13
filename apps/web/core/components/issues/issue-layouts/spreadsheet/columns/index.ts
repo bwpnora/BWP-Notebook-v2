@@ -18,7 +18,7 @@ export * from "./sub-issue-column";
 export * from "./updated-on-column";
 export * from "./module-column";
 export * from "./cycle-column";
-// BWP-Notebook-v2 spreadsheet columns - Code by IT Leon
+// BWP-Notebook-v2 spreadsheet columns
 export * from "./supporter-column";
 export * from "./room-column";
 export * from "./notes-column";

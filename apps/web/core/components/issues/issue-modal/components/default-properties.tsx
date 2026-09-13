@@ -89,7 +89,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {/* BWP-Notebook-v2 task type selector - Code by IT Leon */}
+      {/* BWP-Notebook-v2 task type selector */}
       <Controller
         control={control}
         name="type_id"
@@ -201,7 +201,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           </div>
         )}
       />
-      {/* BWP-Notebook-v2 supporters multi-select - Code by IT Leon */}
+      {/* BWP-Notebook-v2 supporters multi-select */}
       <Controller
         control={control}
         name="supporter_ids"
@@ -223,7 +223,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           </div>
         )}
       />
-      {/* BWP-Notebook-v2 room number - Code by IT Leon */}
+      {/* BWP-Notebook-v2 room number */}
       <Controller
         control={control}
         name="room"
@@ -244,7 +244,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           </div>
         )}
       />
-      {/* BWP-Notebook-v2 task notes - Code by IT Leon */}
+      {/* BWP-Notebook-v2 task notes */}
       <Controller
         control={control}
         name="notes"

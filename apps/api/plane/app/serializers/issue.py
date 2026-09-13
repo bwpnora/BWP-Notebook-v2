@@ -102,7 +102,7 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
-    # BWP-Notebook-v2 supporters - Code by IT Leon
+    # BWP-Notebook-v2 supporters
     supporter_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
@@ -169,7 +169,7 @@ class IssueCreateSerializer(BaseSerializer):
                 member_id__in=attrs["assignee_ids"],
             ).values_list("member_id", flat=True)
 
-        # Validate supporters are from project - Code by IT Leon
+        # Validate supporters are from project
         if attrs.get("supporter_ids", []):
             attrs["supporter_ids"] = ProjectMember.objects.filter(
                 project_id=self.context["project_id"],
@@ -295,7 +295,7 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
 
-        # BWP-Notebook-v2 supporters - Code by IT Leon
+        # BWP-Notebook-v2 supporters
         if supporters is not None and len(supporters):
             try:
                 IssueSupporter.objects.bulk_create(
@@ -370,7 +370,7 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
 
-        # BWP-Notebook-v2 supporters update - Code by IT Leon
+        # BWP-Notebook-v2 supporters update
         if supporters is not None:
             IssueSupporter.objects.filter(issue=instance).delete()
             try:
@@ -936,7 +936,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "updated_by": instance.updated_by_id,
             "is_draft": instance.is_draft,
             "archived_at": instance.archived_at,
-            # BWP-Notebook-v2 domain fields - Code by IT Leon
+            # BWP-Notebook-v2 domain fields
             "type_id": getattr(instance, "type_id", None),
             "room": getattr(instance, "room", None),
             "notes": getattr(instance, "notes", None),
@@ -1017,7 +1017,7 @@ class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
     is_intake = serializers.BooleanField(read_only=True)
-    # BWP-Notebook-v2 supporters details - Code by IT Leon
+    # BWP-Notebook-v2 supporters details
     supporter_details = UserLiteSerializer(source="supporters", read_only=True, many=True)
 
     class Meta(IssueSerializer.Meta):
@@ -1063,7 +1063,7 @@ class IssueSubscriberSerializer(BaseSerializer):
         read_only_fields = ["workspace", "project", "issue"]
 
 
-# BWP-Notebook-v2 extension - Code by IT Leon
+# BWP-Notebook-v2 extension
 class IssueSupporterSerializer(BaseSerializer):
     supporter_detail = UserLiteSerializer(source="supporter", read_only=True)
 

@@ -422,7 +422,7 @@ class IssueViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
-        # BWP-Notebook-v2 Business Rules: Task Type Auto-Classification - Code by IT Leon
+        # BWP-Notebook-v2 Business Rules: Task Type Auto-Classification
         data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
 
         member = ProjectMember.objects.filter(
@@ -600,7 +600,7 @@ class IssueViewSet(BaseViewSet):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
-                # BWP-Notebook-v2 supporters - Code by IT Leon
+                # BWP-Notebook-v2 supporters
                 supporter_ids=Coalesce(
                     Subquery(
                         IssueSupporter.objects.filter(
@@ -730,7 +730,7 @@ class IssueViewSet(BaseViewSet):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
-                # BWP-Notebook-v2 supporters - Code by IT Leon
+                # BWP-Notebook-v2 supporters
                 supporter_ids=Coalesce(
                     ArrayAgg(
                         "supporters__id",
@@ -751,7 +751,7 @@ class IssueViewSet(BaseViewSet):
         if not issue:
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # BWP-Notebook-v2 Business Rules: Code & Architecture by IT Leon
+        # BWP-Notebook-v2 Business Rules: Code & Architecture by BWP Engineering Team
         member = ProjectMember.objects.filter(
             project_id=project_id, member=request.user, is_active=True
         ).first()

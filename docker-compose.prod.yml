@@ -1,6 +1,6 @@
 # ==============================================================================
 # BWP-Notebook-v2 Production Docker Compose
-# Customized & Architecture by IT Leon (BWP Engineering Team)
+# Customized & Architecture by BWP Engineering Team (BWP Engineering Team)
 # Target Server: Debian 192.168.3.168 (Dodge port collisions)
 # Base Platform: Plane CE v1.4.2
 # ==============================================================================

@@ -4,7 +4,7 @@
 
 > **Tài liệu Hướng dẫn Vận hành BWP Notebook (User Guide)**  
 > **Phiên bản:** 2.0 (Bản phát hành Doanh nghiệp)  
-> **Tác quyền & Kiến trúc:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Môi trường mục tiêu:** Debian GNU/Linux 11/12 (Máy chủ nội bộ `192.168.3.168`)
 
 ---
@@ -15,7 +15,7 @@
 
 **BWP Notebook** là giải pháp phần mềm quản lý công việc và điều hành nội bộ chuyên sâu, được thiết kế để giải quyết bài toán phân mảnh thông tin, thiếu nhất quán trong giao nhận việc và chậm trễ tiến độ tại các doanh nghiệp có cơ cấu tổ chức đa phòng ban.
 
-Được kế thừa và phát triển từ nền tảng mã nguồn mở vững chắc **Plane CE (v1.4.2)**, BWP Notebook đã được đội ngũ kỹ sư BWP (dẫn dắt bởi **IT Leon**) tùy biến toàn diện cả ở tầng lõi backend (Django REST Framework) lẫn giao diện người dùng frontend (React Router SPA). Hệ thống chuyển đổi toàn bộ thuật ngữ phần mềm quản lý dự án công nghệ sang mô hình sổ tay công việc thực tiễn, thân thiện và gần gũi với môi trường vận hành doanh nghiệp Việt Nam.
+Được kế thừa và phát triển từ nền tảng mã nguồn mở vững chắc **Plane CE (v1.4.2)**, BWP Notebook đã được đội ngũ kỹ sư BWP (dẫn dắt bởi BWP Engineering Team) tùy biến toàn diện cả ở tầng lõi backend (Django REST Framework) lẫn giao diện người dùng frontend (React Router SPA). Hệ thống chuyển đổi toàn bộ thuật ngữ phần mềm quản lý dự án công nghệ sang mô hình sổ tay công việc thực tiễn, thân thiện và gần gũi với môi trường vận hành doanh nghiệp Việt Nam.
 
 ```mermaid
 flowchart TD
@@ -143,7 +143,7 @@ Nội dung chi tiết của tệp cấu hình:
 ```ini
 # ==============================================================================
 # BWP-Notebook-v2 Environment Configuration
-# Architecture by IT Leon (BWP Engineering Team)
+# Architecture by BWP Engineering Team (BWP Engineering Team)
 # Target Server: Debian 192.168.3.168 (Port 18080)
 # Base Platform: Plane CE v1.4.2
 # ==============================================================================

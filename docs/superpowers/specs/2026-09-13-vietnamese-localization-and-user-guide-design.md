@@ -3,7 +3,7 @@
 ## Dự án: Việt hóa Toàn diện Hệ thống & Bộ Tài liệu Hướng dẫn Sử dụng (BWP-Notebook-v2)
 
 - **Ngày lập**: 2026-09-13
-- **Tác giả tùy biến**: Code & Architecture by **IT Leon** (BWP Engineering Team)
+- **Tác giả tùy biến**: Code & Architecture bởi BWP Engineering Team (BWP Engineering Team)
 - **Nền tảng**: Plane Community Edition (CE) `v1.4.2`
 - **Mã nguồn**: `packages/i18n`, `apps/web`, `apps/api`, `docs/user-guide/`
 - **Trạng thái**: Đã phê duyệt (Approved) qua Brainstorming

@@ -4,7 +4,7 @@
 
 > **Tài liệu Hướng dẫn Vận hành BWP Notebook (User Guide)**  
 > **Phiên bản:** 2.0 (Bản phát hành Doanh nghiệp)  
-> **Tác quyền & Kiến trúc:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Mục tiêu Nghiệp vụ:** Quản trị Đơn vị (Workspace), Phân vùng Phòng ban (Notebook/Project) & Chuẩn hóa Workflow
 
 ---

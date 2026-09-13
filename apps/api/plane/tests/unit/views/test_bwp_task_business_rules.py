@@ -1,6 +1,6 @@
 # Copyright (c) 2023-present Plane Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
-# Code & Architecture by IT Leon
+# Code & Architecture by BWP Engineering Team
 
 """
 Unit tests for BWP-Notebook-v2 Work Item Domain and Business Rules:

@@ -175,7 +175,7 @@ export interface IIssueDisplayProperties {
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
-  // BWP-Notebook-v2 domain fields - Code by IT Leon
+  // BWP-Notebook-v2 domain fields
   supporter?: boolean;
   room?: boolean;
   notes?: boolean;

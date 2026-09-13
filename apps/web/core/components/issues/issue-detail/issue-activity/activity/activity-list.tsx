@@ -30,7 +30,7 @@ import {
   IssueAttachmentActivity,
   IssueArchivedAtActivity,
   IssueInboxActivity,
-  // BWP-Notebook-v2 activity actions - Code by IT Leon
+  // BWP-Notebook-v2 activity actions
   IssueSupporterActivity,
   IssueRoomActivity,
   IssueNotesActivity,
@@ -96,7 +96,7 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
     case "intake":
     case "inbox":
       return <IssueInboxActivity {...componentDefaultProps} />;
-    // BWP-Notebook-v2 activity cases - Code by IT Leon
+    // BWP-Notebook-v2 activity cases
     case "supporters":
       return <IssueSupporterActivity {...componentDefaultProps} showIssue={false} />;
     case "room":

@@ -71,7 +71,7 @@ import {
   SpreadsheetStateColumn,
   SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
-  // BWP-Notebook-v2 spreadsheet columns - Code by IT Leon
+  // BWP-Notebook-v2 spreadsheet columns
   SpreadsheetSupporterColumn,
   SpreadsheetRoomColumn,
   SpreadsheetNotesColumn,
@@ -868,7 +868,7 @@ export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpr
   sub_issue_count: SpreadsheetSubIssueColumn,
   updated_on: SpreadsheetUpdatedOnColumn,
   attachment_count: SpreadsheetAttachmentColumn,
-  // BWP-Notebook-v2 domain columns - Code by IT Leon
+  // BWP-Notebook-v2 domain columns
   supporter: SpreadsheetSupporterColumn,
   room: SpreadsheetRoomColumn,
   notes: SpreadsheetNotesColumn,

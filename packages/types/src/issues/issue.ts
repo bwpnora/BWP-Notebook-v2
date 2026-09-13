@@ -63,7 +63,7 @@ export type TBaseIssue = {
   cycle_id: string | null;
   module_ids: string[] | null;
   type_id: string | null;
-  // BWP-Notebook-v2 domain fields - Code by IT Leon
+  // BWP-Notebook-v2 domain fields
   supporter_ids?: string[];
   room?: number | null;
   notes?: string | null;
@@ -100,7 +100,7 @@ export type TIssue = TBaseIssue & {
   issue_link?: TIssueLink[];
   issue_relation?: IssueRelation[];
   issue_related?: IssueRelation[];
-  // BWP-Notebook-v2 supporter details & type detail - Code by IT Leon
+  // BWP-Notebook-v2 supporter details & type detail
   supporter_details?: any[];
   type_detail?: { id: string; name: string; description?: string; is_active?: boolean } | null;
   // tempId is used for optimistic updates. It is not a part of the API response.

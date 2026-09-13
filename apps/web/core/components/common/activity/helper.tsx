@@ -77,7 +77,7 @@ export const iconsMap: ActivityIconMap = {
   issue_views_view: Layers,
   page_view: FileText,
   intake_view: IntakeIcon,
-  // BWP-Notebook-v2 activity icons - Code by IT Leon
+  // BWP-Notebook-v2 activity icons
   supporters: MembersPropertyIcon,
   room: Hash,
   notes: FileText,
@@ -291,7 +291,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: <>{getBooleanActionText(newValue)} work item types</>,
       };
-    // BWP-Notebook-v2 domain activity messages - Code by IT Leon
+    // BWP-Notebook-v2 domain activity messages
     case "supporters":
       return {
         message: (

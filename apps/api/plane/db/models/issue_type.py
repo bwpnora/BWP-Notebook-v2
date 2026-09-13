@@ -55,7 +55,7 @@ class ProjectIssueType(ProjectBaseModel):
         return f"{self.project} - {self.issue_type}"
 
 
-# BWP-Notebook-v2 task type constants - Code by IT Leon
+# BWP-Notebook-v2 task type constants
 TASK_TYPE_OPERATIONAL = "operational"
 TASK_TYPE_OTHER = "other"
 

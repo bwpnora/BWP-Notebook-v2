@@ -4,7 +4,7 @@
 
 > **Tài liệu Hướng dẫn Vận hành BWP Notebook (User Guide)**  
 > **Phiên bản:** 2.0 (Bản phát hành Doanh nghiệp)  
-> **Tác quyền & Kiến trúc:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Trọng tâm Nghiệp vụ:** Vòng đời Công việc, Phân bổ Đa nhân sự, Định vị Mặt bằng & Đa chế độ hiển thị
 
 ---
@@ -72,7 +72,7 @@ classDiagram
 3. **Người phụ trách chính (Assignee - Đơn nhất):**
    - Đúng **01 nhân sự** chịu trách nhiệm chính về chất lượng và tiến độ hoàn thành công việc. Nhân sự này sẽ nhận thông báo khi có bất kỳ thay đổi nào liên quan.
 4. **Người hỗ trợ (Supporters - Đa nhân sự M2M):**
-   - **Tính năng tùy biến độc quyền (Code by IT Leon):** Trong thực tế vận hành tòa nhà hay khách sạn, một sự cố lớn (như vỡ đường ống nước ngầm hoặc bảo trì thang máy) đòi hỏi sự phối hợp cùng lúc của nhiều kỹ sư và thợ phụ.
+   - **Tính năng tùy biến độc quyền:** Trong thực tế vận hành tòa nhà hay khách sạn, một sự cố lớn (như vỡ đường ống nước ngầm hoặc bảo trì thang máy) đòi hỏi sự phối hợp cùng lúc của nhiều kỹ sư và thợ phụ.
    - Trường **Supporters** cho phép gán danh sách nhiều nhân sự cùng tham gia hỗ trợ. Tất cả người hỗ trợ đều nhận được thông báo, có quyền cập nhật hiện trường và được ghi nhận công lao vào nhật ký kiểm toán.
 5. **Số phòng / Khu vực (Room):**
    - Trường số nguyên định danh vị trí mặt bằng phát sinh sự cố (ví dụ: `101`, `305`, `1208`).

@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Credit Attribution: Mọi file mã nguồn tùy biến và tài liệu mới ghi nhận: **"Code & Architecture by IT Leon"**.
+- Credit Attribution: Mọi file mã nguồn tùy biến và tài liệu mới ghi nhận: **"Code & Architecture by BWP Engineering Team"**.
 - Bản quyền: Giữ nguyên header bản quyền AGPL-3.0 và Makeplane Inc.
 - Không thay đổi tên bảng/entity cốt lõi trong database (`Workspace`, `Project`, `Issue`). Ánh xạ nghiệp vụ thực hiện ở tầng i18n UI.
 - Đảm bảo strict type checking (`pnpm check:types`) và linting (`pnpm check:lint`) vượt qua không có lỗi.
@@ -47,7 +47,7 @@ Xóa tệp symlink `packages/i18n/locales`. Tạo `packages/i18n/src/locales/res
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
- * Customized & Developed by IT Leon
+ * Customized & Developed by BWP Engineering Team
  */
 
 // vi-VN namespaces
@@ -183,7 +183,7 @@ Tạo `packages/i18n/src/locales/registry.ts`:
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
- * Customized & Developed by IT Leon
+ * Customized & Developed by BWP Engineering Team
  */
 
 export const dynamicLocaleLoaders: Record<string, Record<string, () => Promise<any>>> = {
@@ -262,7 +262,7 @@ Kỳ vọng: Biên dịch thành công ra `packages/i18n/dist/index.js` mà khô
 
 ```bash
 git add packages/i18n/src/locales/resources.ts packages/i18n/src/locales/registry.ts packages/i18n/src/constants/language.ts packages/i18n/src/core/instance.ts packages/i18n/locales
-git commit -m "fix(i18n): pre-bundle core vi-VN and en resources and fix dynamic loader - Code by IT Leon"
+git commit -m "fix(i18n): pre-bundle core vi-VN and en resources and fix dynamic loader"
 ```
 
 ---
@@ -328,7 +328,7 @@ Kỳ vọng: In ra "JSON valid".
 
 ```bash
 git add packages/i18n/src/locales/vi-VN/
-git commit -m "feat(i18n): align vi-VN locale files with corporate terminology - Code by IT Leon"
+git commit -m "feat(i18n): align vi-VN locale files with corporate terminology"
 ```
 
 ---
@@ -363,7 +363,7 @@ Kỳ vọng: Exit code 0 không có lỗi cú pháp.
 
 ```bash
 git add apps/api/plane/db/models/user.py
-git commit -m "feat(api): set default user profile language to vi-VN - Code by IT Leon"
+git commit -m "feat(api): set default user profile language to vi-VN"
 ```
 
 ---
@@ -400,7 +400,7 @@ Kỳ vọng: Tìm thấy chuỗi "Hướng dẫn khởi đầu nhanh" trong bund
 
 ```bash
 git add packages/i18n/
-git commit -m "chore(web): update i18n bundle with verified Vietnamese resources - Code by IT Leon"
+git commit -m "chore(web): update i18n bundle with verified Vietnamese resources"
 ```
 
 ---
@@ -444,7 +444,7 @@ Kỳ vọng: Format đạt chuẩn.
 
 ```bash
 git add docs/user-guide/01-TONG-QUAN-VA-KHOI-DONG.md docs/user-guide/02-TAI-KHOAN-VA-PHAN-QUYEN-RBAC.md
-git commit -m "docs(guide): add chapters 1 and 2 for system setup and RBAC - Code by IT Leon"
+git commit -m "docs(guide): add chapters 1 and 2 for system setup and RBAC"
 ```
 
 ---
@@ -497,7 +497,7 @@ Kỳ vọng: Format đạt chuẩn.
 
 ```bash
 git add docs/user-guide/03-QUAN-LY-CONG-TY-VA-NOTEBOOK.md docs/user-guide/04-QUY-TRINH-XU-LY-CONG-VIEC.md docs/user-guide/05-NHAT-KY-HOAT-DONG-VA-QUAN-TRI.md
-git commit -m "docs(guide): add chapters 3, 4, and 5 for operations, workflow, and auditing - Code by IT Leon"
+git commit -m "docs(guide): add chapters 3, 4, and 5 for operations, workflow, and auditing"
 ```
 
 ---
@@ -518,7 +518,7 @@ git commit -m "docs(guide): add chapters 3, 4, and 5 for operations, workflow, a
 
 Hợp nhất toàn bộ 5 chuyên đề thành một tài liệu duy nhất, có:
 
-- Trang bìa & Thông tin bản quyền / Tác quyền: "Tài liệu Hướng dẫn Sử dụng BWP Notebook - Code & Architecture by IT Leon".
+- Trang bìa & Thông tin bản quyền / Tác quyền: "Tài liệu Hướng dẫn Sử dụng BWP Notebook".
 - Mục lục liên kết neo (Anchor links) dẫn trực tiếp đến từng chương và mục con.
 - Bảng biểu ma trận RBAC, sơ đồ quy trình dạng Mermaid và các hộp thông tin chú ý (`> [!NOTE]`, `> [!IMPORTANT]`, `> [!TIP]`).
 - Tối ưu định dạng cho việc in ấn hoặc lưu thành PDF.
@@ -536,5 +536,5 @@ Kiểm tra tính hợp lệ của các liên kết neo.
 
 ```bash
 git add USER_GUIDE_VI.md README.md
-git commit -m "docs(guide): add consolidated USER_GUIDE_VI handbook and link from README - Code by IT Leon"
+git commit -m "docs(guide): add consolidated USER_GUIDE_VI handbook and link from README"
 ```

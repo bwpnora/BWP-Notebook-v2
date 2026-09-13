@@ -31,7 +31,7 @@ Meet [Plane](https://plane.so/), an open-source project management tool to track
 ## 📖 Tài liệu Hướng dẫn Sử dụng & Vận hành (User Guide)
 
 > **Bản phát hành Doanh nghiệp BWP Notebook 2.0**  
-> **Kiến trúc & Phát triển:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Bản địa hóa:** Việt hóa 100% giao diện, quy trình tác nghiệp thực tiễn và nhật ký kiểm toán.
 
 Hệ thống BWP Notebook được xây dựng và tùy biến chuyên sâu từ nền tảng Plane CE (v1.4.2) nhằm tối ưu hóa cho mô hình quản trị công việc và vận hành doanh nghiệp Việt Nam.

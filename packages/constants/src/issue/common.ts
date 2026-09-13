@@ -158,7 +158,7 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "modules",
   "cycle",
   "issue_type",
-  // BWP-Notebook-v2 domain fields - Code by IT Leon
+  // BWP-Notebook-v2 domain fields
   "supporter",
   "room",
   "notes",
@@ -214,7 +214,7 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   },
   { key: "modules", titleTranslationKey: "common.module" },
   { key: "cycle", titleTranslationKey: "common.cycle" },
-  // BWP-Notebook-v2 domain fields - Code by IT Leon
+  // BWP-Notebook-v2 domain fields
   { key: "issue_type", titleTranslationKey: "Loại công việc" },
   { key: "supporter", titleTranslationKey: "Người hỗ trợ" },
   { key: "room", titleTranslationKey: "Số phòng" },
@@ -364,7 +364,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderTitle: "Least",
     icon: "LayersIcon",
   },
-  // BWP-Notebook-v2 spreadsheet column details - Code by IT Leon
+  // BWP-Notebook-v2 spreadsheet column details
   issue_type: {
     i18n_title: "Loại công việc",
     ascendingOrderKey: "priority",
@@ -402,7 +402,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
 // Map filter keys to their corresponding issue property keys
 export const FILTER_TO_ISSUE_MAP: Partial<Record<keyof IIssueFilterOptions, keyof TIssue>> = {
   assignees: "assignee_ids",
-  // BWP-Notebook-v2 domain mapping - Code by IT Leon
+  // BWP-Notebook-v2 domain mapping
   supporters: "supporter_ids",
   created_by: "created_by",
   labels: "label_ids",

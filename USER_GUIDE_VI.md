@@ -11,7 +11,7 @@
 | **Tên tài liệu**           | **Tài liệu Hướng dẫn Sử dụng & Vận hành BWP Notebook (User Guide)**                               |
 | **Phiên bản hệ thống**     | **2.0** (Bản phát hành Doanh nghiệp - Enterprise Edition)                                         |
 | **Ngày phát hành**         | **13/09/2026**                                                                                    |
-| **Tác quyền & Kiến trúc**  | **Code & Architecture by IT Leon** (BWP Engineering Team)                                         |
+| **Tác quyền & Kiến trúc**  | **Code & Architecture by BWP Engineering Team** (BWP Engineering Team)                            |
 | **Nền tảng công nghệ lõi** | Plane CE v1.4.2 Tùy biến sâu (Spreadsheet-first, Supporters, Room, Notes, Activity Audit Trail)   |
 | **Môi trường triển khai**  | Máy chủ nội bộ Debian GNU/Linux 11/12 (`192.168.3.168:18080`)                                     |
 | **Đối tượng áp dụng**      | Ban Giám đốc, Quản trị viên hệ thống (DevOps/Admin), Trưởng phòng ban & Toàn thể Cán bộ Nhân viên |
@@ -25,7 +25,7 @@
 
 Trong kỷ nguyên chuyển đổi số doanh nghiệp, việc phân mảnh thông tin qua các ứng dụng chat rời rạc hoặc sổ tay viết tay truyền thống thường dẫn đến tình trạng bỏ sót đầu việc, chậm trễ tiến độ xử lý sự cố và thiếu minh bạch trong quy trách nhiệm cá nhân.
 
-**BWP Notebook** được nghiên cứu, kiến trúc và phát triển bởi đội ngũ kỹ sư BWP (dẫn dắt bởi **IT Leon**) nhằm mang lại một giải pháp điều hành công việc tinh gọn, hiệu quả và phù hợp nhất với văn hóa tác nghiệp tại các doanh nghiệp Việt Nam. Kế thừa nền tảng mã nguồn mở vững chãi **Plane CE (v1.4.2)**, BWP Notebook đã được tái cấu trúc toàn diện từ giao diện người dùng (React Router SPA) đến tầng dịch vụ nghiệp vụ cốt lõi (Django REST Framework), chuyển đổi các khái niệm trừu tượng thành mô hình **Sổ tay phòng ban (Notebook)** và **Bảng tính lưới (Spreadsheet-first)** thân thuộc.
+**BWP Notebook** được nghiên cứu, kiến trúc và phát triển bởi đội ngũ kỹ sư BWP (dẫn dắt bởi BWP Engineering Team) nhằm mang lại một giải pháp điều hành công việc tinh gọn, hiệu quả và phù hợp nhất với văn hóa tác nghiệp tại các doanh nghiệp Việt Nam. Kế thừa nền tảng mã nguồn mở vững chãi **Plane CE (v1.4.2)**, BWP Notebook đã được tái cấu trúc toàn diện từ giao diện người dùng (React Router SPA) đến tầng dịch vụ nghiệp vụ cốt lõi (Django REST Framework), chuyển đổi các khái niệm trừu tượng thành mô hình **Sổ tay phòng ban (Notebook)** và **Bảng tính lưới (Spreadsheet-first)** thân thuộc.
 
 Sổ tay này là tài liệu hướng dẫn chính thức, chuẩn mực và toàn diện nhất, đóng vai trò cẩm nang tác nghiệp hàng ngày cho người dùng cuối cũng như tài liệu quy chuẩn kỹ thuật cho đội ngũ quản trị hạ tầng.
 
@@ -131,7 +131,7 @@ Sổ tay này là tài liệu hướng dẫn chính thức, chuẩn mực và to
 
 > **Tài liệu Hướng dẫn Vận hành BWP Notebook (User Guide)**  
 > **Phiên bản:** 2.0 (Bản phát hành Doanh nghiệp)  
-> **Tác quyền & Kiến trúc:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Môi trường mục tiêu:** Debian GNU/Linux 11/12 (Máy chủ nội bộ `192.168.3.168`)
 
 ---
@@ -146,7 +146,7 @@ Sổ tay này là tài liệu hướng dẫn chính thức, chuẩn mực và to
 
 **BWP Notebook** là giải pháp phần mềm quản lý công việc và điều hành nội bộ chuyên sâu, được thiết kế để giải quyết bài toán phân mảnh thông tin, thiếu nhất quán trong giao nhận việc và chậm trễ tiến độ tại các doanh nghiệp có cơ cấu tổ chức đa phòng ban.
 
-Được kế thừa và phát triển từ nền tảng mã nguồn mở vững chắc **Plane CE (v1.4.2)**, BWP Notebook đã được đội ngũ kỹ sư BWP (dẫn dắt bởi **IT Leon**) tùy biến toàn diện cả ở tầng lõi backend (Django REST Framework) lẫn giao diện người dùng frontend (React Router SPA). Hệ thống chuyển đổi toàn bộ thuật ngữ phần mềm quản lý dự án công nghệ sang mô hình sổ tay công việc thực tiễn, thân thiện và gần gũi với môi trường vận hành doanh nghiệp Việt Nam.
+Được kế thừa và phát triển từ nền tảng mã nguồn mở vững chắc **Plane CE (v1.4.2)**, BWP Notebook đã được đội ngũ kỹ sư BWP (dẫn dắt bởi BWP Engineering Team) tùy biến toàn diện cả ở tầng lõi backend (Django REST Framework) lẫn giao diện người dùng frontend (React Router SPA). Hệ thống chuyển đổi toàn bộ thuật ngữ phần mềm quản lý dự án công nghệ sang mô hình sổ tay công việc thực tiễn, thân thiện và gần gũi với môi trường vận hành doanh nghiệp Việt Nam.
 
 ```mermaid
 flowchart TD
@@ -286,7 +286,7 @@ Nội dung chi tiết của tệp cấu hình:
 ```ini
 # ==============================================================================
 # BWP-Notebook-v2 Environment Configuration
-# Architecture by IT Leon (BWP Engineering Team)
+# Architecture by BWP Engineering Team (BWP Engineering Team)
 # Target Server: Debian 192.168.3.168 (Port 18080)
 # Base Platform: Plane CE v1.4.2
 # ==============================================================================
@@ -546,7 +546,7 @@ docker compose -f docker-compose.prod.yml up -d
 
 > **Tài liệu Hướng dẫn Vận hành BWP Notebook (User Guide)**  
 > **Phiên bản:** 2.0 (Bản phát hành Doanh nghiệp)  
-> **Tác quyền & Kiến trúc:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Cơ chế Phân quyền:** Role-Based Access Control (RBAC) & Cô lập Phòng ban (Department Partitioning)
 
 ---
@@ -840,7 +840,7 @@ flowchart TD
 
 > **Tài liệu Hướng dẫn Vận hành BWP Notebook (User Guide)**  
 > **Phiên bản:** 2.0 (Bản phát hành Doanh nghiệp)  
-> **Tác quyền & Kiến trúc:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Mục tiêu Nghiệp vụ:** Quản trị Đơn vị (Workspace), Phân vùng Phòng ban (Notebook/Project) & Chuẩn hóa Workflow
 
 ---
@@ -1149,7 +1149,7 @@ Khi cần kích hoạt lại một phòng ban đã lưu trữ:
 
 > **Tài liệu Hướng dẫn Vận hành BWP Notebook (User Guide)**  
 > **Phiên bản:** 2.0 (Bản phát hành Doanh nghiệp)  
-> **Tác quyền & Kiến trúc:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Trọng tâm Nghiệp vụ:** Vòng đời Công việc, Phân bổ Đa nhân sự, Định vị Mặt bằng & Đa chế độ hiển thị
 
 ---
@@ -1221,7 +1221,7 @@ classDiagram
 3. **Người phụ trách chính (Assignee - Đơn nhất):**
    - Đúng **01 nhân sự** chịu trách nhiệm chính về chất lượng và tiến độ hoàn thành công việc. Nhân sự này sẽ nhận thông báo khi có bất kỳ thay đổi nào liên quan.
 4. **Người hỗ trợ (Supporters - Đa nhân sự M2M):**
-   - **Tính năng tùy biến độc quyền (Code by IT Leon):** Trong thực tế vận hành tòa nhà hay khách sạn, một sự cố lớn (như vỡ đường ống nước ngầm hoặc bảo trì thang máy) đòi hỏi sự phối hợp cùng lúc của nhiều kỹ sư và thợ phụ.
+   - **Tính năng tùy biến độc quyền:** Trong thực tế vận hành tòa nhà hay khách sạn, một sự cố lớn (như vỡ đường ống nước ngầm hoặc bảo trì thang máy) đòi hỏi sự phối hợp cùng lúc của nhiều kỹ sư và thợ phụ.
    - Trường **Supporters** cho phép gán danh sách nhiều nhân sự cùng tham gia hỗ trợ. Tất cả người hỗ trợ đều nhận được thông báo, có quyền cập nhật hiện trường và được ghi nhận công lao vào nhật ký kiểm toán.
 5. **Số phòng / Khu vực (Room):**
    - Trường số nguyên định danh vị trí mặt bằng phát sinh sự cố (ví dụ: `101`, `305`, `1208`).
@@ -1441,7 +1441,7 @@ Hình ảnh thực tế là bằng chứng khách quan nhất để nghiệm thu
 
 > **Tài liệu Hướng dẫn Vận hành BWP Notebook (User Guide)**  
 > **Phiên bản:** 2.0 (Bản phát hành Doanh nghiệp)  
-> **Tác quyền & Kiến trúc:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Mục tiêu Quản trị:** Kiểm toán Hoạt động (Audit Trail), An toàn Dữ liệu (Backup/Restore) & Xử lý Sự cố (Troubleshooting)
 
 ---
@@ -1458,7 +1458,7 @@ Trong môi trường quản trị doanh nghiệp chuyên nghiệp, tính minh b�
 
 ```mermaid
 flowchart LR
-    Action["Hành Động Người Dùng<br>(Thêm Người hỗ trợ, đổi Trạng thái, cập nhật Số phòng)"] --> API["Backend DRF API<br>(IssueActivity Task by IT Leon)"]
+    Action["Hành Động Người Dùng<br>(Thêm Người hỗ trợ, đổi Trạng thái, cập nhật Số phòng)"] --> API["Backend DRF API<br>(IssueActivity Task by BWP Engineering Team)"]
     API --> RabbitMQ["Message Queue<br>(plane-mq / Celery Worker)"]
     RabbitMQ --> AuditDB[("Bảng IssueActivity<br>PostgreSQL (plane-db)")]
     AuditDB --> Stream["Dòng Lịch Sử Hoạt Động<br>• Hiển thị chuẩn tiếng Việt 100%<br>• Ghi rõ Danh tính, Thời điểm, Dữ liệu cũ -> mới"]
@@ -1474,7 +1474,7 @@ flowchart LR
 
 ### 1.2. Danh mục các bản ghi hoạt động được Việt hóa 100%
 
-Đội ngũ kỹ sư BWP (dẫn dắt bởi **IT Leon**) đã tùy biến toàn bộ tầng xử lý tác vụ nền (`apps/api/plane/bgtasks/issue_activities_task.py`) để các bản ghi hoạt động hiển thị hoàn toàn bằng tiếng Việt chuẩn mực:
+Đội ngũ kỹ sư BWP (dẫn dắt bởi BWP Engineering Team) đã tùy biến toàn bộ tầng xử lý tác vụ nền (`apps/api/plane/bgtasks/issue_activities_task.py`) để các bản ghi hoạt động hiển thị hoàn toàn bằng tiếng Việt chuẩn mực:
 
 | Trường Dữ Liệu Thay Đổi            | Đoạn Ghi Nhận Kiểm Toán Mẫu (Activity Stream Format)                     | Ý Nghĩa Thực Tế                                                   |
 | :--------------------------------- | :----------------------------------------------------------------------- | :---------------------------------------------------------------- |
@@ -1578,7 +1578,7 @@ sudo tar -czvf /var/backups/bwp-notebook/media/uploads_$(date +%Y%m%d_%H%M%S).ta
 #!/usr/bin/env bash
 # ==============================================================================
 # BWP Notebook Automated Daily Backup Script
-# Code & Architecture by IT Leon
+# Code & Architecture by BWP Engineering Team
 # ==============================================================================
 set -euo pipefail
 
@@ -1708,7 +1708,7 @@ Dưới đây là tổng hợp 8 câu hỏi phổ biến nhất từ người d�
 
 ### FAQ 2: Tại sao tôi không thể đổi loại công việc sang "Công việc khác"?
 
-- **Giải đáp:** Đây là **Quy tắc phân quyền nghiệp vụ (Business Rule)** được thiết kế bởi IT Leon. Thành viên thông thường (Member) chỉ được phép tạo và xử lý các _Công việc vận hành (Operational tasks)_ phát sinh trong ca trực. Chỉ Quản trị viên (Admin) hoặc Trưởng bộ phận mới có thẩm quyền chuyển đổi công việc thành _Công việc khác (Other tasks)_ để phục vụ kế hoạch chỉ đạo tập trung.
+- **Giải đáp:** Đây là **Quy tắc phân quyền nghiệp vụ (Business Rule)** được thiết kế bởi BWP Engineering Team. Thành viên thông thường (Member) chỉ được phép tạo và xử lý các _Công việc vận hành (Operational tasks)_ phát sinh trong ca trực. Chỉ Quản trị viên (Admin) hoặc Trưởng bộ phận mới có thẩm quyền chuyển đổi công việc thành _Công việc khác (Other tasks)_ để phục vụ kế hoạch chỉ đạo tập trung.
 
 <a id="faq-3"></a>
 
@@ -1847,7 +1847,7 @@ echo -e "\n4. Dung lượng Bộ nhớ RAM & Ổ đĩa:" && free -h && df -h /
 ### 1. Thông Tin Kiến Trúc & Đầu Mối Kỹ Thuật
 
 - **Đơn vị phát triển & Tùy biến:** BWP Engineering Team
-- **Kiến trúc trưởng & Lead Developer:** IT Leon
+- **Kiến trúc trưởng & Lead Developer:** BWP Team
 - **Kênh hỗ trợ nội bộ:** Phòng Kỹ thuật & Hạ tầng CNTT BWP
 - **Địa chỉ máy chủ nội bộ:** `http://192.168.3.168:18080` (Mạng LAN nội bộ)
 - **Tài liệu nguồn mở nền tảng:** [Plane Documentation](https://docs.plane.so/)
@@ -1865,4 +1865,4 @@ echo -e "\n4. Dung lượng Bộ nhớ RAM & Ổ đĩa:" && free -h && df -h /
 
 ---
 
-_Tài liệu lưu hành nội bộ - Bản quyền kiến trúc & triển khai thuộc về IT Leon (BWP Engineering Team)._
+_Tài liệu lưu hành nội bộ - Bản quyền kiến trúc & triển khai thuộc về BWP Engineering Team._

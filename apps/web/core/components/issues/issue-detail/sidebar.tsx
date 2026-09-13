@@ -94,7 +94,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
         <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="mt-5 text-body-xs-medium">{t("common.properties")}</h5>
           <div className={`mt-4 mb-2 space-y-2.5 truncate ${!isEditable ? "opacity-60" : ""}`}>
-            {/* BWP-Notebook-v2 Task Type - Code by IT Leon */}
+            {/* BWP-Notebook-v2 Task Type */}
             <SidebarPropertyListItem icon={Layers as any} label="Loại công việc">
               <CustomMenu
                 customButton={
@@ -174,7 +174,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               />
             </SidebarPropertyListItem>
 
-            {/* BWP-Notebook-v2 Supporters - Code by IT Leon */}
+            {/* BWP-Notebook-v2 Supporters */}
             <SidebarPropertyListItem icon={MembersPropertyIcon} label="Người hỗ trợ">
               <MemberDropdown
                 value={issue?.supporter_ids ?? undefined}
@@ -197,7 +197,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               />
             </SidebarPropertyListItem>
 
-            {/* BWP-Notebook-v2 Room Number - Code by IT Leon */}
+            {/* BWP-Notebook-v2 Room Number */}
             <SidebarPropertyListItem icon={Hash as any} label="Số phòng">
               <input
                 type="number"
@@ -212,7 +212,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               />
             </SidebarPropertyListItem>
 
-            {/* BWP-Notebook-v2 Notes - Code by IT Leon */}
+            {/* BWP-Notebook-v2 Notes */}
             <SidebarPropertyListItem icon={FileText as any} label="Ghi chú">
               <input
                 type="text"

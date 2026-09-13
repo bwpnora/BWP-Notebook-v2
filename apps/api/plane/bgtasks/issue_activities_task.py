@@ -432,7 +432,7 @@ def track_assignees(
         )
 
 
-# BWP-Notebook-v2 supporters, type, room, and notes tracking - Code by IT Leon
+# BWP-Notebook-v2 supporters, type, room, and notes tracking
 def track_supporters(
     requested_data,
     current_instance,
@@ -757,7 +757,7 @@ def create_issue_activity(
             issue_activities,
             epoch,
         )
-    # BWP-Notebook-v2 track supporters in create - Code by IT Leon
+    # BWP-Notebook-v2 track supporters in create
     if requested_data.get("supporter_ids") is not None:
         track_supporters(
             requested_data,
@@ -799,7 +799,7 @@ def update_issue_activity(
         "state": track_state,
         "assignees": track_assignees,
         "labels": track_labels,
-        # BWP-Notebook-v2 activity tracking - Code by IT Leon
+        # BWP-Notebook-v2 activity tracking
         "supporter_ids": track_supporters,
         "supporters": track_supporters,
         "type_id": track_type,

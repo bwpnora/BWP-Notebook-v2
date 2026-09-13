@@ -4,7 +4,7 @@
 
 > **Tài liệu Hướng dẫn Vận hành BWP Notebook (User Guide)**  
 > **Phiên bản:** 2.0 (Bản phát hành Doanh nghiệp)  
-> **Tác quyền & Kiến trúc:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Đơn vị phát triển:** BWP Engineering Team  
 > **Mục tiêu Quản trị:** Kiểm toán Hoạt động (Audit Trail), An toàn Dữ liệu (Backup/Restore) & Xử lý Sự cố (Troubleshooting)
 
 ---
@@ -17,7 +17,7 @@ Trong môi trường quản trị doanh nghiệp chuyên nghiệp, tính minh b�
 
 ```mermaid
 flowchart LR
-    Action["Hành Động Người Dùng<br>(Thêm Người hỗ trợ, đổi Trạng thái, cập nhật Số phòng)"] --> API["Backend DRF API<br>(IssueActivity Task by IT Leon)"]
+    Action["Hành Động Người Dùng<br>(Thêm Người hỗ trợ, đổi Trạng thái, cập nhật Số phòng)"] --> API["Backend DRF API<br>(IssueActivity Task by BWP Engineering Team)"]
     API --> RabbitMQ["Message Queue<br>(plane-mq / Celery Worker)"]
     RabbitMQ --> AuditDB[("Bảng IssueActivity<br>PostgreSQL (plane-db)")]
     AuditDB --> Stream["Dòng Lịch Sử Hoạt Động<br>• Hiển thị chuẩn tiếng Việt 100%<br>• Ghi rõ Danh tính, Thời điểm, Dữ liệu cũ -> mới"]
@@ -31,7 +31,7 @@ flowchart LR
 
 ### 1.2. Danh mục các bản ghi hoạt động được Việt hóa 100%
 
-Đội ngũ kỹ sư BWP (dẫn dắt bởi **IT Leon**) đã tùy biến toàn bộ tầng xử lý tác vụ nền (`apps/api/plane/bgtasks/issue_activities_task.py`) để các bản ghi hoạt động hiển thị hoàn toàn bằng tiếng Việt chuẩn mực:
+Đội ngũ kỹ sư BWP (dẫn dắt bởi BWP Engineering Team) đã tùy biến toàn bộ tầng xử lý tác vụ nền (`apps/api/plane/bgtasks/issue_activities_task.py`) để các bản ghi hoạt động hiển thị hoàn toàn bằng tiếng Việt chuẩn mực:
 
 | Trường Dữ Liệu Thay Đổi            | Đoạn Ghi Nhận Kiểm Toán Mẫu (Activity Stream Format)                     | Ý Nghĩa Thực Tế                                                   |
 | :--------------------------------- | :----------------------------------------------------------------------- | :---------------------------------------------------------------- |
@@ -127,7 +127,7 @@ sudo tar -czvf /var/backups/bwp-notebook/media/uploads_$(date +%Y%m%d_%H%M%S).ta
 #!/usr/bin/env bash
 # ==============================================================================
 # BWP Notebook Automated Daily Backup Script
-# Code & Architecture by IT Leon
+# Code & Architecture by BWP Engineering Team
 # ==============================================================================
 set -euo pipefail
 
@@ -249,7 +249,7 @@ Dưới đây là tổng hợp 8 câu hỏi phổ biến nhất từ người d�
 
 ### FAQ 2: Tại sao tôi không thể đổi loại công việc sang "Công việc khác"?
 
-- **Giải đáp:** Đây là **Quy tắc phân quyền nghiệp vụ (Business Rule)** được thiết kế bởi IT Leon. Thành viên thông thường (Member) chỉ được phép tạo và xử lý các _Công việc vận hành (Operational tasks)_ phát sinh trong ca trực. Chỉ Quản trị viên (Admin) hoặc Trưởng bộ phận mới có thẩm quyền chuyển đổi công việc thành _Công việc khác (Other tasks)_ để phục vụ kế hoạch chỉ đạo tập trung.
+- **Giải đáp:** Đây là **Quy tắc phân quyền nghiệp vụ (Business Rule)** được thiết kế bởi BWP Engineering Team. Thành viên thông thường (Member) chỉ được phép tạo và xử lý các _Công việc vận hành (Operational tasks)_ phát sinh trong ca trực. Chỉ Quản trị viên (Admin) hoặc Trưởng bộ phận mới có thẩm quyền chuyển đổi công việc thành _Công việc khác (Other tasks)_ để phục vụ kế hoạch chỉ đạo tập trung.
 
 ### FAQ 3: Một công việc có thể gán bao nhiêu Người hỗ trợ (Supporters)?
 

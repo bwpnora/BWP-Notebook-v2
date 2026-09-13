@@ -1,6 +1,6 @@
 # Copyright (c) 2023-present Plane Software, Inc. and contributors
 # SPDX-License-Identifier: AGPL-3.0-only
-# Code & Architecture by IT Leon (BWP Engineering Team)
+# Code & Architecture by BWP Engineering Team (BWP Engineering Team)
 
 from django.core.management.base import BaseCommand
 from plane.db.models import Workspace, IssueType, Project, ProjectIssueType, State, DEFAULT_STATES
@@ -64,4 +64,4 @@ class Command(BaseCommand):
                         },
                     )
 
-        self.stdout.write(self.style.SUCCESS("Standard task types seeded successfully! - Code by IT Leon"))
+        self.stdout.write(self.style.SUCCESS("Standard task types seeded successfully!"))
