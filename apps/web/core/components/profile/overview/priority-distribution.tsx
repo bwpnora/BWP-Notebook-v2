@@ -35,15 +35,18 @@ export function ProfilePriorityDistribution({ userProfile }: Props) {
             <BarChart
               className="h-[300px] w-full"
               margin={{ top: 20, right: 30, bottom: 5, left: 0 }}
-              data={userProfile.priority_distribution.map((priority) => ({
-                key: priority.priority ?? "None",
-                name: capitalizeFirstLetter(priority.priority ?? "None"),
-                count: priority.priority_count,
-              }))}
+              data={userProfile.priority_distribution.map((priority) => {
+                const pKey = (priority.priority ?? "none").toLowerCase();
+                return {
+                  key: priority.priority ?? "None",
+                  name: t(pKey, { defaultValue: capitalizeFirstLetter(priority.priority ?? "None") }),
+                  count: priority.priority_count,
+                };
+              })}
               bars={[
                 {
                   key: "count",
-                  label: "Count",
+                  label: t("count", { defaultValue: "Số lượng" }),
                   stackId: "bar-one",
                   fill: (payload: any) => priorityColors[payload.key as keyof typeof priorityColors], // TODO: fix types
                   textClassName: "",

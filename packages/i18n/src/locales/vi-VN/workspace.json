@@ -107,6 +107,11 @@
     "active_projects": "Phòng ban đang hoạt động",
     "customized_insights": "Thông tin chi tiết tùy chỉnh",
     "created_vs_resolved": "Đã tạo vs Đã giải quyết",
+    "analytics_for": "Phân tích cho {title}",
+    "add_property": "Thêm thuộc tính",
+    "add_metric": "Thêm chỉ số",
+    "resolved": "Đã giải quyết",
+    "created": "Đã tạo",
     "empty_state": {
       "project_insights": {
         "title": "Chưa có dữ liệu",

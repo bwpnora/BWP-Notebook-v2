@@ -161,11 +161,11 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <>
-            added a new assignee <UserLink activity={activity} />
+            đã thêm người phụ trách mới <UserLink activity={activity} />
             {showIssue && (
               <>
                 {" "}
-                to <IssueLink activity={activity} />
+                cho <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -173,11 +173,11 @@ const activityDetails: {
       else
         return (
           <>
-            removed the assignee <UserLink activity={activity} />
+            đã xóa người phụ trách <UserLink activity={activity} />
             {showIssue && (
               <>
                 {" "}
-                from <IssueLink activity={activity} />
+                khỏi <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -234,11 +234,11 @@ const activityDetails: {
   description: {
     message: (activity, showIssue) => (
       <>
-        updated the description
+        đã cập nhật mô tả
         {showIssue && (
           <>
             {" "}
-            of <IssueLink activity={activity} />
+            của <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -250,11 +250,11 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the estimate point
+            đã xóa điểm ước tính
             {showIssue && (
               <>
                 {" "}
-                from <IssueLink activity={activity} />
+                khỏi <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -262,11 +262,11 @@ const activityDetails: {
       else
         return (
           <>
-            set the estimate point to {activity.new_value}
+            đã đặt điểm ước tính thành {activity.new_value}
             {showIssue && (
               <>
                 {" "}
-                for <IssueLink activity={activity} />
+                cho <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -279,19 +279,19 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            created <IssueLink activity={activity} />
+            đã tạo <IssueLink activity={activity} />
           </>
         );
       else if (activity.verb === "converted")
         return (
           <>
-            converted <IssueLink activity={activity} /> to an epic
+            đã chuyển đổi <IssueLink activity={activity} /> thành epic
           </>
         );
       else
         return (
           <>
-            deleted <IssueLink activity={activity} />
+            đã xóa <IssueLink activity={activity} />
           </>
         );
     },
@@ -325,7 +325,7 @@ const activityDetails: {
       if (activity.old_value === "")
         return (
           <span className="overflow-hidden">
-            added a new label{" "}
+            đã thêm nhãn mới{" "}
             <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.new_value}</span>
@@ -333,7 +333,7 @@ const activityDetails: {
             {showIssue && (
               <span className="">
                 {" "}
-                to <IssueLink activity={activity} />
+                cho <IssueLink activity={activity} />
               </span>
             )}
           </span>
@@ -341,7 +341,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the label{" "}
+            đã xóa nhãn{" "}
             <span className="inline-flex items-center gap-2 rounded-full border border-strong px-2 py-0.5 text-11">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="line-clamp-1 flex-shrink font-medium break-all text-primary">{activity.old_value}</span>
@@ -349,7 +349,7 @@ const activityDetails: {
             {showIssue && (
               <span>
                 {" "}
-                from <IssueLink activity={activity} />
+                khỏi <IssueLink activity={activity} />
               </span>
             )}
           </>
@@ -522,11 +522,11 @@ const activityDetails: {
   name: {
     message: (activity, showIssue) => (
       <>
-        set the title to <span className="break-all">{activity.new_value}</span>
+        đã đổi tiêu đề thành <span className="break-all">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
-            of <IssueLink activity={activity} />
+            của <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -538,11 +538,11 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the parent <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>
+            đã xóa mục cha <span className="font-medium whitespace-nowrap text-primary">{activity.old_value}</span>
             {showIssue && (
               <>
                 {" "}
-                from <IssueLink activity={activity} />
+                khỏi <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -550,11 +550,11 @@ const activityDetails: {
       else
         return (
           <>
-            set the parent to <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>
+            đã đặt mục cha thành <span className="font-medium whitespace-nowrap text-primary">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
-                for <IssueLink activity={activity} />
+                cho <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -563,20 +563,33 @@ const activityDetails: {
     icon: <UsersIcon className="h-3 w-3 !text-secondary" aria-hidden="true" />,
   },
   priority: {
-    message: (activity, showIssue) => (
-      <>
-        set the priority to{" "}
-        <span className="font-medium text-primary">
-          {activity.new_value ? capitalizeFirstLetter(activity.new_value) : "None"}
-        </span>
-        {showIssue && (
-          <>
-            {" "}
-            for <IssueLink activity={activity} />
-          </>
-        )}
-      </>
-    ),
+    message: (activity, showIssue) => {
+      const pKey = (activity.new_value ?? "none").toLowerCase();
+      const pName =
+        pKey === "urgent"
+          ? "Khẩn cấp"
+          : pKey === "high"
+            ? "Cao"
+            : pKey === "medium"
+              ? "Trung bình"
+              : pKey === "low"
+                ? "Thấp"
+                : "Không có";
+      return (
+        <>
+          đã đặt mức độ ưu tiên thành{" "}
+          <span className="font-medium text-primary">
+            {activity.new_value ? pName : "Không có"}
+          </span>
+          {showIssue && (
+            <>
+              {" "}
+              cho <IssueLink activity={activity} />
+            </>
+          )}
+        </>
+      );
+    },
     icon: <SignalMediumIcon size={12} className="text-secondary" aria-hidden="true" />,
   },
   relates_to: {
@@ -658,11 +671,11 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to <span className="font-medium break-all text-primary">{activity.new_value}</span>
+        đã chuyển trạng thái sang <span className="font-medium break-all text-primary">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
-            for <IssueLink activity={activity} />
+            cho <IssueLink activity={activity} />
           </>
         )}
       </>
@@ -674,11 +687,11 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the start date
+            đã xóa ngày bắt đầu
             {showIssue && (
               <>
                 {" "}
-                from <IssueLink activity={activity} />
+                khỏi <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -686,14 +699,14 @@ const activityDetails: {
       else
         return (
           <>
-            set the start date to{" "}
+            đã đặt ngày bắt đầu thành{" "}
             <span className="font-medium whitespace-nowrap text-primary">
               {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
               <>
                 {" "}
-                for <IssueLink activity={activity} />
+                cho <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -706,11 +719,11 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the due date
+            đã xóa ngày hết hạn
             {showIssue && (
               <>
                 {" "}
-                from <IssueLink activity={activity} />
+                khỏi <IssueLink activity={activity} />
               </>
             )}
           </>
@@ -718,13 +731,14 @@ const activityDetails: {
       else
         return (
           <>
-            set the due date to{" "}
+            đã đặt ngày hết hạn thành{" "}
             <span className="font-medium whitespace-nowrap text-primary">
               {renderFormattedDate(activity.new_value)}
             </span>
             {showIssue && (
               <>
-                <IssueLink activity={activity} />
+                {" "}
+                cho <IssueLink activity={activity} />
               </>
             )}
           </>

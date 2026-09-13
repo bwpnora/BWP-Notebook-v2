@@ -1,1 +1,0 @@
-import{V as e}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{t}from"./react-dom-DaNjEFhM.js";import{n}from"./FloatingPortal-owWGGS28.js";var r=e(t());function i(e){let t=n({root:e.root});return t&&r.createPortal(e.children,t)}export{i as t};

@@ -107,6 +107,11 @@
     "active_projects": "Active Projects",
     "customized_insights": "Customized Insights",
     "created_vs_resolved": "Created vs Resolved",
+    "analytics_for": "Analytics for {title}",
+    "add_property": "Add Property",
+    "add_metric": "Add Metric",
+    "resolved": "Resolved",
+    "created": "Created",
     "empty_state": {
       "project_insights": {
         "title": "No data yet",

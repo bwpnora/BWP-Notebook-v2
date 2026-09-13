@@ -18,7 +18,8 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { BarChart } from "@plane/propel/charts/bar-chart";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
-import type { TBarItem, TChart, TChartDatum, ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
+import { ChartXAxisProperty, ChartYAxisMetric } from "@plane/types";
+import type { TBarItem, TChart, TChartDatum } from "@plane/types";
 // plane web components
 import { generateExtendedColors, parseChartData } from "@/components/chart/utils";
 // hooks
@@ -78,11 +79,19 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
         isPeekView
       )
   );
-  const parsedData = useMemo(
-    () =>
-      priorityChartData && parseChartData(priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping),
-    [priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping]
-  );
+  const parsedData = useMemo(() => {
+    if (!priorityChartData) return null;
+    const chart = parseChartData(priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping);
+    if (props.x_axis === ChartXAxisProperty.PRIORITY && chart?.data) {
+      chart.data.forEach((datum) => {
+        const lowerName = datum.name?.toLowerCase();
+        if (lowerName && ["urgent", "high", "medium", "low", "none"].includes(lowerName)) {
+          datum.name = t(lowerName);
+        }
+      });
+    }
+    return chart;
+  }, [priorityChartData, props.x_axis, props.group_by, props.x_axis_date_grouping, t]);
   const chart_model = props.group_by ? EChartModels.STACKED : EChartModels.BASIC;
 
   const bars: TBarItem<string>[] = useMemo(() => {
@@ -95,7 +104,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       parsedBars = [
         {
           key: "count",
-          label: "Count",
+          label: t("count", { defaultValue: "Số lượng" }),
           stackId: "bar-one",
           fill: (payload) => generateBarColor(payload.key, { x_axis, y_axis, group_by }, baseColors, workspaceStates),
           textClassName: "",
@@ -114,8 +123,7 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       parsedData.data.forEach((datum) => {
         let top = null;
         let bottom = null;
-        for (let i = 0; i < schemaKeys.length; i++) {
-          const key = schemaKeys[i];
+        for (const key of schemaKeys) {
           if (datum[key] === 0) continue;
           if (!bottom) bottom = key;
           top = key;
@@ -137,16 +145,51 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       parsedBars = [];
     }
     return parsedBars;
-  }, [chart_model, group_by, parsedData, resolvedTheme, workspaceStates, x_axis, y_axis]);
+  }, [chart_model, group_by, parsedData, resolvedTheme, workspaceStates, x_axis, y_axis, t]);
 
-  const yAxisLabel = useMemo(
-    () => ANALYTICS_Y_AXIS_VALUES.find((item) => item.value === props.y_axis)?.label ?? props.y_axis,
-    [props.y_axis]
-  );
-  const xAxisLabel = useMemo(
-    () => ANALYTICS_X_AXIS_VALUES.find((item) => item.value === props.x_axis)?.label ?? props.x_axis,
-    [props.x_axis]
-  );
+  const yAxisLabel = useMemo(() => {
+    switch (props.y_axis) {
+      case ChartYAxisMetric.WORK_ITEM_COUNT:
+        return t("work_items");
+      case ChartYAxisMetric.ESTIMATE_POINT_COUNT:
+        return t("estimate");
+      case ChartYAxisMetric.EPIC_WORK_ITEM_COUNT:
+        return t("common.epics");
+      default:
+        return props.y_axis;
+    }
+  }, [props.y_axis, t]);
+
+  const xAxisLabel = useMemo(() => {
+    switch (props.x_axis) {
+      case ChartXAxisProperty.STATES:
+        return t("state");
+      case ChartXAxisProperty.STATE_GROUPS:
+        return t("state_group", { defaultValue: "Nhóm trạng thái" });
+      case ChartXAxisProperty.PRIORITY:
+        return t("priority");
+      case ChartXAxisProperty.LABELS:
+        return t("labels");
+      case ChartXAxisProperty.ASSIGNEES:
+        return t("assignees");
+      case ChartXAxisProperty.ESTIMATE_POINTS:
+        return t("estimate");
+      case ChartXAxisProperty.CYCLES:
+        return t("cycle");
+      case ChartXAxisProperty.MODULES:
+        return t("module");
+      case ChartXAxisProperty.COMPLETED_AT:
+        return t("completed_date", { defaultValue: "Ngày hoàn thành" });
+      case ChartXAxisProperty.TARGET_DATE:
+        return t("due_date");
+      case ChartXAxisProperty.START_DATE:
+        return t("start_date");
+      case ChartXAxisProperty.CREATED_AT:
+        return t("created_date", { defaultValue: "Ngày tạo" });
+      default:
+        return props.x_axis;
+    }
+  }, [props.x_axis, t]);
 
   const defaultColumns: ColumnDef<TChartDatum>[] = useMemo(
     () => [
@@ -163,18 +206,18 @@ const PriorityChart = observer(function PriorityChart(props: Props) {
       },
       {
         accessorKey: "count",
-        header: () => <div className="text-right">Count</div>,
+        header: () => <div className="text-right">{t("count", { defaultValue: "Số lượng" })}</div>,
         cell: ({ row }) => <div className="text-right">{row.original.count}</div>,
         meta: {
           export: {
-            key: "Count",
+            key: t("count", { defaultValue: "Số lượng" }),
             value: (row) => row.original.count,
-            label: "Count",
+            label: t("count", { defaultValue: "Số lượng" }),
           },
         },
       },
     ],
-    [xAxisLabel]
+    [xAxisLabel, t]
   );
 
   const columns: ColumnDef<TChartDatum>[] = useMemo(

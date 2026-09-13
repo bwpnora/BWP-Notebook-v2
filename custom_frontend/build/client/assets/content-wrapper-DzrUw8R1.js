@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-noaePsda.js";import{V as t}from"./store-context--eOm9jci.js";var n=e();function r({className:e,children:r}){return(0,n.jsx)(`div`,{className:`h-full w-full overflow-hidden`,children:(0,n.jsx)(`div`,{className:t(`relative h-full w-full overflow-x-hidden overflow-y-scroll`,e),children:r})})}export{r as t};

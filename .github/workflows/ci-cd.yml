@@ -110,3 +110,26 @@ jobs:
           labels: ${{ steps.meta-api.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to Debian Server (192.168.3.168)
+    runs-on: self-hosted
+    needs: [lint-check]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/nora/main' || github.ref == 'refs/heads/main')
+    steps:
+      - name: Deploy & Restart Stack
+        run: |
+          set -e
+          cd /home/bwpleon/bwp-notebook-v2
+          echo "Syncing latest code for ${{ github.ref_name }}..."
+          git fetch origin
+          git checkout ${{ github.ref_name }}
+          git reset --hard origin/${{ github.ref_name }}
+          git clean -fd custom_frontend/build/client/
+          echo "Running migrator if needed..."
+          docker compose -f docker-compose.prod.yml up -d migrator
+          echo "Restarting web and backend containers..."
+          docker compose -f docker-compose.prod.yml restart web api worker beat-worker
+          echo "Stack status:"
+          docker compose -f docker-compose.prod.yml ps
+

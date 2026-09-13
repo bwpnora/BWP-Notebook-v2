@@ -22,6 +22,23 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
   const { t } = useTranslation();
   if (!userProfile) return null;
 
+  const getStateGroupLabel = (stateGroup: string) => {
+    switch (stateGroup) {
+      case "backlog":
+        return t("workspace_projects.state.backlog", { defaultValue: "Tồn đọng" });
+      case "unstarted":
+        return t("workspace_projects.state.unstarted", { defaultValue: "Chưa bắt đầu" });
+      case "started":
+        return t("workspace_projects.state.started", { defaultValue: "Đang tiến hành" });
+      case "completed":
+        return t("workspace_projects.state.completed", { defaultValue: "Đã hoàn thành" });
+      case "cancelled":
+        return t("workspace_projects.state.cancelled", { defaultValue: "Đã hủy" });
+      default:
+        return (STATE_GROUPS as Record<string, any>)[stateGroup]?.label ?? stateGroup;
+    }
+  };
+
   return (
     <div className="flex flex-col space-y-2">
       <h3 className="text-16 font-medium">{t("profile.stats.state_distribution.title")}</h3>
@@ -42,7 +59,7 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
                   id: group.state_group,
                   key: group.state_group,
                   value: group.state_count,
-                  name: capitalizeFirstLetter(group.state_group),
+                  name: getStateGroupLabel(group.state_group),
                   color: STATE_GROUPS[group.state_group]?.color,
                 })) ?? []
               }
@@ -51,7 +68,7 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
                 fill: STATE_GROUPS[group.state_group]?.color,
               }))}
               showTooltip
-              tooltipLabel="Count"
+              tooltipLabel={t("count", { defaultValue: "Số lượng" })}
               paddingAngle={5}
               cornerRadius={4}
               innerRadius="50%"
@@ -69,7 +86,7 @@ export function ProfileStateDistribution({ stateDistribution, userProfile }: Pro
                             STATE_GROUPS[group.state_group]?.color ?? "var(--background-color-accent-primary)",
                         }}
                       />
-                      <div className="whitespace-nowrap">{STATE_GROUPS[group.state_group].label}</div>
+                      <div className="whitespace-nowrap">{getStateGroupLabel(group.state_group)}</div>
                     </div>
                     <div>{group.state_count}</div>
                   </div>

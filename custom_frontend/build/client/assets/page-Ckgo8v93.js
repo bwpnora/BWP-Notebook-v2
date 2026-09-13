@@ -1,0 +1,1 @@
+import{j as e}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{t}from"./jsx-runtime-noaePsda.js";import{t as n}from"./mobxreact.esm-CAsEUKPK.js";import{t as r}from"./not-authorized-view-Dwz5pX1j.js";var i=t();function a(){return(0,i.jsx)(r,{section:`settings`,className:`h-auto`})}var o=e(n(a));export{o as default};

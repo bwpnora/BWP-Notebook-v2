@@ -1,0 +1,2 @@
+- Review and audit the entire translation: I need all titles, buttons, notes, dates, etc., to be fully translated from English into Vietnamese, utilizing the existing localization system.
+- Check the CI/CD pipeline: Why doesn't pushing code trigger the automatic deployment to the server and restart the service? Please investigate and review this.

@@ -1,1 +1,0 @@
-import{Bn as e}from"./store-context--eOm9jci.js";var t=e(`PanelRight`,[[`rect`,{width:`18`,height:`18`,x:`3`,y:`3`,rx:`2`,key:`afitv7`}],[`path`,{d:`M15 3v18`,key:`14nvp0`}]]);export{t};

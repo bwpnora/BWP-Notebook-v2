@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-noaePsda.js";import{V as t}from"./store-context--eOm9jci.js";var n=e();function r(e){let{count:r,className:i=``}=e;return(0,n.jsx)(`div`,{className:t(`relative flex flex-shrink-0 items-center justify-center rounded-xl bg-accent-primary/20 px-2.5 py-0.5 text-caption-sm-semibold text-accent-primary`,i),children:r})}export{r as t};

@@ -19,6 +19,23 @@ type Props = {
 export function ProfileWorkload({ stateDistribution }: Props) {
   const { t } = useTranslation();
 
+  const getStateGroupLabel = (stateGroup: string) => {
+    switch (stateGroup) {
+      case "backlog":
+        return t("workspace_projects.state.backlog", { defaultValue: "Tồn đọng" });
+      case "unstarted":
+        return t("workspace_projects.state.unstarted", { defaultValue: "Chưa bắt đầu" });
+      case "started":
+        return t("workspace_projects.state.started", { defaultValue: "Đang thực hiện" });
+      case "completed":
+        return t("workspace_projects.state.completed", { defaultValue: "Đã hoàn thành" });
+      case "cancelled":
+        return t("workspace_projects.state.cancelled", { defaultValue: "Đã hủy" });
+      default:
+        return (STATE_GROUPS as Record<string, any>)[stateGroup]?.label ?? stateGroup;
+    }
+  };
+
   return (
     <div className="space-y-2">
       <h3 className="text-16 font-medium">{t("profile.stats.workload")}</h3>
@@ -35,11 +52,7 @@ export function ProfileWorkload({ stateDistribution }: Props) {
                 />
                 <div className="flex-col space-y-1">
                   <span className="text-13 text-placeholder">
-                    {group.state_group === "unstarted"
-                      ? "Not started"
-                      : group.state_group === "started"
-                        ? "Working on"
-                        : STATE_GROUPS[group.state_group].label}
+                    {getStateGroupLabel(group.state_group)}
                   </span>
                   <p className="text-18 font-semibold">{group.state_count}</p>
                 </div>

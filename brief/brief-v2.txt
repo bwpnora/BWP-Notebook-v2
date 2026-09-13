@@ -1,0 +1,5 @@
+It is currently working, but I have a few additional requirements:
+
+- Create a user guide covering the initial setup steps, how to use/operate the system, user permissions/roles, etc.
+
+- Translate the entire site into Vietnamese. Please research the best approach to achieve this (e.g., using a sitemap, i18n setup, or other effective methods).

@@ -1,1 +1,0 @@
-import{F as e,V as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{Si as n}from"./issue.service-C78urtXs.js";import{t as r}from"./store-context--eOm9jci.js";var i=t(e()),a=(e=n.ISSUES)=>{let t=(0,i.useContext)(r);if(t===void 0)throw Error(`useIssueDetail must be used within StoreProvider`);return e===n.EPICS?t.issue.epicDetail:t.issue.issueDetail};export{a as t};
