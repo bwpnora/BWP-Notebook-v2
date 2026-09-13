@@ -1,3 +1,4 @@
+// oxlint-disable typescript-eslint/no-duplicate-enum-values
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -36,6 +37,7 @@ export enum EIssueGroupByToServerOptions {
   "project" = "project_id",
   "created_by" = "created_by",
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  // oxlint-disable-next-line @typescript-eslint/no-duplicate-enum-values, typescript-eslint/no-duplicate-enum-values, no-duplicate-enum-values
   "team_project" = "project_id",
 }
 
@@ -156,6 +158,10 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "modules",
   "cycle",
   "issue_type",
+  // BWP-Notebook-v2 domain fields - Code by IT Leon
+  "supporter",
+  "room",
+  "notes",
 ];
 
 export const SUB_ISSUES_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
@@ -208,12 +214,21 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   },
   { key: "modules", titleTranslationKey: "common.module" },
   { key: "cycle", titleTranslationKey: "common.cycle" },
+  // BWP-Notebook-v2 domain fields - Code by IT Leon
+  { key: "issue_type", titleTranslationKey: "Loại công việc" },
+  { key: "supporter", titleTranslationKey: "Người hỗ trợ" },
+  { key: "room", titleTranslationKey: "Số phòng" },
+  { key: "notes", titleTranslationKey: "Ghi chú" },
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
   "state",
   "priority",
+  "issue_type",
   "assignee",
+  "supporter",
+  "room",
+  "notes",
   "labels",
   "modules",
   "cycle",
@@ -349,11 +364,46 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderTitle: "Least",
     icon: "LayersIcon",
   },
+  // BWP-Notebook-v2 spreadsheet column details - Code by IT Leon
+  issue_type: {
+    i18n_title: "Loại công việc",
+    ascendingOrderKey: "priority",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-priority",
+    descendingOrderTitle: "Z",
+    icon: "LayersIcon",
+  },
+  supporter: {
+    i18n_title: "Người hỗ trợ",
+    ascendingOrderKey: "assignees__first_name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-assignees__first_name",
+    descendingOrderTitle: "Z",
+    icon: "MembersPropertyIcon",
+  },
+  room: {
+    i18n_title: "Số phòng",
+    ascendingOrderKey: "created_at",
+    ascendingOrderTitle: "Thấp",
+    descendingOrderKey: "-created_at",
+    descendingOrderTitle: "Cao",
+    icon: "Hash",
+  },
+  notes: {
+    i18n_title: "Ghi chú",
+    ascendingOrderKey: "created_at",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-created_at",
+    descendingOrderTitle: "Z",
+    icon: "FileText",
+  },
 };
 
 // Map filter keys to their corresponding issue property keys
 export const FILTER_TO_ISSUE_MAP: Partial<Record<keyof IIssueFilterOptions, keyof TIssue>> = {
   assignees: "assignee_ids",
+  // BWP-Notebook-v2 domain mapping - Code by IT Leon
+  supporters: "supporter_ids",
   created_by: "created_by",
   labels: "label_ids",
   priority: "priority",

@@ -175,6 +175,10 @@ export interface IIssueDisplayProperties {
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
+  // BWP-Notebook-v2 domain fields - Code by IT Leon
+  supporter?: boolean;
+  room?: boolean;
+  notes?: boolean;
 }
 
 export type TIssueKanbanFilters = {
