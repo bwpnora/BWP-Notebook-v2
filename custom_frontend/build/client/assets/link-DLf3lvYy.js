@@ -1,0 +1,1 @@
+import{F as e,n as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{t as n}from"./jsx-runtime-noaePsda.js";import{t as r}from"./helper-C6C1ZCJ7.js";e();var i=n();function a({href:e,replace:n,prefetch:a,scroll:o,shallow:s,...c}){return(0,i.jsx)(t,{to:r(e),replace:n,...c})}export{a as t};

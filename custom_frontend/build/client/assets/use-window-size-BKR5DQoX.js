@@ -1,0 +1,1 @@
+import{F as e,V as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";var n=t(e()),r=()=>{let[e,t]=(0,n.useState)([window.innerWidth,window.innerHeight]);return(0,n.useEffect)(()=>{let e=()=>{t([window.innerWidth,window.innerHeight])};return window.addEventListener(`resize`,e),()=>{window.removeEventListener(`resize`,e)}},[]),e};export{r as t};

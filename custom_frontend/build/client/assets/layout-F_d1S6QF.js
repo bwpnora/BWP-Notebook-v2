@@ -1,0 +1,1 @@
+import{j as e,o as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{t as n}from"./jsx-runtime-noaePsda.js";var r=n(),i=()=>[{name:`robots`,content:`index, nofollow`},{name:`viewport`,content:`width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover`}],a=e(function(){return(0,r.jsx)(t,{})});export{a as default,i as meta};

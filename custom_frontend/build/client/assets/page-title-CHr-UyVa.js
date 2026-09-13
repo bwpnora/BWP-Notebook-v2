@@ -1,0 +1,1 @@
+import{F as e,V as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";var n=t(e());function r(e){let{title:t}=e;return(0,n.useEffect)(()=>{t&&(document.title=t??`Plane | Simple, extensible, open-source project management tool.`)},[t]),null}export{r as t};

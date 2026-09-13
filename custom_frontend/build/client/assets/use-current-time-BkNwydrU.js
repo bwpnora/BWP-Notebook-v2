@@ -1,0 +1,1 @@
+import{F as e,V as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";var n=t(e()),r=()=>{let[e,t]=(0,n.useState)(new Date);return(0,n.useEffect)(()=>{let e=setInterval(()=>{t(new Date)},6e4);return()=>clearInterval(e)},[]),{currentTime:e}};export{r as t};

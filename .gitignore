@@ -120,3 +120,9 @@ packages/i18n/src/types/keys.generated.ts
 server.txt
 variables.*.env
 !variables.prod.env.example
+
+# Production Web Build for direct Docker Compose mounting
+!custom_frontend/
+!custom_frontend/build/
+!custom_frontend/build/client/
+!custom_frontend/build/client/**

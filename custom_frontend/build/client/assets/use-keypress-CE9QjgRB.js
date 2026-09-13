@@ -1,0 +1,1 @@
+import{F as e,V as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";var n=t(e()),r=(e,t)=>{let r=(0,n.useRef)(t);(0,n.useEffect)(()=>{r.current=t},[t]),(0,n.useEffect)(()=>{let t=t=>{t.key===e&&r.current(t)};return document.addEventListener(`keydown`,t),()=>{document.removeEventListener(`keydown`,t)}},[e])};export{r as t};

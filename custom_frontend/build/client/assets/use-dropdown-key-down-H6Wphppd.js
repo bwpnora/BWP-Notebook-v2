@@ -1,0 +1,1 @@
+import{F as e,V as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";var n=t(e()),r=(e,t,r=!0)=>{let i=(0,n.useCallback)(e=>{r&&(e.stopPropagation(),e.preventDefault())},[r]);return(0,n.useCallback)(n=>{n.key===`Enter`&&!n.nativeEvent.isComposing?(i(n),e()):n.key===`Escape`?(i(n),t()):n.key===`Tab`&&t()},[e,t,i])};export{r as t};

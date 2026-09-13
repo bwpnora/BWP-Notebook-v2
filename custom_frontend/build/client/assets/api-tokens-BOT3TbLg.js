@@ -1,0 +1,1 @@
+import{C as e,j as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";var n=()=>{throw e(`/settings/profile/api-tokens/`)},r=t(function(){return null});export{n as clientLoader,r as default};

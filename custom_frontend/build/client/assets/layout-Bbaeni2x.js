@@ -1,0 +1,1 @@
+import{j as e,o as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{t as n}from"./jsx-runtime-noaePsda.js";var r=n(),i=e(function(){return(0,r.jsx)(t,{})}),a=()=>[{title:`Invitations`}];export{i as default,a as meta};

@@ -1,0 +1,1 @@
+import{C as e,j as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";var n=({params:t})=>{let{workspaceSlug:n,projectId:r}=t,i=t[`*`]||``;throw e(`/${n}/settings/projects/${r}${i?`/${i}`:``}/`)},r=t(function(){return null});export{n as clientLoader,r as default};

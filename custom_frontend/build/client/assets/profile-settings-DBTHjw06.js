@@ -1,0 +1,1 @@
+import{C as e,j as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";var n=({params:t,request:n})=>{let r=new URL(n.url).searchParams;throw e(`/settings/profile/${t[`*`]||`general`}?${r.toString()}`)},r=t(function(){return null});export{n as clientLoader,r as default};

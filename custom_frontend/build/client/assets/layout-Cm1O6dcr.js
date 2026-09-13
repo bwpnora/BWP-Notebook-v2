@@ -1,0 +1,1 @@
+import{j as e,o as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{t as n}from"./jsx-runtime-noaePsda.js";var r=n(),i=()=>[{title:`Sign up - Plane`},{name:`robots`,content:`index, nofollow`}],a=e(function(){return(0,r.jsx)(t,{})});export{a as default,i as meta};
