@@ -43,6 +43,7 @@ jobs:
 
       - name: Validate Docker Compose Configurations
         run: |
+          pip install --no-cache-dir pyyaml
           python3 -c "
           import yaml
           for path in ['docker-compose.prod.yml']:
@@ -54,6 +55,7 @@ jobs:
                   print(f'Error reading {path}: {e}')
                   exit(1)
           "
+          docker compose -f docker-compose.prod.yml config > /dev/null
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
@@ -69,10 +71,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Check formatting and linting
-        run: |
-          pnpm exec oxfmt --check .
-          pnpm exec oxlint --deny-warnings packages/ apps/web/app/root.tsx
+      - name: Run workspace lint checks
+        run: pnpm check:lint
 
   docker:
     name: Build & Push Production Images
