@@ -159,6 +159,17 @@ services:
       - ./custom_backend/apps/api/plane/app/serializers/__init__.py:/code/plane/app/serializers/__init__.py
       - ./custom_backend/apps/api/plane/app/views/issue/base.py:/code/plane/app/views/issue/base.py
       - ./custom_backend/apps/api/plane/bgtasks/issue_activities_task.py:/code/plane/bgtasks/issue_activities_task.py
+      - ./custom_backend/apps/api/plane/app/permissions/base.py:/code/plane/app/permissions/base.py
+      - ./custom_backend/apps/api/plane/app/permissions/project.py:/code/plane/app/permissions/project.py
+      - ./custom_backend/apps/api/plane/app/views/workspace/direct_member.py:/code/plane/app/views/workspace/direct_member.py
+      - ./custom_backend/apps/api/plane/app/views/workspace/base.py:/code/plane/app/views/workspace/base.py
+      - ./custom_backend/apps/api/plane/app/views/project/base.py:/code/plane/app/views/project/base.py
+      - ./custom_backend/apps/api/plane/app/views/project/member.py:/code/plane/app/views/project/member.py
+      - ./custom_backend/apps/api/plane/app/urls/workspace.py:/code/plane/app/urls/workspace.py
+      - ./custom_backend/apps/api/plane/authentication/views/app/check.py:/code/plane/authentication/views/app/check.py
+      - ./custom_backend/apps/api/plane/authentication/views/app/email.py:/code/plane/authentication/views/app/email.py
+      - ./custom_backend/apps/api/plane/authentication/provider/credentials/email.py:/code/plane/authentication/provider/credentials/email.py
+      - ./custom_backend/apps/api/plane/app/serializers/user.py:/code/plane/app/serializers/user.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -190,6 +201,17 @@ services:
       - ./custom_backend/apps/api/plane/app/serializers/__init__.py:/code/plane/app/serializers/__init__.py
       - ./custom_backend/apps/api/plane/app/views/issue/base.py:/code/plane/app/views/issue/base.py
       - ./custom_backend/apps/api/plane/bgtasks/issue_activities_task.py:/code/plane/bgtasks/issue_activities_task.py
+      - ./custom_backend/apps/api/plane/app/permissions/base.py:/code/plane/app/permissions/base.py
+      - ./custom_backend/apps/api/plane/app/permissions/project.py:/code/plane/app/permissions/project.py
+      - ./custom_backend/apps/api/plane/app/views/workspace/direct_member.py:/code/plane/app/views/workspace/direct_member.py
+      - ./custom_backend/apps/api/plane/app/views/workspace/base.py:/code/plane/app/views/workspace/base.py
+      - ./custom_backend/apps/api/plane/app/views/project/base.py:/code/plane/app/views/project/base.py
+      - ./custom_backend/apps/api/plane/app/views/project/member.py:/code/plane/app/views/project/member.py
+      - ./custom_backend/apps/api/plane/app/urls/workspace.py:/code/plane/app/urls/workspace.py
+      - ./custom_backend/apps/api/plane/authentication/views/app/check.py:/code/plane/authentication/views/app/check.py
+      - ./custom_backend/apps/api/plane/authentication/views/app/email.py:/code/plane/authentication/views/app/email.py
+      - ./custom_backend/apps/api/plane/authentication/provider/credentials/email.py:/code/plane/authentication/provider/credentials/email.py
+      - ./custom_backend/apps/api/plane/app/serializers/user.py:/code/plane/app/serializers/user.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -217,6 +239,17 @@ services:
       - ./custom_backend/apps/api/plane/app/serializers/__init__.py:/code/plane/app/serializers/__init__.py
       - ./custom_backend/apps/api/plane/app/views/issue/base.py:/code/plane/app/views/issue/base.py
       - ./custom_backend/apps/api/plane/bgtasks/issue_activities_task.py:/code/plane/bgtasks/issue_activities_task.py
+      - ./custom_backend/apps/api/plane/app/permissions/base.py:/code/plane/app/permissions/base.py
+      - ./custom_backend/apps/api/plane/app/permissions/project.py:/code/plane/app/permissions/project.py
+      - ./custom_backend/apps/api/plane/app/views/workspace/direct_member.py:/code/plane/app/views/workspace/direct_member.py
+      - ./custom_backend/apps/api/plane/app/views/workspace/base.py:/code/plane/app/views/workspace/base.py
+      - ./custom_backend/apps/api/plane/app/views/project/base.py:/code/plane/app/views/project/base.py
+      - ./custom_backend/apps/api/plane/app/views/project/member.py:/code/plane/app/views/project/member.py
+      - ./custom_backend/apps/api/plane/app/urls/workspace.py:/code/plane/app/urls/workspace.py
+      - ./custom_backend/apps/api/plane/authentication/views/app/check.py:/code/plane/authentication/views/app/check.py
+      - ./custom_backend/apps/api/plane/authentication/views/app/email.py:/code/plane/authentication/views/app/email.py
+      - ./custom_backend/apps/api/plane/authentication/provider/credentials/email.py:/code/plane/authentication/provider/credentials/email.py
+      - ./custom_backend/apps/api/plane/app/serializers/user.py:/code/plane/app/serializers/user.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
