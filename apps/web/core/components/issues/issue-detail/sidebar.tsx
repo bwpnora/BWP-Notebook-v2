@@ -8,6 +8,9 @@ import { observer } from "mobx-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
+import { Hash, FileText, Layers } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { CustomMenu } from "@plane/ui";
 import {
   CycleIcon,
   StatePropertyIcon,
@@ -35,6 +38,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 // components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
@@ -77,12 +81,66 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
+  const { allowPermissions } = useUserPermissions();
+  const isManager = Boolean(
+    workspaceSlug &&
+    projectId &&
+    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId)
+  );
+
   return (
     <>
       <div className="flex h-full w-full flex-col items-center divide-y-2 divide-subtle-1 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="mt-5 text-body-xs-medium">{t("common.properties")}</h5>
           <div className={`mt-4 mb-2 space-y-2.5 truncate ${!isEditable ? "opacity-60" : ""}`}>
+            {/* BWP-Notebook-v2 Task Type - Code by IT Leon */}
+            <SidebarPropertyListItem icon={Layers as any} label="Loại công việc">
+              <CustomMenu
+                customButton={
+                  <button
+                    type="button"
+                    className={cn(
+                      "flex h-7 items-center gap-1.5 rounded border px-2 text-body-xs-regular font-medium transition-colors",
+                      issue?.type_id === "other" || issue?.type_detail?.name === "Công việc khác"
+                        ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                        : "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                    )}
+                    disabled={!isEditable || !isManager}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                    <span>
+                      {issue?.type_id === "other" || issue?.type_detail?.name === "Công việc khác"
+                        ? "Công việc khác"
+                        : "Công việc vận hành"}
+                    </span>
+                  </button>
+                }
+                closeOnSelect
+                disabled={!isEditable || !isManager}
+              >
+                <CustomMenu.MenuItem
+                  onClick={() => issueOperations.update(workspaceSlug, projectId, issueId, { type_id: "operational" })}
+                  className="text-xs flex items-center gap-2"
+                >
+                  <span className="bg-blue-500 h-2 w-2 rounded-full" />
+                  <span>Công việc vận hành</span>
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    if (isManager) {
+                      issueOperations.update(workspaceSlug, projectId, issueId, { type_id: "other" });
+                    }
+                  }}
+                  disabled={!isManager}
+                  className={cn("text-xs flex items-center gap-2", !isManager && "cursor-not-allowed opacity-50")}
+                >
+                  <span className="bg-amber-500 h-2 w-2 rounded-full" />
+                  <span>Công việc khác {!isManager && "(Chỉ quản lý)"}</span>
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            </SidebarPropertyListItem>
+
             <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
               <StateDropdown
                 value={issue?.state_id}
@@ -113,6 +171,58 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 hideIcon={issue.assignee_ids?.length === 0}
                 dropdownArrow
                 dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              />
+            </SidebarPropertyListItem>
+
+            {/* BWP-Notebook-v2 Supporters - Code by IT Leon */}
+            <SidebarPropertyListItem icon={MembersPropertyIcon} label="Người hỗ trợ">
+              <MemberDropdown
+                value={issue?.supporter_ids ?? undefined}
+                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { supporter_ids: val })}
+                disabled={!isEditable}
+                projectId={projectId?.toString() ?? ""}
+                placeholder="Thêm người hỗ trợ"
+                multiple
+                buttonVariant={
+                  issue?.supporter_ids && issue.supporter_ids.length > 1
+                    ? "transparent-without-text"
+                    : "transparent-with-text"
+                }
+                className="group w-full grow"
+                buttonContainerClassName="w-full text-left h-7.5"
+                buttonClassName={`text-body-xs-regular justify-between ${issue?.supporter_ids && issue.supporter_ids.length > 0 ? "" : "text-placeholder"}`}
+                hideIcon={!issue?.supporter_ids || issue.supporter_ids.length === 0}
+                dropdownArrow
+                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+              />
+            </SidebarPropertyListItem>
+
+            {/* BWP-Notebook-v2 Room Number - Code by IT Leon */}
+            <SidebarPropertyListItem icon={Hash as any} label="Số phòng">
+              <input
+                type="number"
+                value={issue?.room ?? ""}
+                disabled={!isEditable}
+                onChange={(e) => {
+                  const val = e.target.value ? parseInt(e.target.value, 10) : null;
+                  issueOperations.update(workspaceSlug, projectId, issueId, { room: val });
+                }}
+                placeholder="Chưa có số phòng"
+                className="h-7.5 w-full bg-transparent px-2 text-body-xs-regular text-primary outline-none placeholder:text-placeholder"
+              />
+            </SidebarPropertyListItem>
+
+            {/* BWP-Notebook-v2 Notes - Code by IT Leon */}
+            <SidebarPropertyListItem icon={FileText as any} label="Ghi chú">
+              <input
+                type="text"
+                value={issue?.notes ?? ""}
+                disabled={!isEditable}
+                onChange={(e) => {
+                  issueOperations.update(workspaceSlug, projectId, issueId, { notes: e.target.value || null });
+                }}
+                placeholder="Thêm ghi chú công việc"
+                className="h-7.5 w-full truncate bg-transparent px-2 text-body-xs-regular text-primary outline-none placeholder:text-placeholder"
               />
             </SidebarPropertyListItem>
 

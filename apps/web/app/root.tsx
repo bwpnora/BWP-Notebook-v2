@@ -30,12 +30,14 @@ import { isStaleAssetError, recoverFromStaleAsset } from "@/lib/stale-asset-erro
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
 // fonts
+/* oxlint-disable eslint-plugin-import/no-unassigned-import */
 import "@fontsource-variable/inter";
 import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
-
-const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
+/* oxlint-enable eslint-plugin-import/no-unassigned-import */
+// BWP Notebook Branding - Code & Architecture by IT Leon
+const APP_TITLE = "BWP Notebook - Sổ tay công việc | Code & Architecture by IT Leon";
 
 export const links: LinksFunction = () => [
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
