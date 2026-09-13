@@ -58,18 +58,22 @@ Sổ tay này là tài liệu hướng dẫn chính thức, chuẩn mực và to
     - [6.2. Container `migrator` báo lỗi kết nối database](#c1-sec-6-2)
     - [6.3. Khởi động lại toàn bộ hệ thống sạch sẽ](#c1-sec-6-3)
 - [Chương 2: Quản Lý Tài Khoản và Phân Quyền RBAC](#chuong-2)
-  - [1. Phân Cấp 4 Vai Trò Người Dùng](#c2-sec-1)
-    - [1.1. SuperAdmin (Quản trị viên Cấp cao / Toàn hệ thống)](#c2-sec-1-1)
-    - [1.2. Quản trị viên đơn vị (Workspace Admin)](#c2-sec-1-2)
-    - [1.3. Thành viên (Member)](#c2-sec-1-3)
-    - [1.4. Khách (Guest / Cộng tác viên)](#c2-sec-1-4)
+  - [1. Phân Cấp Mô Hình 5 Tầng Phân Quyền (5-Tier RBAC)](#c2-sec-1)
+    - [1.1. SuperAdmin (Tier 1 - Quản trị viên Tối cao / God Mode)](#c2-sec-1-1)
+    - [1.2. Quản trị viên Đơn vị (Tier 2 - Unit Admin / Workspace Admin)](#c2-sec-1-2)
+    - [1.3. Quản trị viên Phòng ban (Tier 3 - Department Admin / Project Admin)](#c2-sec-1-3)
+    - [1.4. Thành viên Chính thức (Tier 4 - Member)](#c2-sec-1-4)
+    - [1.5. Khách / Cộng tác viên (Tier 5 - Guest)](#c2-sec-1-5)
   - [2. Bảng Ma Trận Phân Quyền Chi Tiết (RBAC Matrix)](#c2-sec-2)
-  - [3. Nguyên Tắc Cô Lập Dữ Liệu Theo Phòng Ban (Department Isolation)](#c2-sec-3)
+  - [3. Nguyên Tắc Cô Lập Dữ Liệu Theo Phòng Ban & Ranh Giới Quản Trị](#c2-sec-3)
     - [3.1. Các nguyên tắc an toàn bất khả xâm phạm](#c2-sec-3-1)
-  - [4. Quy Trình Mời Nhân Sự & Quản Lý Phiên Đăng Nhập An Toàn](#c2-sec-4)
-    - [4.1. Quy trình mời nhân sự mới vào hệ thống](#c2-sec-4-1)
-    - [4.2. Phân bổ nhân sự vào từng Phòng ban / Notebook](#c2-sec-4-2)
-    - [4.3. Quản lý phiên đăng nhập an toàn (Session & Token Management)](#c2-sec-4-3)
+  - [4. Quy Trình Cấp Phát Tài Khoản & Quản Lý Đăng Nhập](#c2-sec-4)
+    - [4.1. Tạo tài khoản trực tiếp & Cấp phát mật khẩu tự động (Direct Member Creation)](#c2-sec-4-1)
+    - [4.2. Thẻ bàn giao tài khoản & Sao chép 1 chạm (Credential Handover Card)](#c2-sec-4-2)
+    - [4.3. Đăng nhập linh hoạt bằng Định danh kép (Username hoặc Email)](#c2-sec-4-3)
+    - [4.4. Quy trình mời nhân sự qua email (Email Invitation)](#c2-sec-4-4)
+    - [4.5. Phân bổ nhân sự vào từng Phòng ban / Notebook](#c2-sec-4-5)
+    - [4.6. Quản lý phiên đăng nhập an toàn (Session & Token Management)](#c2-sec-4-6)
   - [5. Quy Trình Thu Hồi Quyền & Bàn Giao Khi Nhân Sự Nghỉ Việc (Offboarding)](#c2-sec-5)
 - [Chương 3: Quản Lý Công Ty và Sổ Tay Phòng Ban (Notebook)](#chuong-3)
   - [1. Quản Trị Công Ty / Đơn Vị (Workspace Administration)](#c3-sec-1)
@@ -78,8 +82,8 @@ Sổ tay này là tài liệu hướng dẫn chính thức, chuẩn mực và to
     - [1.3. Quản lý dung lượng lưu trữ & Hạn ngạch tệp đính kèm](#c3-sec-1-3)
   - [2. Quản Lý Phòng Ban / Sổ Tay Công Việc (Notebook / Project)](#c3-sec-2)
     - [2.1. Triết lý phân vùng dữ liệu theo Phòng ban (Department Partitioning)](#c3-sec-2-1)
-    - [2.2. Quy trình khởi tạo Phòng ban / Notebook mới](#c3-sec-2-2)
-    - [2.3. Quản lý nhân sự và phân quyền theo từng Notebook](#c3-sec-2-3)
+    - [2.2. Quy trình khởi tạo Phòng ban / Notebook mới (Đặc quyền SuperAdmin)](#c3-sec-2-2)
+    - [2.3. Quản lý nhân sự và phân quyền theo từng Notebook (Chỉ định Lead bởi SuperAdmin)](#c3-sec-2-3)
   - [3. Cấu Hình Quy Trình Làm Việc (Workflow States Configuration)](#c3-sec-3)
     - [3.1. Kiến trúc 5 Nhóm Trạng Thái Chuẩn Hóa](#c3-sec-3-1)
     - [3.2. Tùy chỉnh trạng thái công việc theo đặc thù phòng ban](#c3-sec-3-2)
@@ -553,70 +557,90 @@ docker compose -f docker-compose.prod.yml up -d
 
 <a id="c2-sec-1"></a>
 
-## 1. Phân Cấp 4 Vai Trò Người Dùng
+## 1. Phân Cấp Mô Hình 5 Tầng Phân Quyền (5-Tier RBAC)
 
-Trong BWP Notebook, mọi hành vi truy cập dữ liệu và thực thi nghiệp vụ đều được kiểm soát nghiêm ngặt thông qua mô hình phân quyền dựa trên vai trò (**Role-Based Access Control - RBAC**). Hệ thống định nghĩa 4 cấp vai trò phân cấp từ cao xuống thấp:
+Trong BWP Notebook, mọi hành vi truy cập dữ liệu và thực thi nghiệp vụ đều được kiểm soát nghiêm ngặt thông qua mô hình phân quyền 5 tầng (**5-Tier Role-Based Access Control - RBAC**). Hệ thống định nghĩa rõ ràng thẩm quyền và ranh giới bảo mật từ cấp quản trị hạ tầng đến cộng tác viên:
 
 ```mermaid
 graph TD
-    SA["SuperAdmin (Instance Admin - Cấp 20)<br>• Quản trị toàn bộ máy chủ & instance<br>• Quyền kiểm soát tập trung toàn bộ đơn vị & phòng ban"]
-    AD["Quản Trị Viên Đơn Vị (Workspace Admin - Cấp 20)<br>• Quản lý thông tin công ty, múi giờ, logo<br>• Mời nhân sự, tạo và phân quyền các Notebook"]
-    MB["Thành Viên Chính Thức (Member - Cấp 15)<br>• Tác nghiệp trong các Notebook được tham gia<br>• Tạo việc vận hành, gán phụ trách/hỗ trợ, đổi trạng thái"]
-    GU["Khách / Cộng Tác Viên (Guest - Cấp 5)<br>• Giới hạn chỉ xem hoặc tương tác trong Notebook được chỉ định<br>• Không xem được cấu hình hoặc nhân sự đơn vị"]
+    T1["Tier 1: SuperAdmin (Quản Trị Viên Tối Cao / God Mode)<br>• InstanceAdmin (role >= 15) hoặc is_superuser<br>• Toàn quyền hệ thống, tạo workspace, tạo phòng ban, chỉ định Lead"]
+    T2["Tier 2: Quản Trị Viên Đơn Vị (Unit Admin / Workspace Admin)<br>• WorkspaceMember (role = 20)<br>• Quản trị cấu hình công ty, tạo tài khoản trực tiếp toàn đơn vị<br>• RÀO CHẮN: Không tạo phòng ban, không đổi Trưởng bộ phận"]
+    T3["Tier 3: Quản Trị Viên Phòng Ban (Department Admin / Project Admin)<br>• ProjectMember (role = 20)<br>• Quản lý quy trình & thành viên phòng ban mình phụ trách<br>• RÀO CHẮN: Cô lập tuyệt đối, không can thiệp phòng ban khác"]
+    T4["Tier 4: Thành Viên Chính Thức (Member)<br>• WorkspaceMember (role = 15) & ProjectMember (role = 15)<br>• Tác nghiệp trong Notebook được giao: tạo việc vận hành, cập nhật phòng, đổi trạng thái"]
+    T5["Tier 5: Khách / Cộng Tác Viên (Guest)<br>• WorkspaceMember (role = 5) & ProjectMember (role = 5)<br>• Giới hạn chỉ xem hoặc tương tác trong việc được chỉ định đích danh"]
 
-    SA --> AD
-    AD --> MB
-    MB --> GU
+    T1 --> T2
+    T2 --> T3
+    T3 --> T4
+    T4 --> T5
 ```
 
 <a id="c2-sec-1-1"></a>
 
-### 1.1. SuperAdmin (Quản trị viên Cấp cao / Toàn hệ thống)
+### 1.1. SuperAdmin (Tier 1 - Quản trị viên Tối cao / God Mode)
 
-- **Định danh kỹ thuật:** `InstanceAdmin` với thuộc tính `role = 20`.
+- **Định danh kỹ thuật:** `InstanceAdmin` với thuộc tính `role >= 15` hoặc người dùng sở hữu cờ `is_superuser = True`.
 - **Phạm vi quyền hạn:** Toàn bộ hệ thống máy chủ, không bị giới hạn bởi bất kỳ ranh giới Đơn vị (Workspace) hay Phòng ban (Notebook/Project) nào.
-- **Quyền hạn đặc thù:**
-  - Truy cập bảng điều khiển quản trị toàn cục **God Mode** (`/god-mode`).
-  - Quản lý, khởi tạo, kích hoạt hoặc đóng băng bất kỳ Đơn vị (Công ty) nào trên máy chủ.
-  - Xem toàn bộ dữ liệu kiểm toán hệ thống (System Audit Logs) để phục vụ công tác thanh tra bảo mật.
-  - Cấp quyền quản trị viên cho các tài khoản mới hoặc khôi phục quyền truy cập khi đơn vị gặp sự cố.
+- **Quyền hạn đặc thù & Độc quyền (God Mode):**
+  - **Khởi tạo Đơn vị mới (Workspace):** Chỉ có SuperAdmin mới có thẩm quyền tạo thêm công ty / đơn vị mới trên hệ thống.
+  - **Khởi tạo Phòng ban mới (Notebook / Project):** Chỉ có SuperAdmin mới có quyền tạo mới sổ tay phòng ban trong mọi đơn vị.
+  - **Chỉ định & Thay đổi Trưởng bộ phận (Department Lead):** Chỉ có SuperAdmin mới có thẩm quyền phân công hoặc điều chuyển Trưởng bộ phận phụ trách phòng ban.
+  - **Truy cập bảng điều khiển God Mode:** Truy cập giao diện quản trị toàn cục tại `/god-mode` để giám sát sức khỏe hệ thống, quản lý người dùng và cấu hình máy chủ.
+  - **Xem nhật ký kiểm toán hệ thống (System Audit Logs):** Giám sát mọi biến động dữ liệu xuyên suốt các đơn vị nhằm phục vụ thanh tra an toàn thông tin.
+  - **Khởi tạo tài khoản trực tiếp:** Có thể khởi tạo tài khoản nhân sự nhanh cho bất kỳ đơn vị hoặc phòng ban nào mà không cần qua email.
 
 <a id="c2-sec-1-2"></a>
 
-### 1.2. Quản trị viên đơn vị (Workspace Admin)
+### 1.2. Quản trị viên Đơn vị (Tier 2 - Unit Admin / Workspace Admin)
 
 - **Định danh kỹ thuật:** `WorkspaceMember` với thuộc tính `role = 20`.
 - **Phạm vi quyền hạn:** Toàn bộ không gian làm việc của Công ty / Đơn vị được phân công quản lý.
-- **Quyền hạn đặc thù:**
-  - Cấu hình thông tin tổ chức: Tên công ty, logo nhận diện, địa chỉ URL rút gọn (slug), múi giờ và lịch làm việc.
-  - Quản lý danh bạ nhân sự: Mời nhân sự mới qua email, phân bổ vai trò ban đầu, thu hồi quyền truy cập hoặc vô hiệu hóa tài khoản rời tổ chức.
-  - Quản trị danh mục Notebook: Khởi tạo các phòng ban mới (Kỹ thuật, Kế toán, Vận hành, v.v.), gán trưởng bộ phận và quản lý danh sách thành viên tham gia từng phòng.
-  - Đóng băng hoặc lưu trữ (Archive) các Notebook không còn hoạt động.
+- **Quyền hạn cho phép:**
+  - Cấu hình nhận diện tổ chức: Đổi tên đơn vị, cập nhật biểu tượng (logo), múi giờ (`Asia/Ho_Chi_Minh`), định dạng ngày tháng và lịch làm việc.
+  - Quản lý danh bạ nhân sự đơn vị: Mời nhân sự qua email, **Tạo tài khoản trực tiếp không cần email**, phân bổ vai trò ban đầu, thu hồi quyền hoặc khóa tài khoản nghỉ việc.
+  - Đóng băng hoặc lưu trữ (Archive) các Notebook không còn hoạt động trong công ty.
+- **Rào chắn bảo vệ nghiêm ngặt (Enforced Guards):**
+  - **KHÔNG CÓ QUYỀN tạo mới Phòng ban / Notebook:** Nút tạo phòng ban bị ẩn trên giao diện và API `POST /api/workspaces/{slug}/projects/` sẽ trả về lỗi `HTTP 403 Forbidden` kèm thông báo: _"Chỉ Quản trị viên cấp cao (God Mode) mới có quyền tạo phòng ban mới."_
+  - **KHÔNG CÓ QUYỀN chỉ định hoặc thay đổi Trưởng bộ phận (Department Lead):** Dropdown chọn Trưởng bộ phận bị vô hiệu hóa trên giao diện; nếu cố tình gửi request `PATCH`, backend sẽ trả về lỗi `HTTP 403 Forbidden`: _"Chỉ Quản trị viên cấp cao (God Mode) mới có quyền chỉ định Trưởng bộ phận."_
 
 <a id="c2-sec-1-3"></a>
 
-### 1.3. Thành viên (Member)
+### 1.3. Quản trị viên Phòng ban (Tier 3 - Department Admin / Project Admin)
 
-- **Định danh kỹ thuật:** `WorkspaceMember` (`role = 15`) và `ProjectMember` (`role = 15`).
-- **Phạm vi quyền hạn:** Hoạt động tác nghiệp hàng ngày bên trong các Phòng ban / Notebook mà mình được thêm vào danh sách thành viên.
-- **Quyền hạn đặc thù:**
-  - Xem danh sách và chi tiết toàn bộ công việc trong các Notebook được quyền truy cập.
-  - Tạo mới **Công việc vận hành (Operational Task)** phát sinh hằng ngày.
-  - Tiếp nhận và xử lý **Công việc khác (Other Task)** do cấp trên giao.
-  - Gán người phụ trách chính (Assignee), bổ sung danh sách người hỗ trợ (Supporters).
-  - Cập nhật thông tin số phòng/khu vực (Room), ghi chú nội bộ (Notes), tiến độ và chuyển đổi trạng thái công việc.
-  - Tham gia trao đổi, bình luận và đính kèm hồ sơ chứng từ liên quan.
+- **Định danh kỹ thuật:** `ProjectMember` với thuộc tính `role = 20` tại một Notebook cụ thể.
+- **Phạm vi quyền hạn:** Giới hạn nghiêm ngặt bên trong Phòng ban / Notebook được giao phụ trách.
+- **Quyền hạn cho phép:**
+  - Quản lý cấu hình nội bộ của phòng ban: Tên gọi, mô tả, biểu tượng, quy trình trạng thái (Workflow States).
+  - Quản lý nhân sự trong phòng ban: Thêm nhân sự từ danh bạ công ty vào phòng, phân công vai trò nội bộ (Member/Guest), loại bỏ nhân sự khỏi phòng.
+  - **Tạo tài khoản trực tiếp trong phòng:** Được phép tạo tài khoản mới và gán trực tiếp vào phòng ban mình quản lý với vai trò `role = 15` (Member) hoặc `role = 5` (Guest).
+- **Rào chắn bảo vệ & Nguyên tắc cô lập (Isolation Guards):**
+  - **Cô lập phòng ban tuyệt đối:** Quản trị viên phòng A tuyệt đối không thể thêm/xóa thành viên, không thể sửa đổi cấu hình, và không thể tạo tài khoản cho phòng B. Mọi hành vi can thiệp chéo đều bị chặn với mã lỗi `HTTP 403 Forbidden`.
+  - **Chống leo thang đặc quyền (Privilege Escalation Guard):** Quản trị viên phòng ban không được phép nâng quyền tài khoản mới tạo lên mức Quản trị viên đơn vị (`role = 20`).
 
 <a id="c2-sec-1-4"></a>
 
-### 1.4. Khách (Guest / Cộng tác viên)
+### 1.4. Thành viên Chính thức (Tier 4 - Member)
+
+- **Định danh kỹ thuật:** `WorkspaceMember` (`role = 15`) và `ProjectMember` (`role = 15`).
+- **Phạm vi quyền hạn:** Tác nghiệp hàng ngày bên trong các Notebook mà mình tham gia.
+- **Quyền hạn tác nghiệp:**
+  - Xem danh sách và chi tiết công việc trong các Notebook được phân quyền.
+  - Tạo mới **Công việc vận hành (Operational Task)** hằng ngày.
+  - Tiếp nhận và xử lý **Công việc khác (Other Task)** do cấp trên giao.
+  - Gán người phụ trách chính (Assignee), bổ sung danh sách người hỗ trợ (Supporters).
+  - Cập nhật thông tin số phòng/khu vực (Room), ghi chú nội bộ (Notes), tiến độ và chuyển đổi trạng thái công việc.
+  - Trao đổi, bình luận và đính kèm hồ sơ, hình ảnh hiện trường.
+
+<a id="c2-sec-1-5"></a>
+
+### 1.5. Khách / Cộng tác viên (Tier 5 - Guest)
 
 - **Định danh kỹ thuật:** `WorkspaceMember` (`role = 5`) và `ProjectMember` (`role = 5`).
-- **Phạm vi quyền hạn:** Bị cô lập cao độ, chỉ có quyền truy cập vào duy nhất một hoặc một số Notebook cụ thể được chỉ định bằng văn bản mời.
+- **Phạm vi quyền hạn:** Bị cô lập ở mức tối đa, chỉ có quyền truy cập vào một hoặc một số công việc/sổ tay được chỉ định đích danh.
 - **Đặc điểm giới hạn:**
-  - Không thể xem danh sách nhân sự hay cấu hình chung của Công ty.
-  - Không thể tạo mới phòng ban hay tự ý mời người khác vào hệ thống.
-  - Quyền hạn trên công việc bị thu hẹp: Chỉ xem các công việc được giao hoặc bình luận góp ý mà không thể tự ý xóa hoặc thay đổi cấu hình workflow.
+  - Không thể xem danh sách nhân sự hay cấu hình chung của Đơn vị hoặc Phòng ban.
+  - Không thể tự tạo việc vận hành hay giao việc cho nhân sự khác.
+  - Chỉ được xem tiến độ, bình luận góp ý hoặc đính kèm tài liệu trên các công việc được gán.
 
 ---
 
@@ -626,84 +650,86 @@ graph TD
 
 Dưới đây là ma trận đối chiếu quyền thực thi chi tiết trên **5 nhóm tài nguyên nghiệp vụ** của BWP Notebook:
 
-| Nhóm Tài Nguyên                         | Thao Tác / Quyền Nghiệp Vụ                 | SuperAdmin | Quản Trị Viên (Admin) |     Thành Viên (Member)     |    Khách (Guest)    |
-| :-------------------------------------- | :----------------------------------------- | :--------: | :-------------------: | :-------------------------: | :-----------------: |
-| **1. Tài Khoản & Người Dùng**           | Xem danh sách người dùng toàn máy chủ      |     Có     |         Không         |            Không            |        Không        |
-|                                         | Xem danh bạ nhân sự trong đơn vị           |     Có     |          Có           |             Có              | Chỉ xem trong phòng |
-|                                         | Mời / Tạo tài khoản nhân sự mới            |     Có     |          Có           |            Không            |        Không        |
-|                                         | Chỉnh sửa thông tin / hồ sơ cá nhân        |     Có     |          Có           |             Có              |         Có          |
-|                                         | Chỉnh sửa thông tin nhân sự khác           |     Có     |          Có           |            Không            |        Không        |
-|                                         | Khóa / Vô hiệu hóa tài khoản               |     Có     |          Có           |            Không            |        Không        |
-|                                         | Gán vai trò SuperAdmin                     |     Có     |         Không         |            Không            |        Không        |
-|                                         | Gán / Đổi vai trò Admin / Member / Guest   |     Có     |          Có           |            Không            |        Không        |
-| **2. Đơn Vị / Công Ty (Workspace)**     | Xem thông tin cấu hình công ty             |     Có     |          Có           |             Có              |      Giới hạn       |
-|                                         | Thay đổi tên công ty, logo, múi giờ        |     Có     |          Có           |            Không            |        Không        |
-|                                         | Quản lý tích hợp webhooks & dịch vụ ngoài  |     Có     |          Có           |            Không            |        Không        |
-|                                         | Quản lý thành viên đơn vị                  |     Có     |          Có           |            Không            |        Không        |
-|                                         | Lưu trữ (Archive) / Xóa đơn vị             |     Có     |         Không         |            Không            |        Không        |
-| **3. Phòng Ban / Notebook (Project)**   | Xem phòng ban được mời tham gia            |     Có     |          Có           |             Có              |         Có          |
-|                                         | Xem tất cả phòng ban trong công ty         |     Có     |          Có           |            Không            |        Không        |
-|                                         | Tạo mới Phòng ban / Notebook               |     Có     |          Có           |            Không            |        Không        |
-|                                         | Thay đổi tên, mô tả, nhận diện Notebook    |     Có     |          Có           |            Không            |        Không        |
-|                                         | Cấu hình quy trình trạng thái (Workflow)   |     Có     |          Có           |            Không            |        Không        |
-|                                         | Quản lý thành viên trong từng Notebook     |     Có     |          Có           |            Không            |        Không        |
-|                                         | Lưu trữ / Khôi phục phòng ban (Archive)    |     Có     |          Có           |            Không            |        Không        |
-|                                         | Xóa vĩnh viễn phòng ban                    |     Có     |   Có (Cần xác nhận)   |            Không            |        Không        |
-| **4. Công Việc (Task / Work Item)**     | Xem danh sách & chi tiết việc trong phòng  |     Có     |          Có           |             Có              |  Có (Nếu được mời)  |
-|                                         | Tạo "Công việc vận hành" (Operational)     |     Có     |          Có           |             Có              |         Có          |
-|                                         | Tạo / Giao "Công việc khác" (Other)        |     Có     |          Có           | Có (Nếu có quyền giao việc) |        Không        |
-|                                         | Đổi loại công việc (Vận hành <-> Khác)     |     Có     |          Có           |    Không (Chặn backend)     |        Không        |
-|                                         | Gán / Đổi người phụ trách chính (Assignee) |     Có     |          Có           |             Có              |      Giới hạn       |
-|                                         | Gán người hỗ trợ (Supporters)              |     Có     |          Có           |             Có              |         Có          |
-|                                         | Cập nhật số phòng / khu vực (Room)         |     Có     |          Có           |             Có              |         Có          |
-|                                         | Thêm / Sửa ghi chú nội bộ (Notes)          |     Có     |          Có           |             Có              |         Có          |
-|                                         | Đổi trạng thái xử lý công việc             |     Có     |          Có           |             Có              |      Giới hạn       |
-|                                         | Bình luận, trao đổi, đính kèm tài liệu     |     Có     |          Có           |             Có              |         Có          |
-|                                         | Lưu trữ / Xóa công việc                    |     Có     |          Có           |      Chỉ việc mình tạo      |        Không        |
-| **5. Nhật Ký & Kiểm Toán (Audit Logs)** | Xem lịch sử thao tác của chính mình        |     Có     |          Có           |             Có              |         Có          |
-|                                         | Xem nhật ký hoạt động của phòng ban        |     Có     |          Có           |             Có              |        Không        |
-|                                         | Xem toàn bộ nhật ký hệ thống (System Log)  |     Có     |         Không         |            Không            |        Không        |
-|                                         | Xuất báo cáo hoạt động / kiểm toán         |     Có     |          Có           |            Không            |        Không        |
+| Nhóm Tài Nguyên                         | Thao Tác / Quyền Nghiệp Vụ                     | SuperAdmin (Tier 1) | Quản Trị Đơn Vị (Tier 2)  | Quản Trị Phòng Ban (Tier 3) | Thành Viên (Tier 4)  | Khách (Tier 5)  |
+| :-------------------------------------- | :--------------------------------------------- | :-----------------: | :-----------------------: | :-------------------------: | :------------------: | :-------------: |
+| **1. Tài Khoản & Người Dùng**           | Xem danh sách người dùng toàn máy chủ          |         Có          |           Không           |            Không            |        Không         |      Không      |
+|                                         | Xem danh bạ nhân sự trong đơn vị               |         Có          |            Có             |             Có              |          Có          | Chỉ trong phòng |
+|                                         | Tạo tài khoản trực tiếp (Direct Member Create) |    Có (Mọi nơi)     |     Có (Toàn đơn vị)      |     Có (Chỉ phòng mình)     |        Không         |      Không      |
+|                                         | Mời nhân sự qua email                          |         Có          |            Có             |            Không            |        Không         |      Không      |
+|                                         | Khóa / Vô hiệu hóa tài khoản                   |         Có          |            Có             |            Không            |        Không         |      Không      |
+|                                         | Gán vai trò SuperAdmin                         |         Có          |           Không           |            Không            |        Không         |      Không      |
+|                                         | Gán vai trò Quản trị viên Đơn vị (role 20)     |         Có          |            Có             |   Không (Chặn leo quyền)    |        Không         |      Không      |
+|                                         | Gán vai trò Quản trị viên Phòng ban            |         Có          |            Có             |      Có (Trong phòng)       |        Không         |      Không      |
+| **2. Đơn Vị / Công Ty (Workspace)**     | Khởi tạo Đơn vị mới (Workspace)                |   Có (Độc quyền)    |           Không           |            Không            |        Không         |      Không      |
+|                                         | Cấu hình tên, logo, múi giờ, slug              |         Có          |            Có             |            Không            |        Không         |      Không      |
+|                                         | Quản lý tích hợp webhooks & dịch vụ            |         Có          |            Có             |            Không            |        Không         |      Không      |
+|                                         | Đóng băng / Lưu trữ (Archive) Đơn vị           |         Có          |           Không           |            Không            |        Không         |      Không      |
+| **3. Phòng Ban / Notebook (Project)**   | Xem các phòng ban được mời                     |         Có          |            Có             |             Có              |          Có          |       Có        |
+|                                         | Xem tất cả phòng ban trong công ty             |         Có          |            Có             |            Không            |        Không         |      Không      |
+|                                         | **Khởi tạo Phòng ban mới (Notebook)**          | **Có (Độc quyền)**  | **Không (Chặn God Mode)** |          **Không**          |      **Không**       |    **Không**    |
+|                                         | **Chỉ định / Đổi Trưởng bộ phận (Lead)**       | **Có (Độc quyền)**  | **Không (Chặn God Mode)** |          **Không**          |      **Không**       |    **Không**    |
+|                                         | Thay đổi tên, mô tả, nhận diện Notebook        |         Có          |            Có             |     Có (Chỉ phòng mình)     |        Không         |      Không      |
+|                                         | Cấu hình quy trình trạng thái (Workflow)       |         Có          |            Có             |     Có (Chỉ phòng mình)     |        Không         |      Không      |
+|                                         | Quản lý thành viên phòng ban                   |         Có          |            Có             |     Có (Chỉ phòng mình)     |        Không         |      Không      |
+|                                         | Đóng băng / Lưu trữ phòng ban (Archive)        |         Có          |            Có             |            Không            |        Không         |      Không      |
+| **4. Công Việc (Task / Work Item)**     | Xem danh sách & chi tiết việc trong phòng      |         Có          |            Có             |             Có              |          Có          |  Có (Được gán)  |
+|                                         | Tạo "Công việc vận hành" (Operational)         |         Có          |            Có             |             Có              |          Có          |       Có        |
+|                                         | Tạo / Giao "Công việc khác" (Other)            |         Có          |            Có             |             Có              | Có (Được giao quyền) |      Không      |
+|                                         | Đổi loại công việc (Vận hành <-> Khác)         |         Có          |            Có             |             Có              | Không (Chặn backend) |      Không      |
+|                                         | Gán / Đổi người phụ trách (Assignee)           |         Có          |            Có             |             Có              |          Có          |    Giới hạn     |
+|                                         | Gán người hỗ trợ (Supporters)                  |         Có          |            Có             |             Có              |          Có          |       Có        |
+|                                         | Cập nhật số phòng / khu vực (Room)             |         Có          |            Có             |             Có              |          Có          |       Có        |
+|                                         | Thêm / Sửa ghi chú nội bộ (Notes)              |         Có          |            Có             |             Có              |          Có          |       Có        |
+|                                         | Đổi trạng thái xử lý công việc                 |         Có          |            Có             |             Có              |          Có          |    Giới hạn     |
+|                                         | Bình luận, trao đổi, đính kèm tài liệu         |         Có          |            Có             |             Có              |          Có          |       Có        |
+|                                         | Xóa công việc                                  |         Có          |            Có             |             Có              |  Chỉ việc mình tạo   |      Không      |
+| **5. Nhật Ký & Kiểm Toán (Audit Logs)** | Xem lịch sử thao tác của chính mình            |         Có          |            Có             |             Có              |          Có          |       Có        |
+|                                         | Xem nhật ký hoạt động của phòng ban            |         Có          |            Có             |             Có              |          Có          |      Không      |
+|                                         | Xem toàn bộ nhật ký hệ thống (System Log)      |         Có          |           Không           |            Không            |        Không         |      Không      |
+|                                         | Xuất báo cáo hoạt động / kiểm toán             |         Có          |            Có             |       Có (Phòng mình)       |        Không         |      Không      |
 
 > [!NOTE]
-> **Ký hiệu:**
+> **Ký hiệu thẩm quyền:**
 >
-> - **Có**: Được phép thực hiện đầy đủ.
-> - **Không**: Bị nghiêm cấm và bị chặn ngay từ backend API.
-> - **Giới hạn**: Chỉ được phép thao tác trên các bản ghi do chính mình tạo hoặc được chỉ định đích danh.
+> - **Có:** Được phép thực hiện đầy đủ.
+> - **Không:** Bị nghiêm cấm và bị chặn ngay từ backend API với mã lỗi `HTTP 403 Forbidden`.
+> - **Giới hạn:** Chỉ được phép thao tác trên các bản ghi do chính mình tạo hoặc được chỉ định đích danh.
+> - **Độc quyền:** Chỉ Quản trị viên cấp cao (SuperAdmin - God Mode) mới có thẩm quyền thực hiện.
 
 ---
 
 <a id="c2-sec-3"></a>
 
-## 3. Nguyên Tắc Cô Lập Dữ Liệu Theo Phòng Ban (Department Isolation)
+## 3. Nguyên Tắc Cô Lập Dữ Liệu Theo Phòng Ban & Ranh Giới Quản Trị
 
-Một trong những tiêu chuẩn an toàn thông tin cốt lõi nhất của BWP Notebook là **cô lập dữ liệu theo ranh giới phòng ban** (Departmental Silo). Mỗi phòng ban được xem như một chiếc "sổ tay đóng kín", ngăn chặn hoàn toàn nguy cơ rò rỉ dữ liệu nhạy cảm giữa các bộ phận trong cùng doanh nghiệp.
+Một trong những tiêu chuẩn an toàn thông tin cốt lõi nhất của BWP Notebook là **cô lập dữ liệu theo ranh giới phòng ban** (Departmental Scoping & Isolation). Mỗi phòng ban được xem như một chiếc "sổ tay đóng kín", ngăn chặn hoàn toàn nguy cơ rò rỉ dữ liệu nhạy cảm giữa các bộ phận trong cùng doanh nghiệp.
 
 ```mermaid
 graph LR
     subgraph Company ["Công Ty ABC (Workspace)"]
         subgraph NB_KT ["Notebook Kỹ Thuật"]
             Tasks_KT["Công việc hạ tầng, cáp mạng, server"]
+            Admin_KT["Quản Trị Phòng Kỹ Thuật"]
         end
         subgraph NB_TC ["Notebook Kế Toán"]
             Tasks_TC["Báo cáo thuế, lương bổng, hóa đơn"]
+            Admin_TC["Quản Trị Phòng Kế Toán"]
         end
         subgraph NB_VH ["Notebook Vận Hành"]
-            Tasks_VH["Bảo trì phòng, checklist ca trực"]
+            Tasks_VH["Bảo trì buồng phòng, checklist ca"]
         end
     end
 
-    User_KT["Kỹ sư Kỹ thuật"] -->|Toàn quyền truy cập| NB_KT
-    User_KT -.->|BỊ CHẶN HOÀN TOÀN| NB_TC
-    User_KT -.->|BỊ CHẶN HOÀN TOÀN| NB_VH
+    Admin_KT -->|Toàn quyền nội bộ| NB_KT
+    Admin_KT -.->|BỊ CHẶN 403 FORBIDDEN| NB_TC
+    Admin_KT -.->|BỊ CHẶN 403 FORBIDDEN| NB_VH
 
-    User_TC["Kế toán viên"] -->|Toàn quyền truy cập| NB_TC
-    User_TC -.->|BỊ CHẶN HOÀN TOÀN| NB_KT
+    Admin_TC -->|Toàn quyền nội bộ| NB_TC
+    Admin_TC -.->|BỊ CHẶN 403 FORBIDDEN| NB_KT
 
-    Admin["Quản Trị Viên Đơn Vị"] ==>|Giám sát & Điều phối| NB_KT
-    Admin ==>|Giám sát & Điều phối| NB_TC
-    Admin ==>|Giám sát & Điều phối| NB_VH
+    SuperAdmin["Quản Trị Viên Tối Cao (God Mode)"] ==>|Toàn quyền bao quát| NB_KT
+    SuperAdmin ==>|Toàn quyền bao quát| NB_TC
+    SuperAdmin ==>|Toàn quyền bao quát| NB_VH
 ```
 
 <a id="c2-sec-3-1"></a>
@@ -712,92 +738,144 @@ graph LR
 
 1. **Nguyên tắc "Cần biết mới thấy" (Need-to-Know Basis):**
    - Nhân sự thuộc phòng Kỹ thuật **tuyệt đối không thể nhìn thấy** danh sách công việc, ghi chú nội bộ, tệp đính kèm hay bình luận thuộc phòng Kế toán hoặc Nhân sự, trừ khi quản trị viên chủ động thêm nhân sự đó vào danh sách thành viên của phòng tương ứng.
-2. **Kiểm tra thẩm quyền 2 lớp (Two-tier Enforcement):**
-   - **Tầng Giao diện (Frontend Guard):** Thanh điều hướng và danh sách phòng ban chỉ hiển thị những Notebook mà tài khoản hiện tại đang là thành viên. Các nút thao tác nhạy cảm (Xóa phòng, Đổi cấu hình) tự động bị ẩn hoặc vô hiệu hóa.
-   - **Tầng Dịch vụ Lõi (Backend Enforcement):** Mọi truy vấn API đến backend Django đều đi qua middleware kiểm tra quyền (`ProjectMemberBasePermission`) và lọc trực tiếp tại câu lệnh cơ sở dữ liệu:
+2. **Cô lập Quản trị viên Phòng ban (Department Admin Scoping):**
+   - Quản trị viên phòng ban A **không thể can thiệp sang phòng ban B** dưới bất kỳ hình thức nào:
+     - Không thể thêm hoặc xóa thành viên trong phòng ban B.
+     - Không thể điều chỉnh cấu hình, trạng thái làm việc hay biểu tượng của phòng ban B.
+     - Không thể sử dụng tính năng Tạo tài khoản trực tiếp để gán thành viên mới vào phòng ban B.
+   - Mọi nỗ lực can thiệp chéo phòng ban đều bị backend từ chối với mã lỗi `HTTP 403 Forbidden`.
+3. **Kiểm tra thẩm quyền 2 lớp (Two-tier Enforcement):**
+   - **Tầng Giao diện (Frontend Guard):** Thanh điều hướng và danh sách phòng ban chỉ hiển thị những Notebook mà tài khoản hiện tại đang là thành viên. Các nút thao tác nhạy cảm (Tạo phòng, Đổi Lead, Đổi cấu hình) tự động bị ẩn hoặc vô hiệu hóa.
+   - **Tầng Dịch vụ Lõi (Backend Enforcement):** Mọi truy vấn API đến backend Django đều đi qua decorator `@allow_permission`, class `ProjectMemberPermission`, `WorkSpaceBasePermission` và các guard kiểm tra trực tiếp tại câu lệnh cơ sở dữ liệu:
      ```python
-     # Logic cốt lõi chặn truy cập trái phép ở tầng cơ sở dữ liệu
-     queryset = Issue.objects.filter(
-         project__members=request.user,
-         workspace__members=request.user
-     )
+     # Chặn can thiệp chéo phòng ban ở tầng backend
+     is_member_of_dept = ProjectMember.objects.filter(
+         workspace__slug=slug,
+         project_id=project_id,
+         member=request.user,
+         role=ROLE.ADMIN.value,
+         is_active=True,
+     ).exists()
+     if not is_member_of_dept and not is_super_admin(request.user):
+         return Response({"error": "You don't have the required permissions."}, status=403)
      ```
    - Điều này đảm bảo rằng người dùng cố tình can thiệp mã JavaScript hay gọi trực tiếp REST API bằng Postman/cURL đều sẽ nhận về mã lỗi `403 Forbidden` hoặc `404 Not Found`.
-
-> [!IMPORTANT]
-> **Quyền kiểm soát tập trung của SuperAdmin & Admin:**
->
-> - Quản trị viên đơn vị (Admin) có quyền xem và cấu hình toàn bộ các phòng ban trong công ty của mình để giải quyết ách tắc vận hành.
-> - SuperAdmin có quyền kiểm soát xuyên suốt trên toàn máy chủ nhằm phục vụ mục đích sao lưu, bảo trì kỹ thuật và thanh tra hệ thống.
 
 ---
 
 <a id="c2-sec-4"></a>
 
-## 4. Quy Trình Mời Nhân Sự & Quản Lý Phiên Đăng Nhập An Toàn
+## 4. Quy Trình Cấp Phát Tài Khoản & Quản Lý Đăng Nhập
+
+BWP Notebook cung cấp hai cơ chế cấp phát tài khoản song song: **Tạo tài khoản trực tiếp & Cấp phát mật khẩu tự động** (ưu tiên cho nhân sự vận hành thực địa không dùng email) và **Mời nhân sự qua email** (cho khối văn phòng).
 
 <a id="c2-sec-4-1"></a>
 
-### 4.1. Quy trình mời nhân sự mới vào hệ thống
+### 4.1. Tạo tài khoản trực tiếp & Cấp phát mật khẩu tự động (Direct Member Creation)
+
+Trong môi trường doanh nghiệp thực tế, nhiều nhân sự như kỹ thuật viên bảo trì, nhân viên buồng phòng, tài xế hay bảo vệ **không có địa chỉ email doanh nghiệp**. Việc bắt buộc phải có email để kích hoạt tài khoản sẽ gây tắc nghẽn lớn cho quá trình vận hành. BWP Notebook cung cấp tính năng **Tạo tài khoản trực tiếp** giúp Quản trị viên cấp tài khoản chỉ trong 30 giây:
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Admin as Quản Trị Viên (Admin)
-    participant Web as Giao Diện Web
-    participant API as Backend API
-    participant Mail as Máy Chủ Email (SMTP)
-    actor Member as Nhân Sự Mới
+    participant UI as Modal Tạo Trực Tiếp
+    participant API as Endpoint direct-create
+    participant DB as PostgreSQL (plane-db)
+    actor Member as Nhân Viên Mới
 
-    Admin->>Web: Vào Cài đặt đơn vị -> Thành viên -> "Mời nhân sự"
-    Admin->>Web: Nhập email & chọn vai trò (Admin / Member / Guest)
-    Web->>API: Gửi yêu cầu mời (POST /api/workspaces/{slug}/invitations/)
-    API->>API: Tạo token kích hoạt an toàn có thời hạn (72 giờ)
-    API->>Mail: Gửi thư mời chứa liên kết kích hoạt độc bản
-    Mail-->>Member: Nhận email: "Lời mời tham gia BWP Notebook"
-    Member->>Web: Nhấp liên kết mời trong email
-    Web->>API: Xác thực token & mở màn hình đăng ký thông tin
-    Member->>Web: Điền Họ tên & Tạo mật khẩu mạnh (zxcvbn >= 3)
-    Web->>API: Hoàn tất đăng ký & cấp phiên làm việc
-    API-->>Member: Đăng nhập thành công & chuyển tới trang chào mừng
+    Admin->>UI: Bấm "Tạo tài khoản trực tiếp"
+    Admin->>UI: Nhập Họ tên (ví dụ: "Nguyễn Văn Hùng")
+    UI->>UI: Tự động sinh Username: nguyen_van_hung_4821
+    UI->>UI: Tự động sinh Mật khẩu mạnh: 14 ký tự an toàn
+    Admin->>UI: Chọn Vai trò & Phòng ban ban đầu
+    Admin->>UI: Bấm "Tạo tài khoản"
+    UI->>API: POST /api/workspaces/{slug}/members/direct-create/
+    API->>API: Hash mật khẩu (PBKDF2) & Lưu User (email=None)
+    API->>DB: Tạo WorkspaceMember & ProjectMember
+    API-->>UI: HTTP 201 Created kèm credentials plaintext
+    UI-->>Admin: Hiển thị Thẻ bàn giao (Credential Handover Card)
+    Admin->>UI: Bấm "Sao chép toàn bộ thông tin" (1-Click Copy)
+    Admin-->>Member: Gửi thông tin đăng nhập qua Zalo / SMS / Giấy bàn giao
+    Member->>UI: Đăng nhập bằng Username + Mật khẩu
 ```
 
-#### Các bước thao tác của Quản trị viên:
+#### Quy trình thao tác chi tiết:
 
-1. Đăng nhập vào hệ thống với tài khoản Admin.
-2. Tại thanh bên trái, chọn **Cài đặt đơn vị (Workspace Settings)** $\rightarrow$ chọn mục **Thành viên (Members)**.
-3. Bấm vào nút **Mời nhân sự (Invite Member)** ở góc trên bên phải.
-4. Nhập địa chỉ email của nhân sự cần mời.
-5. Tại trường **Vai trò**, chọn cấp độ phù hợp:
-   - Chọn **Thành viên (Member)** cho nhân sự làm việc thông thường.
-   - Chọn **Quản trị viên (Admin)** nếu người này là phó ban hoặc người hỗ trợ quản trị hệ thống.
-   - Chọn **Khách (Guest)** nếu là cộng tác viên thời vụ hoặc đối tác ngoài.
-6. Bấm **Gửi lời mời**.
-
-#### Các bước tiếp nhận của Nhân sự mới:
-
-1. Mở hộp thư điện tử cá nhân, tìm email có tiêu đề: _"Lời mời tham gia không gian làm việc BWP Notebook"_.
-2. Nhấp vào nút **Chấp nhận lời mời (Accept Invitation)**.
-3. Trên trang kích hoạt tài khoản:
-   - Điền **Họ và tên đầy đủ**.
-   - Thiết lập **Mật khẩu cá nhân**. Hệ thống tự động kiểm tra độ mạnh mật khẩu; mật khẩu phải đạt chuẩn an toàn doanh nghiệp (tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường, chữ số và ký hiệu đặc biệt).
-4. Nhấn **Hoàn tất và Đăng nhập**. Hệ thống sẽ tự động đăng nhập và hiển thị giao diện tiếng Việt chuẩn hóa.
+1. Đăng nhập với tài khoản **Quản trị viên đơn vị (Unit Admin)** hoặc **SuperAdmin**.
+2. Truy cập **Cài đặt đơn vị (Workspace Settings)** $\rightarrow$ chọn mục **Thành viên (Members)**.
+3. Bấm vào nút **Tạo tài khoản trực tiếp (Create Member Directly)** bên cạnh nút mời email.
+4. Điền các trường thông tin trong hộp thoại:
+   - **Họ và tên hiển thị (Display Name - Bắt buộc):** Nhập họ tên đầy đủ bằng tiếng Việt (ví dụ: `Nguyễn Văn Hùng`).
+   - **Tên đăng nhập (Username):** Hệ thống **tự động sinh** dựa trên họ tên tiếng Việt (loại bỏ dấu, chuyển sang snake_case và thêm 4 số ngẫu nhiên, ví dụ: `nguyen_van_hung_4821`). Quản trị viên có thể bấm biểu tượng cây đũa phép **🪄** để tạo lại tên đăng nhập ngẫu nhiên khác hoặc tự gõ tên đăng nhập tùy chỉnh (chỉ gồm chữ thường, số, dấu gạch dưới, dài từ 3-30 ký tự).
+   - **Mật khẩu (Password):** Hệ thống **tự động sinh** mật khẩu ngẫu nhiên có độ an toàn cao (14 ký tự gồm chữ hoa, chữ thường, chữ số và ký hiệu đặc biệt). Quản trị viên có thể bấm biểu tượng chìa khóa **🔑** để sinh lại mật khẩu mới, bấm biểu tượng con mắt để xem/ẩn mật khẩu, hoặc tự nhập mật khẩu tùy ý (tối thiểu 6 ký tự).
+   - **Địa chỉ Email (Tùy chọn - Không bắt buộc):** Nếu nhân sự có email cá nhân/công việc, quản trị viên có thể nhập để nhân sự nhận thông báo; nếu để trống, hệ thống sẽ lưu `email = null` hoàn toàn hợp lệ mà không sinh bất kỳ email rác (dummy email) nào.
+   - **Vai trò đơn vị (Workspace Role):** Mặc định là **Thành viên (Member)**. Quản trị viên đơn vị có thể cấp vai trò Admin hoặc Guest; Quản trị viên phòng ban chỉ được phép cấp tối đa vai trò Member.
+   - **Phòng ban ban đầu (Notebook / Project):** Tùy chọn gán trực tiếp nhân sự vào một phòng ban cụ thể kèm vai trò trong phòng ban đó.
+5. Bấm nút **Tạo tài khoản**.
 
 <a id="c2-sec-4-2"></a>
 
-### 4.2. Phân bổ nhân sự vào từng Phòng ban / Notebook
+### 4.2. Thẻ bàn giao tài khoản & Sao chép 1 chạm (Credential Handover Card)
 
-Sau khi nhân sự đã gia nhập Công ty, Quản trị viên cần phân bổ nhân sự vào đúng các phòng ban nghiệp vụ:
+Ngay sau khi tài khoản được tạo thành công, hệ thống sẽ hiển thị **Thẻ bàn giao thông tin đăng nhập (Credential Handover Card)**:
+
+- **Bảo mật tối đa:** Mật khẩu gốc dạng văn bản thuần (plaintext) chỉ được trả về một lần duy nhất tại thời điểm khởi tạo này. Backend chỉ lưu trữ mã hash PBKDF2 không thể đảo ngược, đảm bảo không ai (kể cả quản trị viên kỹ thuật) có thể đọc lén mật khẩu sau khi đóng hộp thoại.
+- **Tính năng sao chép 1 chạm (1-Click Clipboard Copy):**
+  - Bấm nút **Sao chép toàn bộ thông tin** ở cuối thẻ: Hệ thống sẽ tự động tổng hợp toàn bộ thông tin tài khoản thành văn bản mẫu chuẩn hóa và đưa vào bộ nhớ tạm:
+    ```text
+    === THÔNG TIN BÀN GIAO TÀI KHOẢN ===
+    Họ và tên: Nguyễn Văn Hùng
+    Tên đăng nhập: nguyen_van_hung_4821
+    Mật khẩu: kF9#mP2$xL8!vQ
+    Vai trò đơn vị: Thành viên (Member)
+    Phòng ban: Phòng Kỹ Thuật & Bảo Trì
+    Vai trò phòng ban: Thành viên (Member)
+    Đường dẫn đăng nhập: http://192.168.3.168:18080
+    ====================================
+    ```
+  - Quản trị viên có thể dán ngay thông tin này vào tin nhắn Zalo, SMS, in phiếu bàn giao hoặc gửi cho nhân sự mới.
+- **Sao chép từng trường riêng lẻ:** Cạnh mỗi trường Tên đăng nhập, Mật khẩu và Đường dẫn đăng nhập đều có biểu tượng sao chép riêng biệt để tiện thao tác.
+
+<a id="c2-sec-4-3"></a>
+
+### 4.3. Đăng nhập linh hoạt bằng Định danh kép (Username hoặc Email)
+
+Màn hình đăng nhập của BWP Notebook được nâng cấp toàn diện với cơ chế **Định danh kép (Dual-Identifier Authentication)**:
+
+- **Ô nhập liệu đa năng duy nhất:** Tiêu đề ô đăng nhập hiển thị: **"Tên đăng nhập hoặc Email"**.
+- **Cơ chế nhận diện thông minh tự động:**
+  - Nếu chuỗi nhập vào **có chứa ký tự `@`**: Hệ thống nhận diện đây là địa chỉ email, tự động kiểm tra định dạng email và tìm kiếm tài khoản theo email tương ứng.
+  - Nếu chuỗi nhập vào **không chứa ký tự `@`**: Hệ thống nhận diện đây là tên đăng nhập (Username), chuẩn hóa và tra cứu trực tiếp theo tài khoản tương ứng.
+- **Đăng nhập liền mạch cho tài khoản không email:** Nhân sự được tạo tài khoản trực tiếp chỉ cần nhập Username đã được cấp (ví dụ: `nguyen_van_hung_4821`) cùng mật khẩu bàn giao là có thể đăng nhập ngay lập tức.
+- **Toàn vẹn dữ liệu:** Tuyệt đối không sinh email giả lập (shadow dummy email), giữ sạch cơ sở dữ liệu và đảm bảo hoạt động an toàn lâu dài.
+
+<a id="c2-sec-4-4"></a>
+
+### 4.4. Quy trình mời nhân sự qua email (Email Invitation)
+
+Đối với khối văn phòng có hộp thư điện tử doanh nghiệp, Quản trị viên vẫn có thể sử dụng quy trình mời qua email truyền thống:
+
+1. Tại màn hình **Thành viên**, bấm nút **Mời nhân sự (Invite Member)**.
+2. Nhập địa chỉ email của nhân sự cần mời và chọn vai trò.
+3. Bấm **Gửi lời mời**: Hệ thống sẽ tạo liên kết kích hoạt an toàn có thời hạn 72 giờ và gửi email tới hòm thư của nhân sự.
+4. Nhân sự mở email, nhấp liên kết mời, thiết lập Họ tên và Mật khẩu cá nhân để hoàn tất kích hoạt.
+
+<a id="c2-sec-4-5"></a>
+
+### 4.5. Phân bổ nhân sự vào từng Phòng ban / Notebook
+
+Sau khi nhân sự đã có tài khoản trong đơn vị, Quản trị viên phân bổ nhân sự vào các phòng ban nghiệp vụ:
 
 1. Nhấp vào tên **Phòng ban / Notebook** cần cấu hình (ví dụ: _Notebook Kỹ Thuật_).
 2. Chọn **Cài đặt phòng ban (Project Settings)** $\rightarrow$ mục **Thành viên (Members)**.
 3. Bấm **Thêm thành viên (Add Member)**.
-4. Chọn tên nhân sự từ danh sách danh bạ công ty, thiết lập vai trò trong phòng ban đó rồi nhấn **Lưu**.
-5. Ngay lập tức, nhân sự sẽ nhìn thấy sổ tay này trên thanh điều hướng của mình và có thể bắt đầu tiếp nhận công việc.
+4. Chọn tên nhân sự từ danh sách danh bạ công ty, thiết lập vai trò nội bộ rồi nhấn **Lưu**.
+5. Nhân sự sẽ nhìn thấy sổ tay này trên thanh điều hướng của mình và có thể bắt đầu tác nghiệp.
 
-<a id="c2-sec-4-3"></a>
+<a id="c2-sec-4-6"></a>
 
-### 4.3. Quản lý phiên đăng nhập an toàn (Session & Token Management)
+### 4.6. Quản lý phiên đăng nhập an toàn (Session & Token Management)
 
 Để ngăn chặn nguy cơ đánh cắp phiên và truy cập trái phép, BWP Notebook áp dụng cơ chế quản lý phiên tiêu chuẩn doanh nghiệp:
 
@@ -950,33 +1028,41 @@ graph LR
 
 <a id="c3-sec-2-2"></a>
 
-### 2.2. Quy trình khởi tạo Phòng ban / Notebook mới
+### 2.2. Quy trình khởi tạo Phòng ban / Notebook mới (Đặc quyền SuperAdmin)
 
-Để tạo một sổ tay phòng ban mới, Quản trị viên thực hiện theo quy trình 5 bước sau:
+> [!IMPORTANT]
+> **Rào chắn bảo vệ cấp cao (God Mode Guard):**  
+> Việc khởi tạo Phòng ban / Sổ tay công việc (Notebook) mới là **đặc quyền duy nhất của Quản trị viên cấp cao (SuperAdmin - Tier 1)**. Quản trị viên đơn vị (Unit Admin) và Quản trị viên phòng ban (Department Admin) **không có quyền** tự ý khởi tạo thêm phòng ban nhằm bảo đảm tính nhất quán trong quy hoạch cơ cấu tổ chức doanh nghiệp.
+>
+> - **Trên giao diện (Frontend):** Nút tạo phòng ban **(+)** trên thanh điều hướng, các nút tạo trong danh sách và lệnh tạo phòng ban trong bảng điều khiển Power-K (`Cmd/Ctrl + K`) tự động ẩn đối với người dùng không phải SuperAdmin.
+> - **Tại backend API:** Endpoint `POST /api/workspaces/{slug}/projects/` được bảo vệ bằng guard `is_super_admin`, lập tức từ chối mọi yêu cầu từ Unit Admin với mã lỗi `HTTP 403 Forbidden`: _"Chỉ Quản trị viên cấp cao (God Mode) mới có quyền tạo phòng ban mới."_
+
+Khi doanh nghiệp có nhu cầu mở thêm phòng ban mới, Quản trị viên đơn vị gửi đề xuất cơ cấu để **SuperAdmin** trực tiếp thực hiện khởi tạo theo quy trình 5 bước sau:
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as Quản Trị Viên
+    actor SA as SuperAdmin (God Mode)
     participant UI as Giao Diện Web
     participant API as Django REST API
     participant DB as PostgreSQL (plane-db)
 
-    Admin->>UI: Bấm "Tạo phòng ban / Notebook" (+ Mới)
-    UI-->>Admin: Hiển thị hộp thoại khởi tạo (Modal)
-    Admin->>UI: Điền Tên, Mã nhận diện, Mô tả, Quyền riêng tư
-    Admin->>UI: Nhấn "Tạo phòng ban"
-    UI->>API: POST /api/workspaces/{slug}/projects/
+    SA->>UI: Bấm "Tạo phòng ban / Notebook" (+ Mới)
+    UI-->>SA: Hiển thị hộp thoại khởi tạo (Modal)
+    SA->>UI: Điền Tên, Mã nhận diện, Mô tả, Quyền riêng tư
+    SA->>UI: Nhấn "Tạo phòng ban"
+    UI->>API: POST /api/workspaces/{slug}/projects/ (Guard: is_super_admin)
     API->>DB: Ghi bản ghi Project & Khởi tạo 5 nhóm Workflow States mặc định
     DB-->>API: Tạo thành công Project ID
     API-->>UI: Phản hồi HTTP 201 Created
-    UI-->>Admin: Chuyển hướng tới Sổ tay phòng ban mới tạo
+    UI-->>SA: Chuyển hướng tới Sổ tay phòng ban mới tạo
 ```
 
-#### Hướng dẫn thao tác chi tiết:
+#### Hướng dẫn thao tác chi tiết (Dành cho SuperAdmin):
 
 1. **Bước 1: Mở giao diện tạo mới**
-   - Tại thanh điều hướng bên trái, rê chuột vào tiêu đề mục **Phòng ban / Notebook** và bấm vào nút dấu cộng **(+)** hoặc chọn nút **Tạo phòng ban mới (Create Project)** trên màn hình Tổng quan.
+   - Đăng nhập với tài khoản **SuperAdmin**.
+   - Tại thanh điều hướng bên trái, rê chuột vào tiêu đề mục **Phòng ban / Notebook** và bấm vào nút dấu cộng **(+)** hoặc nhấn tổ hợp `Cmd/Ctrl + K` gõ _"Tạo phòng ban"_.
 2. **Bước 2: Thiết lập Tên và Mã nhận diện**
    - **Tên phòng ban (Project Name):** Đặt tên rõ ràng, chuẩn tiếng Việt (ví dụ: _Phòng Kỹ Thuật & Bảo Trì_, _Tổ Vận Hành Tòa Nhà_).
    - **Mã nhận diện (Project Identifier / Key):** Nhập chuỗi viết tắt từ 2 đến 6 ký tự in hoa không dấu (ví dụ: `KT`, `VH`, `KTTC`). Hệ thống sẽ tự động kiểm tra tính duy nhất trong đơn vị.
@@ -985,24 +1071,35 @@ sequenceDiagram
    - **Biểu tượng (Icon / Emoji) & Màu sắc:** Chọn biểu tượng đại diện (ví dụ: biểu tượng cờ lê 🔧 cho Kỹ thuật, biểu tượng tòa nhà 🏢 cho Vận hành) và tông màu nhận diện để phân biệt nhanh trên thanh menu.
 4. **Bước 4: Cấu hình Chế độ hiển thị & Quyền riêng tư (Network / Visibility)**
    - **Công khai nội bộ (Public to Workspace):** Mọi thành viên chính thức trong công ty đều có thể nhìn thấy phòng ban này và tự do tham gia xem thông tin nếu cần phối hợp liên phòng ban.
-   - **Riêng tư / Bảo mật (Secret / Private):** **Khuyến nghị sử dụng** cho các phòng ban nhạy cảm (Kế toán, Ban Giám đốc, Nhân sự). Chỉ những nhân sự được Quản trị viên thêm đích danh vào danh sách thành viên mới có thể nhìn thấy và truy cập vào Notebook này.
+   - **Riêng tư / Bảo mật (Secret / Private):** **Khuyến nghị sử dụng** cho các phòng ban nhạy cảm (Kế toán, Ban Giám đốc, Nhân sự). Chỉ những nhân sự được phân quyền đích danh mới có thể nhìn thấy và truy cập vào Notebook này.
 5. **Bước 5: Hoàn tất khởi tạo**
    - Bấm nút **Tạo phòng ban**. Hệ thống sẽ tự động khởi tạo sổ tay cùng bộ trạng thái quy trình mặc định (_Chưa bắt đầu, Chờ xử lý, Đang thực hiện, Hoàn thành, Đã hủy_).
 
 <a id="c3-sec-2-3"></a>
 
-### 2.3. Quản lý nhân sự và phân quyền theo từng Notebook
+### 2.3. Quản lý nhân sự và phân quyền theo từng Notebook (Chỉ định Lead bởi SuperAdmin)
 
-Sau khi khởi tạo Notebook, Quản trị viên cần phân bổ đúng nhân sự vào phòng ban:
+> [!WARNING]
+> **Rào chắn Chỉ định Trưởng bộ phận (Department Lead Guard):**  
+> Việc chỉ định hoặc thay đổi nhân sự giữ vị trí **Trưởng bộ phận (Project / Department Lead)** là **đặc quyền duy nhất của SuperAdmin (God Mode)**.
+>
+> - Quản trị viên đơn vị (Unit Admin) có quyền thêm hoặc bớt nhân sự tác nghiệp trong phòng nhưng **không được phép tự ý thay đổi Trưởng bộ phận**.
+> - Trên giao diện **Cài đặt phòng ban (Project Settings)**, trường chọn Trưởng bộ phận (Lead Selector) sẽ tự động bị vô hiệu hóa (disabled) kèm chú thích hướng dẫn.
+> - Tại backend API, lệnh `PATCH /api/workspaces/{slug}/projects/{pk}/` sẽ trả về lỗi `HTTP 403 Forbidden`: _"Chỉ Quản trị viên cấp cao (God Mode) mới có quyền chỉ định Trưởng bộ phận."_ nếu người thực hiện không phải SuperAdmin.
 
-1. Truy cập vào Notebook vừa tạo $\rightarrow$ Chọn **Cài đặt phòng ban (Project Settings)** tại góc dưới bên trái thanh menu.
-2. Chọn thẻ **Thành viên (Members)**.
-3. Bấm nút **Thêm thành viên (Add Member)** ở góc trên bên phải.
-4. Chọn nhân sự từ danh bạ công ty và chỉ định vai trò nội bộ trong phòng ban:
-   - **Trưởng bộ phận / Quản lý (Project Admin / Lead - Cấp 20):** Có toàn quyền điều chỉnh cấu hình phòng ban, tùy chỉnh quy trình trạng thái, thêm/bớt nhân viên và giao các _Công việc khác (Other tasks)_.
-   - **Nhân viên tác nghiệp (Project Member - Cấp 15):** Nhận việc, tự tạo _Công việc vận hành (Operational tasks)_, cập nhật tiến độ, số phòng và trao đổi bình luận.
-   - **Cộng tác viên / Khách (Project Guest - Cấp 5):** Chỉ được xem hoặc bình luận trên các công việc được giao trực tiếp.
-5. Bấm **Xác nhận**. Nhân sự sẽ thấy phòng ban này xuất hiện trên thanh điều hướng làm việc của họ ngay tức thì.
+#### Quy trình phân bổ nhân sự và chỉ định vai trò trong Notebook:
+
+1. **Chỉ định Trưởng bộ phận ban đầu:**
+   - **SuperAdmin** truy cập vào Notebook $\rightarrow$ **Cài đặt phòng ban (Project Settings)** $\rightarrow$ chọn mục **Mặc định thành viên**.
+   - Tại trường **Trưởng bộ phận (Lead)**, chọn nhân sự chỉ huy từ danh sách nhân sự của công ty và nhấn **Lưu**.
+2. **Phân bổ nhân sự tác nghiệp:**
+   - Quản trị viên đơn vị hoặc Quản trị viên phòng ban truy cập thẻ **Thành viên (Members)** của Notebook.
+   - Bấm nút **Thêm thành viên (Add Member)** ở góc trên bên phải.
+   - Chọn nhân sự từ danh bạ công ty và chỉ định vai trò nội bộ trong phòng ban:
+     - **Quản trị viên phòng ban (Project Admin - Cấp 20):** Quản lý quy trình trạng thái, thêm/bớt nhân viên trong phòng, tạo tài khoản trực tiếp gán vào phòng ban mình quản lý.
+     - **Nhân viên tác nghiệp (Project Member - Cấp 15):** Nhận việc, tự tạo _Công việc vận hành (Operational tasks)_, cập nhật tiến độ, số phòng và trao đổi bình luận.
+     - **Cộng tác viên / Khách (Project Guest - Cấp 5):** Chỉ được xem hoặc bình luận trên các công việc được giao trực tiếp.
+   - Bấm **Xác nhận**. Nhân sự sẽ thấy phòng ban này xuất hiện trên thanh điều hướng làm việc của họ ngay tức thì.
 
 ---
 
