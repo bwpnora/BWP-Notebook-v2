@@ -26,6 +26,7 @@ from plane.db.models import (
     IssueAssignee,
     IssueSubscriber,
     IssueSupporter,
+    IssueType,
     IssueLabel,
     Label,
     CycleIssue,
@@ -88,6 +89,9 @@ class IssueCreateSerializer(BaseSerializer):
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent", queryset=Issue.objects.all(), required=False, allow_null=True
     )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
+    )
     label_ids = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
@@ -122,12 +126,13 @@ class IssueCreateSerializer(BaseSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        assignee_ids = self.initial_data.get("assignee_ids")
+        assignee_ids = self.initial_data.get("assignee_ids") if self.initial_data else None
         data["assignee_ids"] = assignee_ids if assignee_ids else []
-        label_ids = self.initial_data.get("label_ids")
+        label_ids = self.initial_data.get("label_ids") if self.initial_data else None
         data["label_ids"] = label_ids if label_ids else []
-        supporter_ids = self.initial_data.get("supporter_ids")
+        supporter_ids = self.initial_data.get("supporter_ids") if self.initial_data else None
         data["supporter_ids"] = supporter_ids if supporter_ids else []
+        data["type_id"] = str(instance.type_id) if getattr(instance, "type_id", None) else None
         return data
 
     def validate(self, attrs):
