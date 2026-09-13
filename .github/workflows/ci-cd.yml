@@ -128,8 +128,12 @@ jobs:
           git clean -fd custom_frontend/build/client/
           echo "Running migrator if needed..."
           docker compose -f docker-compose.prod.yml up -d migrator
-          echo "Restarting web and backend containers..."
-          docker compose -f docker-compose.prod.yml restart web api worker beat-worker
+          echo "Recreating backend, web and proxy containers with updated volume mounts..."
+          docker compose -f docker-compose.prod.yml up -d --force-recreate web api worker beat-worker proxy
+          echo "Waiting for API service to stabilize..."
+          sleep 5
+          echo "Verifying DirectMemberCreateEndpoint route resolution in API container..."
+          docker compose -f docker-compose.prod.yml exec -T api python manage.py shell -c "from django.urls import resolve; match = resolve('/api/workspaces/it/members/direct-create/'); print('SUCCESS: Resolved direct-create to', match.func.view_class.__name__)"
           echo "Stack status:"
           docker compose -f docker-compose.prod.yml ps
 
