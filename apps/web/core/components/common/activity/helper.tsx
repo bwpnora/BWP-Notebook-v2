@@ -77,6 +77,12 @@ export const iconsMap: ActivityIconMap = {
   issue_views_view: Layers,
   page_view: FileText,
   intake_view: IntakeIcon,
+  // BWP-Notebook-v2 activity icons - Code by IT Leon
+  supporters: MembersPropertyIcon,
+  room: Hash,
+  notes: FileText,
+  type_id: Layers,
+  type: Layers,
 };
 
 export const messages = (activity: TProjectActivity): { message: string | ReactNode; customUserName?: string } => {
@@ -284,6 +290,60 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
     case "is_issue_type_enabled":
       return {
         message: <>{getBooleanActionText(newValue)} work item types</>,
+      };
+    // BWP-Notebook-v2 domain activity messages - Code by IT Leon
+    case "supporters":
+      return {
+        message: (
+          <>
+            {verb === "removed" ? "đã xóa người hỗ trợ" : "đã thêm người hỗ trợ"}{" "}
+            <span className="font-medium text-primary">{newValue || oldValue}</span>
+          </>
+        ),
+      };
+    case "room":
+      return {
+        message: (
+          <>
+            {newValue ? (
+              <>
+                đã cập nhật số phòng thành <span className="font-medium text-primary">{newValue}</span>
+              </>
+            ) : (
+              "đã xóa số phòng"
+            )}
+          </>
+        ),
+      };
+    case "notes":
+      return {
+        message: (
+          <>
+            {newValue ? (
+              <>
+                đã cập nhật ghi chú thành <span className="font-medium text-primary">{newValue}</span>
+              </>
+            ) : (
+              "đã xóa ghi chú"
+            )}
+          </>
+        ),
+      };
+    case "type_id":
+    case "type":
+      return {
+        message: (
+          <>
+            đã cập nhật loại công việc thành{" "}
+            <span className="font-medium text-primary">
+              {newValue === "other"
+                ? "Công việc khác"
+                : newValue === "operational"
+                  ? "Công việc vận hành"
+                  : newValue || "Công việc vận hành"}
+            </span>
+          </>
+        ),
       };
     default:
       return {

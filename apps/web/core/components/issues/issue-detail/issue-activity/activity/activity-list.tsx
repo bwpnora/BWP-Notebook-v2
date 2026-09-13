@@ -30,6 +30,11 @@ import {
   IssueAttachmentActivity,
   IssueArchivedAtActivity,
   IssueInboxActivity,
+  // BWP-Notebook-v2 activity actions - Code by IT Leon
+  IssueSupporterActivity,
+  IssueRoomActivity,
+  IssueNotesActivity,
+  IssueTypeActivity,
 } from "./actions";
 
 type TIssueActivityItem = {
@@ -91,6 +96,16 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
     case "intake":
     case "inbox":
       return <IssueInboxActivity {...componentDefaultProps} />;
+    // BWP-Notebook-v2 activity cases - Code by IT Leon
+    case "supporters":
+      return <IssueSupporterActivity {...componentDefaultProps} showIssue={false} />;
+    case "room":
+      return <IssueRoomActivity {...componentDefaultProps} showIssue={false} />;
+    case "notes":
+      return <IssueNotesActivity {...componentDefaultProps} showIssue={false} />;
+    case "type":
+    case "type_id":
+      return <IssueTypeActivity {...componentDefaultProps} showIssue={false} />;
     default:
       return null;
   }

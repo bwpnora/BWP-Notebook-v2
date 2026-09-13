@@ -23,6 +23,11 @@ export * from "./attachment";
 export * from "./archived-at";
 export * from "./inbox";
 export * from "./label-activity-chip";
+// BWP-Notebook-v2 activity actions - Code by IT Leon
+export * from "./supporter";
+export * from "./room";
+export * from "./notes";
+export * from "./type";
 
 // helpers
 export * from "./helpers/activity-block";
