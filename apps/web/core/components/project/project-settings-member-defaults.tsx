@@ -36,7 +36,7 @@ type TDefaultSettingItemProps = {
 
 function DefaultSettingItem({ title, description, children }: TDefaultSettingItemProps) {
   return (
-    <div className="flex items-center justify-between gap-x-2">
+    <div className="flex items-start justify-between gap-x-2">
       <div className="flex flex-col gap-0.5">
         <h4 className="text-13 font-medium">{title}</h4>
         <p className="text-11 text-tertiary">{description}</p>
@@ -58,7 +58,7 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, isSuperAdmin } = useUserPermissions();
 
   const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
   // derived values
@@ -99,61 +99,66 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       ...formData,
     });
 
-    await updateProject(workspaceSlug, projectId, {
-      default_assignee:
-        formData.default_assignee === "none"
-          ? null
-          : (formData.default_assignee ?? currentProjectDetails?.default_assignee),
-      project_lead:
-        formData.project_lead === "none" ? null : (formData.project_lead ?? currentProjectDetails?.project_lead),
-    })
-      .then(() => {
-        setToast({
-          title: `${t("success")}!`,
-          type: TOAST_TYPE.SUCCESS,
-          message: t("project_settings.general.toast.success"),
-        });
-      })
-      .catch((err) => {
-        console.error(err);
+    try {
+      await updateProject(workspaceSlug, projectId, {
+        default_assignee:
+          formData.default_assignee === "none"
+            ? null
+            : (formData.default_assignee ?? currentProjectDetails?.default_assignee),
+        project_lead:
+          formData.project_lead === "none" ? null : (formData.project_lead ?? currentProjectDetails?.project_lead),
       });
+      setToast({
+        title: `${t("success")}!`,
+        type: TOAST_TYPE.SUCCESS,
+        message: t("project_settings.general.toast.success"),
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const toggleGuestViewAllIssues = async (value: boolean) => {
     if (!workspaceSlug || !projectId) return;
 
-    updateProject(workspaceSlug, projectId, {
-      guest_view_all_features: value,
-    })
-      .then(() => {
-        setToast({
-          title: `${t("success")}!`,
-          type: TOAST_TYPE.SUCCESS,
-          message: t("project_settings.general.toast.success"),
-        });
-      })
-      .catch((err) => {
-        console.error(err);
+    try {
+      await updateProject(workspaceSlug, projectId, {
+        guest_view_all_features: value,
       });
+      setToast({
+        title: `${t("success")}!`,
+        type: TOAST_TYPE.SUCCESS,
+        message: t("project_settings.general.toast.success"),
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
     <div className="my-6 flex flex-col gap-y-6">
       <DefaultSettingItem title="Project Lead" description="Select the project lead for the project.">
         {currentProjectDetails ? (
-          <Controller
-            control={control}
-            name="project_lead"
-            render={({ field: { value } }) => (
-              <MemberSelect
-                value={value}
-                onChange={(val: string) => {
-                  submitChanges({ project_lead: val });
-                }}
-                isDisabled={!isAdmin}
-              />
+          <div className="flex flex-col gap-1.5">
+            <Controller
+              control={control}
+              name="project_lead"
+              render={({ field: { value } }) => (
+                <MemberSelect
+                  value={value}
+                  onChange={(val: string) => {
+                    submitChanges({ project_lead: val });
+                  }}
+                  isDisabled={!isSuperAdmin}
+                />
+              )}
+            />
+            {!isSuperAdmin && (
+              <span className="text-amber-500 text-11">
+                Chỉ Quản trị viên cấp cao (God Mode) mới có quyền chỉ định hoặc thay đổi Trưởng bộ phận.
+              </span>
             )}
-          />
+          </div>
         ) : (
           <Loader className="h-9 w-full">
             <Loader.Item width="100%" height="100%" />

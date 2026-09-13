@@ -61,6 +61,13 @@ class UserSerializer(BaseSerializer):
 
 
 class UserMeSerializer(BaseSerializer):
+    is_superuser = serializers.BooleanField(read_only=True)
+    is_super_admin = serializers.SerializerMethodField()
+
+    def get_is_super_admin(self, obj):
+        from plane.app.permissions.base import is_super_admin
+        return is_super_admin(obj)
+
     class Meta:
         model = User
         fields = [
@@ -80,9 +87,10 @@ class UserMeSerializer(BaseSerializer):
             "user_timezone",
             "username",
             "is_password_autoset",
-            "is_email_verified",
             "last_login_medium",
             "last_login_time",
+            "is_superuser",
+            "is_super_admin",
         ]
         read_only_fields = fields
 

@@ -12,7 +12,7 @@ import { useParams, usePathname } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
@@ -44,7 +44,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
   // store hooks
   const { t } = useTranslation();
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
+  const { isSuperAdmin } = useUserPermissions();
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
   const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar } = useAppTheme();
 
@@ -52,12 +52,6 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
   // router params
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
-
-  // auth
-  const isAuthorizedUser = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   // Compute limited projects for main sidebar
   const displayedProjects = projectPreferences.showLimitedProjects
@@ -68,13 +62,12 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
   const hasMoreProjects =
     projectPreferences.showLimitedProjects && joinedProjects.length > projectPreferences.limitedProjectsCount;
 
-  const handleCopyText = (projectId: string) => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("link_copied"),
-        message: t("project_link_copied_to_clipboard"),
-      });
+  const handleCopyText = async (projectId: string) => {
+    await copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`);
+    setToast({
+      type: TOAST_TYPE.SUCCESS,
+      title: t("link_copied"),
+      message: t("project_link_copied_to_clipboard"),
     });
   };
 
@@ -186,7 +179,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                 <span className="text-13 font-semibold">{t("projects")}</span>
               </Disclosure.Button>
               <div className="flex items-center gap-1">
-                {isAuthorizedUser && (
+                {isSuperAdmin && (
                   <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                     <IconButton
                       variant="ghost"
@@ -229,8 +222,8 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
             >
               {loader === "init-loader" && (
                 <Loader className="w-full space-y-1.5">
-                  {Array.from({ length: 4 }).map((_, index) => (
-                    <Loader.Item key={index} height="28px" />
+                  {["loader-1", "loader-2", "loader-3", "loader-4"].map((key) => (
+                    <Loader.Item key={key} height="28px" />
                   ))}
                 </Loader>
               )}
@@ -274,7 +267,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
           </Disclosure>
         </>
 
-        {isAuthorizedUser && joinedProjects?.length === 0 && (
+        {isSuperAdmin && joinedProjects?.length === 0 && (
           <button
             type="button"
             data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}

@@ -6,7 +6,6 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { ContentWrapper } from "@plane/ui";
@@ -40,17 +39,14 @@ export const ProjectCardList = observer(function ProjectCardList(props: TProject
     getProjectById,
   } = useProject();
   const { currentWorkspaceDisplayFilters, currentWorkspaceFilters } = useProjectFilter();
-  const { allowPermissions } = useUserPermissions();
+  const { isSuperAdmin } = useUserPermissions();
 
   // derived values
   const workspaceProjectIds = totalProjectIdsProps ?? storeWorkspaceProjectIds;
   const filteredProjectIds = filteredProjectIdsProps ?? storeFilteredProjectIds;
 
   // permissions
-  const canPerformEmptyStateActions = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canPerformEmptyStateActions = Boolean(isSuperAdmin);
 
   if (!filteredProjectIds || !workspaceProjectIds || loader === "init-loader" || fetchStatus !== "complete")
     return <ProjectsLoader />;

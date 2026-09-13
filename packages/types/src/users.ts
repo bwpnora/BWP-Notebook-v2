@@ -50,6 +50,8 @@ export interface IUser extends IUserLite {
   username: string;
   last_login_medium: TLoginMediums;
   theme: IUserTheme;
+  is_superuser?: boolean;
+  is_super_admin?: boolean;
 }
 
 export interface IUserAccount {

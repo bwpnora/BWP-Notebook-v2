@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // i18n
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
@@ -28,14 +28,9 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
+  const { isSuperAdmin } = useUserPermissions();
 
   const pathname = usePathname();
-  // auth
-  const isAuthorizedUser = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
   const isArchived = pathname.includes("/archives");
 
   return (
@@ -58,7 +53,7 @@ export const ProjectsBaseHeader = observer(function ProjectsBaseHeader() {
         <div className="hidden md:flex">
           <HeaderFilters />
         </div>
-        {isAuthorizedUser && !isArchived ? (
+        {isSuperAdmin && !isArchived ? (
           <Button
             variant="primary"
             size="lg"

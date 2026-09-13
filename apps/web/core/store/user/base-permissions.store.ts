@@ -5,7 +5,7 @@
  */
 
 import { unset, set } from "lodash-es";
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import type { TUserPermissions, TUserPermissionsLevel } from "@plane/constants";
@@ -30,6 +30,7 @@ type ETempUserRole = TUserPermissions | EUserWorkspaceRoles | EUserProjectRoles;
 
 export interface IBaseUserPermissionStore {
   loader: boolean;
+  isSuperAdmin: boolean;
   // observables
   workspaceUserInfo: Record<string, IWorkspaceMemberMe>; // workspaceSlug -> IWorkspaceMemberMe
   projectUserInfo: Record<string, Record<string, TProjectMembership>>; // workspaceSlug -> projectId -> TProjectMembership
@@ -80,6 +81,7 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
       projectUserInfo: observable,
       workspaceProjectsPermissions: observable,
       // computed
+      isSuperAdmin: computed,
       // actions
       fetchUserWorkspaceInfo: action,
       leaveWorkspace: action,
@@ -88,6 +90,11 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
       joinProject: action,
       leaveProject: action,
     });
+  }
+
+  get isSuperAdmin(): boolean {
+    const user = this.store.user.data;
+    return Boolean(user?.is_super_admin || user?.is_superuser);
   }
 
   // computed helpers

@@ -52,6 +52,7 @@ export interface IUserStore {
   reset: () => void;
   signOut: () => Promise<void>;
   // computed
+  isSuperAdmin: boolean;
   canPerformAnyCreateAction: boolean;
   projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }
@@ -100,6 +101,7 @@ export class UserStore implements IUserStore {
       reset: action,
       signOut: action,
       // computed
+      isSuperAdmin: computed,
       canPerformAnyCreateAction: computed,
       projectsWithCreatePermissions: computed,
     });
@@ -294,6 +296,14 @@ export class UserStore implements IUserStore {
    */
   get projectsWithCreatePermissions() {
     return this.fetchProjectsWithCreatePermissions();
+  }
+
+  /**
+   * @description returns true if user is super admin
+   * @returns {boolean}
+   */
+  get isSuperAdmin(): boolean {
+    return Boolean(this.data?.is_super_admin || this.data?.is_superuser);
   }
 
   /**

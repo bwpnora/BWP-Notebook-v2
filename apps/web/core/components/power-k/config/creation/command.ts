@@ -6,7 +6,7 @@
 
 import { FileText, FolderPlus, Layers, SquarePlus } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissionsLevel } from "@plane/constants";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
 // components
 import { EUserProjectRoles } from "@plane/types";
@@ -34,6 +34,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
   const { config } = useInstance();
   const {
     canPerformAnyCreateAction,
+    isSuperAdmin,
     permission: { allowPermissions },
   } = useUser();
   const { workspaceProjectIds, getPartialProjectById } = useProject();
@@ -47,10 +48,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
   } = useCommandPalette();
   // derived values
   const canCreateWorkItem = canPerformAnyCreateAction && workspaceProjectIds && workspaceProjectIds.length > 0;
-  const canCreateProject = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canCreateProject = Boolean(isSuperAdmin);
   const hasProjectMemberLevelPermissions = (ctx: TPowerKContext) =>
     allowPermissions(
       [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
