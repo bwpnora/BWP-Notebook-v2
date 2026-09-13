@@ -168,6 +168,16 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         null=True,
         blank=True,
     )
+    # BWP-Notebook-v2 extensions - Code by IT Leon
+    supporters = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name="supported_issues",
+        through="IssueSupporter",
+        through_fields=("issue", "supporter"),
+    )
+    room = models.IntegerField(null=True, blank=True, verbose_name="Room Number")
+    notes = models.TextField(blank=True, null=True, verbose_name="Task Notes")
 
     issue_objects = IssueManager()
 
@@ -366,6 +376,33 @@ class IssueAssignee(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.assignee.email}"
+
+
+# BWP-Notebook-v2 extension - Code by IT Leon
+class IssueSupporter(ProjectBaseModel):
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_supporter")
+    supporter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_supporter",
+    )
+
+    class Meta:
+        unique_together = ["issue", "supporter", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["issue", "supporter"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="issue_supporter_unique_issue_supporter_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Issue Supporter"
+        verbose_name_plural = "Issue Supporters"
+        db_table = "issue_supporters"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.supporter.email}"
 
 
 class IssueLink(ProjectBaseModel):
