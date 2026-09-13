@@ -28,6 +28,33 @@ Meet [Plane](https://plane.so/), an open-source project management tool to track
 
 > Plane is evolving every day. Your suggestions, ideas, and reported bugs help us immensely. Do not hesitate to join in the conversation on [Forum](https://forum.plane.so) or raise a GitHub issue. We read everything and respond to most.
 
+## 📖 Tài liệu Hướng dẫn Sử dụng & Vận hành (User Guide)
+
+> **Bản phát hành Doanh nghiệp BWP Notebook 2.0**  
+> **Kiến trúc & Phát triển:** Code & Architecture by IT Leon (BWP Engineering Team)  
+> **Bản địa hóa:** Việt hóa 100% giao diện, quy trình tác nghiệp thực tiễn và nhật ký kiểm toán.
+
+Hệ thống BWP Notebook được xây dựng và tùy biến chuyên sâu từ nền tảng Plane CE (v1.4.2) nhằm tối ưu hóa cho mô hình quản trị công việc và vận hành doanh nghiệp Việt Nam.
+
+Toàn bộ hệ thống tài liệu hướng dẫn vận hành, quản trị phân quyền và khắc phục sự cố đã được biên soạn chi tiết:
+
+- **[Sổ Tay Vận Hành Hợp Nhất (USER_GUIDE_VI.md)](./USER_GUIDE_VI.md)**: Cẩm nang hoàn chỉnh 5 chương bao gồm ma trận phân quyền RBAC, sơ đồ quy trình Mermaid, kịch bản sao lưu tự động và hướng dẫn xử lý sự cố.
+- **Thư mục Hướng dẫn Chuyên đề (`docs/user-guide/`)**:
+  - [Chương 1: Tổng Quan và Khởi Động Hệ Thống (`docs/user-guide/01-TONG-QUAN-VA-KHOI-DONG.md`)](./docs/user-guide/01-TONG-QUAN-VA-KHOI-DONG.md)
+  - [Chương 2: Quản Lý Tài Khoản và Phân Quyền RBAC (`docs/user-guide/02-TAI-KHOAN-VA-PHAN-QUYEN-RBAC.md`)](./docs/user-guide/02-TAI-KHOAN-VA-PHAN-QUYEN-RBAC.md)
+  - [Chương 3: Quản Lý Công Ty và Sổ Tay Phòng Ban (`docs/user-guide/03-QUAN-LY-CONG-TY-VA-NOTEBOOK.md`)](./docs/user-guide/03-QUAN-LY-CONG-TY-VA-NOTEBOOK.md)
+  - [Chương 4: Quy Trình Xử Lý và Điều Hành Công Việc (`docs/user-guide/04-QUY-TRINH-XU-LY-CONG-VIEC.md`)](./docs/user-guide/04-QUY-TRINH-XU-LY-CONG-VIEC.md)
+  - [Chương 5: Nhật Ký Hoạt Động, Kiểm Toán và Quản Trị Hệ Thống (`docs/user-guide/05-NHAT-KY-HOAT-DONG-VA-QUAN-TRI.md`)](./docs/user-guide/05-NHAT-KY-HOAT-DONG-VA-QUAN-TRI.md)
+
+### ✨ Tính Năng Doanh Nghiệp Tùy Biến (Custom Enterprise Capabilities)
+
+- **Đa nhân sự hỗ trợ (`Supporters`):** Hỗ trợ phân bổ một người phụ trách chính kèm danh sách nhiều kỹ sư/nhân viên phối hợp giải quyết sự cố tại hiện trường.
+- **Định danh số phòng & khu vực (`Room`):** Gắn mã phòng, căn hộ hoặc vị trí mặt bằng vào từng công việc, hỗ trợ tra cứu lịch sử sự cố theo phòng tức thì.
+- **Ghi chú nội bộ bảo mật (`Notes`):** Cho phép ghi lại các hướng dẫn kỹ thuật, dặn dò ca trực bảo mật giữa các nhân sự xử lý.
+- **Dấu vết kiểm toán tiếng Việt (`Activity & Audit Log`):** Toàn bộ lịch sử thêm bớt nhân sự, cập nhật số phòng, chuyển giao công việc được ghi nhận tự động bằng tiếng Việt chuẩn mực.
+- **Mô hình Bảng tính lưới (`Spreadsheet-first`):** Giao diện bảng làm việc trực quan tương tự Excel, hỗ trợ chỉnh sửa nhanh trực tiếp tại ô (Inline Edit).
+- **Phân vùng dữ liệu phòng ban (`Department Partitioning`):** Cô lập thông tin an toàn giữa các phòng ban chức năng, phân cấp 4 vai trò rõ ràng theo chuẩn RBAC.
+
 ## 🚀 Installation
 
 Getting started with Plane is simple. Choose the setup that works best for you:
@@ -42,7 +69,7 @@ Getting started with Plane is simple. Choose the setup that works best for you:
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Docker               | [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://developers.plane.so/self-hosting/methods/docker-compose)         |
 | Kubernetes           | [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://developers.plane.so/self-hosting/methods/kubernetes) |
-| Managed hosting      | [<img alt="Deploy with Zenith" src="https://cdn.zenith.hosting/buttons/deploy-with-zenith.svg" height="40">](https://zenith.hosting/host/plane) |
+| Managed hosting      | [<img alt="Deploy with Zenith" src="https://cdn.zenith.hosting/buttons/deploy-with-zenith.svg" height="40">](https://zenith.hosting/host/plane)                                         |
 
 `Instance admins` can configure instance settings with [God mode](https://developers.plane.so/self-hosting/govern/instance-admin).
 
@@ -126,7 +153,8 @@ See [CONTRIBUTING](./CONTRIBUTING.md)
 
 ## 📝 Documentation
 
-Explore Plane's [product documentation](https://docs.plane.so/) and [developer documentation](https://developers.plane.so/) to learn about features, setup, and usage.
+- **Sổ tay Vận hành Doanh nghiệp:** Tham khảo **[Sổ Tay Vận Hành BWP Notebook (USER_GUIDE_VI.md)](./USER_GUIDE_VI.md)** và 5 chuyên đề tại [`docs/user-guide/`](./docs/user-guide/).
+- **Tài liệu Kỹ thuật Nền tảng:** Explore Plane's [product documentation](https://docs.plane.so/) and [developer documentation](https://developers.plane.so/) to learn about baseline features, setup, and usage.
 
 ## ❤️ Community
 
