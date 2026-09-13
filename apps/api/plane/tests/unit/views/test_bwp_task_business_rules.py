@@ -146,7 +146,7 @@ def test_regular_user_create_task_auto_assigns_operational(bwp_setup):
 
     response = client.post(url, payload, format="json")
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.data["type_id"] == str(bwp_setup["operational_type"].id)
+    assert str(response.data["type_id"]) == str(bwp_setup["operational_type"].id)
     assert response.data["room"] == 302
     assert response.data["notes"] == "Daily morning inspection"
 
@@ -165,7 +165,7 @@ def test_manager_create_task_defaults_to_other(bwp_setup):
 
     response = client.post(url, payload, format="json")
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.data["type_id"] == str(bwp_setup["other_type"].id)
+    assert str(response.data["type_id"]) == str(bwp_setup["other_type"].id)
 
 
 @pytest.mark.unit
@@ -248,4 +248,4 @@ def test_supporters_room_notes_save_and_retrieve(bwp_setup):
     assert get_resp.data["room"] == 105
     assert get_resp.data["notes"] == "Bring replacement CAT6 cables"
     assert len(get_resp.data["supporter_details"]) == 1
-    assert get_resp.data["supporter_details"][0]["id"] == str(bwp_setup["supporter_user"].id)
+    assert str(get_resp.data["supporter_details"][0]["id"]) == str(bwp_setup["supporter_user"].id)
