@@ -62,14 +62,9 @@ class ProjectMemberPermission(BasePermission):
                 project_id=view.project_id,
                 is_active=True,
             ).exists()
-        ## Only workspace owners or admins can create the projects
+        ## Only super admin can create the projects
         if request.method == "POST":
-            return WorkspaceMember.objects.filter(
-                workspace__slug=view.workspace_slug,
-                member=request.user,
-                role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
-                is_active=True,
-            ).exists()
+            return is_super_admin(request.user)
 
         ## Only Project Admins can update project attributes
         return ProjectMember.objects.filter(

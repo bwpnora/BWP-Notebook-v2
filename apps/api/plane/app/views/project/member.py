@@ -25,6 +25,12 @@ from plane.app.permissions.base import allow_permission, ROLE
 
 
 class ProjectMemberViewSet(BaseViewSet):
+    """
+    ViewSet for managing project/department members.
+    Enforces strict department-level scoping: Department Admins (Tier 3)
+    can only view, add, update, and remove members within their assigned project_id.
+    """
+
     serializer_class = ProjectMemberAdminSerializer
     model = ProjectMember
 
