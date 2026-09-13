@@ -347,7 +347,7 @@ class ProjectViewSet(BaseViewSet):
         if "project_lead" in request.data:
             new_lead = request.data.get("project_lead")
             current_lead = str(project.project_lead_id) if project.project_lead_id else None
-            new_lead_str = str(new_lead) if new_lead is not None else None
+            new_lead_str = str(new_lead).strip() if (new_lead and str(new_lead).strip()) else None
             if new_lead_str != current_lead and not is_super_admin(request.user):
                 return Response(
                     {"error": "Chỉ Quản trị viên cấp cao (God Mode) mới có quyền chỉ định Trưởng bộ phận."},
