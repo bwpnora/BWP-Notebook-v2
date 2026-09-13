@@ -15,7 +15,7 @@ import { ParentPropertyIcon } from "@plane/propel/icons";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
-import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
+import { getDate, renderFormattedPayloadDate, getTabIndex, cn } from "@plane/utils";
 // components
 import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -83,8 +83,67 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
   const maxDate = getDate(targetDate);
   maxDate?.setDate(maxDate.getDate());
 
+  const isManager = Boolean(
+    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId)
+  );
+
   return (
     <div className="flex flex-wrap items-center gap-2">
+      {/* BWP-Notebook-v2 task type selector - Code by IT Leon */}
+      <Controller
+        control={control}
+        name="type_id"
+        render={({ field: { value, onChange } }) => {
+          const currentType = value === "other" ? "other" : "operational";
+          const typeLabel = currentType === "other" ? "Công việc khác" : "Công việc vận hành";
+          return (
+            <div className="h-7">
+              <CustomMenu
+                customButton={
+                  <button
+                    type="button"
+                    className={cn(
+                      "text-xs flex h-7 items-center gap-1.5 rounded border px-2.5 font-medium transition-colors",
+                      currentType === "other"
+                        ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                        : "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                    )}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                    <span>{typeLabel}</span>
+                  </button>
+                }
+                closeOnSelect
+                disabled={!isManager}
+              >
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    onChange("operational");
+                    handleFormChange();
+                  }}
+                  className="text-xs flex items-center gap-2"
+                >
+                  <span className="bg-blue-500 h-2 w-2 rounded-full" />
+                  <span>Công việc vận hành</span>
+                </CustomMenu.MenuItem>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    if (isManager) {
+                      onChange("other");
+                      handleFormChange();
+                    }
+                  }}
+                  disabled={!isManager}
+                  className={cn("text-xs flex items-center gap-2", !isManager && "cursor-not-allowed opacity-50")}
+                >
+                  <span className="bg-amber-500 h-2 w-2 rounded-full" />
+                  <span>Công việc khác {!isManager && "(Chỉ quản lý)"}</span>
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            </div>
+          );
+        }}
+      />
       <Controller
         control={control}
         name="state_id"
@@ -138,6 +197,69 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
               placeholder={t("assignees")}
               multiple
               tabIndex={getIndex("assignee_ids")}
+            />
+          </div>
+        )}
+      />
+      {/* BWP-Notebook-v2 supporters multi-select - Code by IT Leon */}
+      <Controller
+        control={control}
+        name="supporter_ids"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <MemberDropdown
+              projectId={projectId ?? undefined}
+              value={value ?? []}
+              onChange={(supporterIds) => {
+                onChange(supporterIds);
+                handleFormChange();
+              }}
+              buttonVariant={value && value.length > 0 ? "transparent-without-text" : "border-with-text"}
+              buttonClassName={value && value.length > 0 ? "hover:bg-transparent" : ""}
+              placeholder="Người hỗ trợ"
+              multiple
+              tabIndex={getIndex("assignee_ids")}
+            />
+          </div>
+        )}
+      />
+      {/* BWP-Notebook-v2 room number - Code by IT Leon */}
+      <Controller
+        control={control}
+        name="room"
+        render={({ field: { value, onChange } }) => (
+          <div className="border-custom-border-200 bg-custom-background-100 text-xs text-custom-text-200 flex h-7 items-center rounded border px-2">
+            <span className="text-custom-text-400 mr-1 font-medium">Phòng:</span>
+            <input
+              type="number"
+              value={value ?? ""}
+              onChange={(e) => {
+                const val = e.target.value ? parseInt(e.target.value, 10) : null;
+                onChange(val);
+                handleFormChange();
+              }}
+              placeholder="Số phòng"
+              className="text-xs text-custom-text-100 placeholder:text-custom-text-400 w-16 bg-transparent outline-none"
+            />
+          </div>
+        )}
+      />
+      {/* BWP-Notebook-v2 task notes - Code by IT Leon */}
+      <Controller
+        control={control}
+        name="notes"
+        render={({ field: { value, onChange } }) => (
+          <div className="border-custom-border-200 bg-custom-background-100 text-xs text-custom-text-200 flex h-7 items-center rounded border px-2">
+            <span className="text-custom-text-400 mr-1 font-medium">Ghi chú:</span>
+            <input
+              type="text"
+              value={value ?? ""}
+              onChange={(e) => {
+                onChange(e.target.value || null);
+                handleFormChange();
+              }}
+              placeholder="Ghi chú công việc"
+              className="text-xs text-custom-text-100 placeholder:text-custom-text-400 w-32 bg-transparent outline-none"
             />
           </div>
         )}

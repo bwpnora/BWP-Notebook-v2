@@ -17,6 +17,10 @@ export const DEFAULT_WORK_ITEM_FORM_VALUES: Partial<TIssue> = {
   parent_id: null,
   priority: "none",
   assignee_ids: [],
+  // BWP-Notebook-v2 domain fields - Code by IT Leon
+  supporter_ids: [],
+  room: null,
+  notes: null,
   label_ids: [],
   cycle_id: null,
   module_ids: null,

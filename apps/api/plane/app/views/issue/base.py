@@ -446,6 +446,10 @@ class IssueViewSet(BaseViewSet):
         else:
             if not data.get("type_id") and other_type:
                 data["type_id"] = str(other_type.id)
+            elif data.get("type_id") == "operational" and operational_type:
+                data["type_id"] = str(operational_type.id)
+            elif data.get("type_id") == "other" and other_type:
+                data["type_id"] = str(other_type.id)
 
         serializer = IssueCreateSerializer(
             data=data,
@@ -756,7 +760,14 @@ class IssueViewSet(BaseViewSet):
 
         # Rule 1: Permission check for Task Type change to 'other'
         if "type_id" in request.data and request.data["type_id"]:
-            target_type = IssueType.objects.filter(id=request.data["type_id"]).first()
+            req_type = str(request.data["type_id"])
+            if req_type in ["operational", "other"]:
+                target_type = IssueType.objects.filter(workspace_id=project.workspace_id, external_id=req_type).first()
+                if target_type:
+                    request.data["type_id"] = str(target_type.id)
+            else:
+                target_type = IssueType.objects.filter(id=req_type).first()
+
             if target_type and target_type.external_id == "other" and not is_admin_or_manager:
                 return Response(
                     {"error": "Bạn không có quyền chuyển công việc sang loại Công việc khác."},
