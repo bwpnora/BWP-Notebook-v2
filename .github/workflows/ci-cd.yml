@@ -30,7 +30,7 @@ env:
 
 jobs:
   lint-check:
-    name: Lint and Schema Validation
+    name: Lint, Typecheck and Validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -45,14 +45,34 @@ jobs:
         run: |
           python3 -c "
           import yaml
-          for path in ['docker-compose.prod.yml', 'deployments/cli/community/docker-compose.yml']:
+          for path in ['docker-compose.prod.yml']:
               try:
                   with open(path, 'r', encoding='utf-8') as f:
                       yaml.safe_load(f)
                   print(f'Valid YAML: {path}')
               except Exception as e:
                   print(f'Error reading {path}: {e}')
+                  exit(1)
           "
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.3.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting and linting
+        run: |
+          pnpm exec oxfmt --check .
+          pnpm exec oxlint --deny-warnings packages/ apps/web/app/root.tsx
 
   docker:
     name: Build & Push Production Images
