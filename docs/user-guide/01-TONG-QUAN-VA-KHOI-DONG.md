@@ -158,8 +158,8 @@ LISTEN_HTTP_PORT=18080
 LISTEN_HTTPS_PORT=18443
 
 # 3. Khóa bảo mật hệ thống (Bắt buộc sinh chuỗi ngẫu nhiên mạnh)
-SECRET_KEY=bwp-notebook-secret-key-super-secure-2026-leon
-LIVE_SERVER_SECRET_KEY=bwp-live-secret-key-2026-leon
+SECRET_KEY=bwp-notebook-secret-key-super-secure-2026-prod
+LIVE_SERVER_SECRET_KEY=bwp-live-secret-key-2026-prod
 
 # 4. Cấu hình Cơ sở dữ liệu PostgreSQL (Mạng nội bộ bwp_notebook_net)
 POSTGRES_USER=bwp_plane_user
