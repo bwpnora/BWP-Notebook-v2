@@ -102,7 +102,7 @@ export type TIssue = TBaseIssue & {
   issue_related?: IssueRelation[];
   // BWP-Notebook-v2 supporter details & type detail
   supporter_details?: any[];
-  type_detail?: { id: string; name: string; description?: string; is_active?: boolean } | null;
+  type_detail?: { id: string; name: string; description?: string; is_active?: boolean; external_id?: string } | null;
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.

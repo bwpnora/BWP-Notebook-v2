@@ -90,6 +90,12 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
       allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId))
   );
 
+  const isOther =
+    (issue?.type_id === "other" ||
+      issue?.type_detail?.external_id === "other" ||
+      issue?.type_detail?.name === "Công việc khác") &&
+    issue?.type_id !== "operational";
+
   return (
     <>
       <div className="flex h-full w-full flex-col items-center divide-y-2 divide-subtle-1 overflow-hidden">
@@ -104,34 +110,41 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                     type="button"
                     className={cn(
                       "flex h-7 items-center gap-1.5 rounded border px-2 text-body-xs-regular font-medium transition-colors",
-                      issue?.type_id === "other" || issue?.type_detail?.name === "Công việc khác"
+                      isOther
                         ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
                         : "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400"
                     )}
                     disabled={!isEditable || !isManager}
                   >
                     <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                    <span>
-                      {issue?.type_id === "other" || issue?.type_detail?.name === "Công việc khác"
-                        ? "Công việc khác"
-                        : "Công việc vận hành"}
-                    </span>
+                    <span>{isOther ? "Công việc khác" : "Công việc vận hành"}</span>
                   </button>
                 }
                 closeOnSelect
                 disabled={!isEditable || !isManager}
               >
                 <CustomMenu.MenuItem
-                  onClick={() => issueOperations.update(workspaceSlug, projectId, issueId, { type_id: "operational" })}
-                  className="text-xs flex items-center gap-2"
+                  onClick={() => {
+                    if (isManager) {
+                      issueOperations.update(workspaceSlug, projectId, issueId, {
+                        type_id: "operational",
+                        type_detail: { id: "operational", name: "Công việc vận hành", external_id: "operational" },
+                      });
+                    }
+                  }}
+                  disabled={!isManager}
+                  className={cn("text-xs flex items-center gap-2", !isManager && "cursor-not-allowed opacity-50")}
                 >
                   <span className="bg-blue-500 h-2 w-2 rounded-full" />
-                  <span>Công việc vận hành</span>
+                  <span>Công việc vận hành {!isManager && "(Chỉ quản lý)"}</span>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
                   onClick={() => {
                     if (isManager) {
-                      issueOperations.update(workspaceSlug, projectId, issueId, { type_id: "other" });
+                      issueOperations.update(workspaceSlug, projectId, issueId, {
+                        type_id: "other",
+                        type_detail: { id: "other", name: "Công việc khác", external_id: "other" },
+                      });
                     }
                   }}
                   disabled={!isManager}

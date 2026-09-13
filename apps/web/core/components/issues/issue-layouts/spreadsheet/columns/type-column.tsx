@@ -41,7 +41,11 @@ export const SpreadsheetTypeColumn = observer(function SpreadsheetTypeColumn(pro
           ))))
   );
 
-  const isOther = issue.type_detail?.name === "Công việc khác" || issue.type_id === "other";
+  const isOther =
+    (issue.type_detail?.name === "Công việc khác" ||
+      issue.type_detail?.external_id === "other" ||
+      issue.type_id === "other") &&
+    issue.type_id !== "operational";
   const label = isOther ? "Công việc khác" : "Công việc vận hành";
 
   return (
@@ -67,18 +71,35 @@ export const SpreadsheetTypeColumn = observer(function SpreadsheetTypeColumn(pro
       >
         <CustomMenu.MenuItem
           onClick={() => {
-            onChange(issue, { type_id: "operational" }, { changed_property: "type_id", change_details: "operational" });
-            onClose?.();
+            if (isManager) {
+              onChange(
+                issue,
+                {
+                  type_id: "operational",
+                  type_detail: { id: "operational", name: "Công việc vận hành", external_id: "operational" },
+                },
+                { changed_property: "type_id", change_details: "operational" }
+              );
+              onClose?.();
+            }
           }}
-          className="text-xs flex items-center gap-2"
+          disabled={!isManager}
+          className={cn("text-xs flex items-center gap-2", !isManager && "cursor-not-allowed opacity-50")}
         >
           <span className="bg-blue-500 h-2 w-2 rounded-full" />
-          <span>Công việc vận hành</span>
+          <span>Công việc vận hành {!isManager && "(Chỉ quản lý)"}</span>
         </CustomMenu.MenuItem>
         <CustomMenu.MenuItem
           onClick={() => {
             if (isManager) {
-              onChange(issue, { type_id: "other" }, { changed_property: "type_id", change_details: "other" });
+              onChange(
+                issue,
+                {
+                  type_id: "other",
+                  type_detail: { id: "other", name: "Công việc khác", external_id: "other" },
+                },
+                { changed_property: "type_id", change_details: "other" }
+              );
               onClose?.();
             }
           }}

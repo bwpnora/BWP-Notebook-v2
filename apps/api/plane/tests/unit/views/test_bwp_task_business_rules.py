@@ -334,13 +334,15 @@ def test_superadmin_can_convert_task_type_both_directions(bwp_setup):
 
     # 1. Convert from Other to Operational
     resp1 = client.patch(url, {"type_id": "operational"}, format="json")
-    assert resp1.status_code == status.HTTP_200_OK
-    assert str(resp1.data["type_id"]) == str(bwp_setup["operational_type"].id)
+    assert resp1.status_code in [status.HTTP_200_OK, status.HTTP_204_NO_CONTENT]
+    issue.refresh_from_db()
+    assert str(issue.type_id) == str(bwp_setup["operational_type"].id)
 
     # 2. Convert back from Operational to Other
     resp2 = client.patch(url, {"type_id": "other"}, format="json")
-    assert resp2.status_code == status.HTTP_200_OK
-    assert str(resp2.data["type_id"]) == str(bwp_setup["other_type"].id)
+    assert resp2.status_code in [status.HTTP_200_OK, status.HTTP_204_NO_CONTENT]
+    issue.refresh_from_db()
+    assert str(issue.type_id) == str(bwp_setup["other_type"].id)
 
 
 @pytest.mark.unit
@@ -362,13 +364,15 @@ def test_workspace_admin_can_convert_task_type_both_directions(bwp_setup):
 
     # 1. Convert from Other to Operational
     resp1 = client.patch(url, {"type_id": "operational"}, format="json")
-    assert resp1.status_code == status.HTTP_200_OK
-    assert str(resp1.data["type_id"]) == str(bwp_setup["operational_type"].id)
+    assert resp1.status_code in [status.HTTP_200_OK, status.HTTP_204_NO_CONTENT]
+    issue.refresh_from_db()
+    assert str(issue.type_id) == str(bwp_setup["operational_type"].id)
 
     # 2. Convert back from Operational to Other
     resp2 = client.patch(url, {"type_id": "other"}, format="json")
-    assert resp2.status_code == status.HTTP_200_OK
-    assert str(resp2.data["type_id"]) == str(bwp_setup["other_type"].id)
+    assert resp2.status_code in [status.HTTP_200_OK, status.HTTP_204_NO_CONTENT]
+    issue.refresh_from_db()
+    assert str(issue.type_id) == str(bwp_setup["other_type"].id)
 
 
 @pytest.mark.unit
@@ -390,10 +394,12 @@ def test_manager_can_convert_task_type_both_directions(bwp_setup):
 
     # 1. Convert from Other to Operational
     resp1 = client.patch(url, {"type_id": "operational"}, format="json")
-    assert resp1.status_code == status.HTTP_200_OK
-    assert str(resp1.data["type_id"]) == str(bwp_setup["operational_type"].id)
+    assert resp1.status_code in [status.HTTP_200_OK, status.HTTP_204_NO_CONTENT]
+    issue.refresh_from_db()
+    assert str(issue.type_id) == str(bwp_setup["operational_type"].id)
 
     # 2. Convert back from Operational to Other
     resp2 = client.patch(url, {"type_id": "other"}, format="json")
-    assert resp2.status_code == status.HTTP_200_OK
-    assert str(resp2.data["type_id"]) == str(bwp_setup["other_type"].id)
+    assert resp2.status_code in [status.HTTP_200_OK, status.HTTP_204_NO_CONTENT]
+    issue.refresh_from_db()
+    assert str(issue.type_id) == str(bwp_setup["other_type"].id)

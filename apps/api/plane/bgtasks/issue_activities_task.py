@@ -523,8 +523,20 @@ def track_type(
     requested_type_id = requested_data.get("type_id") or requested_data.get("type")
 
     if current_type_id != requested_type_id:
-        old_type = IssueType.objects.filter(pk=current_type_id).first() if current_type_id else None
-        new_type = IssueType.objects.filter(pk=requested_type_id).first() if requested_type_id else None
+        old_type = None
+        if current_type_id:
+            old_type = (
+                IssueType.objects.filter(pk=current_type_id).first()
+                if is_valid_uuid(current_type_id)
+                else IssueType.objects.filter(external_id=current_type_id).first()
+            )
+        new_type = None
+        if requested_type_id:
+            new_type = (
+                IssueType.objects.filter(pk=requested_type_id).first()
+                if is_valid_uuid(requested_type_id)
+                else IssueType.objects.filter(external_id=requested_type_id).first()
+            )
 
         issue_activities.append(
             IssueActivity(

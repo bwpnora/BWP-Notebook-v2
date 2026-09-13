@@ -834,6 +834,13 @@ class IssueIntakeSerializer(DynamicBaseSerializer):
         read_only_fields = fields
 
 
+class IssueTypeLiteSerializer(BaseSerializer):
+    class Meta:
+        model = IssueType
+        fields = ["id", "name", "description", "is_active", "external_id"]
+        read_only_fields = fields
+
+
 class IssueSerializer(DynamicBaseSerializer):
     # ids
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -843,6 +850,7 @@ class IssueSerializer(DynamicBaseSerializer):
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     assignee_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     supporter_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    type_detail = IssueTypeLiteSerializer(source="type", read_only=True)
 
     # Count items
     sub_issues_count = serializers.IntegerField(read_only=True)
@@ -870,6 +878,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "assignee_ids",
             "supporter_ids",
             "type_id",
+            "type_detail",
             "room",
             "notes",
             "sub_issues_count",
@@ -938,6 +947,17 @@ class IssueListDetailSerializer(serializers.Serializer):
             "archived_at": instance.archived_at,
             # BWP-Notebook-v2 domain fields
             "type_id": getattr(instance, "type_id", None),
+            "type_detail": (
+                {
+                    "id": str(instance.type.id),
+                    "name": instance.type.name,
+                    "description": instance.type.description,
+                    "is_active": instance.type.is_active,
+                    "external_id": instance.type.external_id,
+                }
+                if getattr(instance, "type", None)
+                else None
+            ),
             "room": getattr(instance, "room", None),
             "notes": getattr(instance, "notes", None),
             # Computed fields

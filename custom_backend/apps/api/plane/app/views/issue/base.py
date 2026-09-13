@@ -230,6 +230,9 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "type_id",
+                "room",
+                "notes",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -250,7 +253,7 @@ class IssueViewSet(BaseViewSet):
         issues = Issue.issue_objects.filter(
             project_id=self.kwargs.get("project_id"),
             workspace__slug=self.kwargs.get("slug"),
-        ).distinct()
+        ).select_related("type").distinct()
 
         return issues
 
@@ -798,9 +801,15 @@ class IssueViewSet(BaseViewSet):
         if not issue:
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
+        # Ensure project is loaded
+        project = Project.objects.filter(pk=project_id, workspace__slug=slug).first() or getattr(issue, "project", None)
+        if not project and issue:
+            project = issue.project
+
         # BWP-Notebook-v2 Business Rules: Code & Architecture by BWP Engineering Team
         is_admin_or_manager = check_is_admin_or_manager(request.user, project)
         data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
+        data.pop("type_detail", None)
 
         # Rule 1: Permission check for Task Type change (both directions: operational <-> other)
         if "type_id" in data and data["type_id"]:
@@ -822,7 +831,10 @@ class IssueViewSet(BaseViewSet):
                 )
                 data["type_id"] = str(target_type.id)
             else:
-                target_type = IssueType.objects.filter(id=req_type).first()
+                try:
+                    target_type = IssueType.objects.filter(id=req_type).first()
+                except (ValueError, ValidationError):
+                    target_type = None
 
             if target_type:
                 ProjectIssueType.objects.get_or_create(
@@ -844,7 +856,10 @@ class IssueViewSet(BaseViewSet):
             current_type_id = issue.type_id
             is_other_task = False
             if current_type_id:
-                current_type = IssueType.objects.filter(id=current_type_id).first()
+                try:
+                    current_type = IssueType.objects.filter(id=current_type_id).first()
+                except (ValueError, ValidationError):
+                    current_type = None
                 if current_type and current_type.external_id == "other":
                     is_other_task = True
 
@@ -1079,6 +1094,9 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "type_id",
+            "room",
+            "notes",
         ]
 
         if str(is_description_required).lower() == "true":
