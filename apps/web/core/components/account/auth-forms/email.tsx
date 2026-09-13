@@ -21,6 +21,8 @@ type TAuthEmailForm = {
   onSubmit: (data: IEmailCheckData) => Promise<void>;
 };
 
+const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,30}$/;
+
 export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailForm) {
   const { onSubmit, defaultEmail } = props;
   // states
@@ -28,10 +30,13 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   const [email, setEmail] = useState(defaultEmail);
   // plane hooks
   const { t } = useTranslation();
-  const emailError = useMemo(
-    () => (email && !checkEmailValidity(email) ? { email: "auth.common.email.errors.invalid" } : undefined),
-    [email]
-  );
+  const emailError = useMemo(() => {
+    if (!email) return undefined;
+    if (email.includes("@")) {
+      return !checkEmailValidity(email) ? { email: "auth.common.email.errors.invalid" } : undefined;
+    }
+    return !USERNAME_REGEX.test(email) ? { email: "auth.common.email.errors.invalid_username" } : undefined;
+  }, [email]);
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -69,12 +74,13 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
           <Input
             id="email"
             name="email"
-            type="email"
+            type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("auth.common.email.placeholder")}
             className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder autofill:bg-danger-primary focus:bg-none active:bg-transparent`}
-            autoComplete="off"
+            autoComplete="username"
+            // oxlint-disable-next-line jsx_a11y/no-autofocus
             autoFocus
             ref={inputRef}
           />
