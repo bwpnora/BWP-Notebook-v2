@@ -167,7 +167,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name} {self.last_name}".strip()
 
     def save(self, *args, **kwargs):
-        self.email = self.email.lower().strip()
+        if self.email:
+            self.email = self.email.lower().strip()
+        else:
+            self.email = None
         self.mobile_number = self.mobile_number
 
         if self.token_updated_at is not None:
@@ -175,11 +178,12 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.token_updated_at = timezone.now()
 
         if not self.display_name:
-            self.display_name = (
-                self.email.split("@")[0]
-                if len(self.email.split("@"))
-                else "".join(random.choice(string.ascii_letters) for _ in range(6))
-            )
+            if self.email and len(self.email.split("@")) > 1:
+                self.display_name = self.email.split("@")[0]
+            elif self.username:
+                self.display_name = self.username
+            else:
+                self.display_name = "".join(random.choice(string.ascii_letters) for _ in range(6))
 
         if self.is_superuser:
             self.is_staff = True

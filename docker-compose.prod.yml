@@ -125,6 +125,7 @@ services:
       - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
       - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
       - ./custom_backend/apps/api/plane/db/models/state.py:/code/plane/db/models/state.py
+      - ./custom_backend/apps/api/plane/db/models/user.py:/code/plane/db/models/user.py
       - ./custom_backend/apps/api/plane/db/models/__init__.py:/code/plane/db/models/__init__.py
       - ./custom_backend/apps/api/plane/db/migrations/0123_issue_supporters_room_notes.py:/code/plane/db/migrations/0123_issue_supporters_room_notes.py
       - ./custom_backend/apps/api/plane/db/management/commands/seed_task_types.py:/code/plane/db/management/commands/seed_task_types.py
@@ -152,6 +153,7 @@ services:
       - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
       - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
       - ./custom_backend/apps/api/plane/db/models/state.py:/code/plane/db/models/state.py
+      - ./custom_backend/apps/api/plane/db/models/user.py:/code/plane/db/models/user.py
       - ./custom_backend/apps/api/plane/db/models/__init__.py:/code/plane/db/models/__init__.py
       - ./custom_backend/apps/api/plane/db/migrations/0123_issue_supporters_room_notes.py:/code/plane/db/migrations/0123_issue_supporters_room_notes.py
       - ./custom_backend/apps/api/plane/db/management/commands/seed_task_types.py:/code/plane/db/management/commands/seed_task_types.py
@@ -199,6 +201,7 @@ services:
       - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
       - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
       - ./custom_backend/apps/api/plane/db/models/state.py:/code/plane/db/models/state.py
+      - ./custom_backend/apps/api/plane/db/models/user.py:/code/plane/db/models/user.py
       - ./custom_backend/apps/api/plane/db/models/__init__.py:/code/plane/db/models/__init__.py
       - ./custom_backend/apps/api/plane/db/migrations/0123_issue_supporters_room_notes.py:/code/plane/db/migrations/0123_issue_supporters_room_notes.py
       - ./custom_backend/apps/api/plane/db/management/commands/seed_task_types.py:/code/plane/db/management/commands/seed_task_types.py
@@ -242,6 +245,7 @@ services:
       - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
       - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
       - ./custom_backend/apps/api/plane/db/models/state.py:/code/plane/db/models/state.py
+      - ./custom_backend/apps/api/plane/db/models/user.py:/code/plane/db/models/user.py
       - ./custom_backend/apps/api/plane/db/models/__init__.py:/code/plane/db/models/__init__.py
       - ./custom_backend/apps/api/plane/db/migrations/0123_issue_supporters_room_notes.py:/code/plane/db/migrations/0123_issue_supporters_room_notes.py
       - ./custom_backend/apps/api/plane/db/management/commands/seed_task_types.py:/code/plane/db/management/commands/seed_task_types.py
