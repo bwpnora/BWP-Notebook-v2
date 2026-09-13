@@ -8,6 +8,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 # Module import
 from plane.db.models import ProjectMember, WorkspaceMember
 from plane.db.models.project import ROLE
+from .base import is_super_admin
 
 
 class ProjectBasePermission(BasePermission):
@@ -21,14 +22,9 @@ class ProjectBasePermission(BasePermission):
                 workspace__slug=view.workspace_slug, member=request.user, is_active=True
             ).exists()
 
-        ## Only workspace owners or admins can create the projects
+        ## Only super admin can create the projects
         if request.method == "POST":
-            return WorkspaceMember.objects.filter(
-                workspace__slug=view.workspace_slug,
-                member=request.user,
-                role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
-                is_active=True,
-            ).exists()
+            return is_super_admin(request.user)
 
         project_member_qs = ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,

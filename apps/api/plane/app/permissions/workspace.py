@@ -5,8 +5,8 @@
 # Third Party imports
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-# Module imports
 from plane.db.models import WorkspaceMember
+from .base import is_super_admin
 
 
 # Permission Mappings
@@ -18,12 +18,12 @@ Guest = 5
 # TODO: Move the below logic to python match - python v3.10
 class WorkSpaceBasePermission(BasePermission):
     def has_permission(self, request, view):
-        # allow anyone to create a workspace
+        # allow only super admin to create a workspace
         if request.user.is_anonymous:
             return False
 
         if request.method == "POST":
-            return True
+            return is_super_admin(request.user)
 
         ## Safe Methods
         if request.method in SAFE_METHODS:

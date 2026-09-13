@@ -15,8 +15,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
-# Module imports
-from plane.app.permissions import ROLE, ProjectMemberPermission, allow_permission
+from plane.app.permissions import ROLE, ProjectMemberPermission, allow_permission, is_super_admin
 from plane.app.serializers import (
     DeployBoardSerializer,
     ProjectListSerializer,
@@ -256,6 +255,12 @@ class ProjectViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     def create(self, request, slug):
+        if not is_super_admin(request.user):
+            return Response(
+                {"error": "Chỉ Quản trị viên cấp cao (God Mode) mới có quyền tạo phòng ban mới."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         workspace = Workspace.objects.get(slug=slug)
 
         serializer = ProjectSerializer(data={**request.data}, context={"workspace_id": workspace.id})
@@ -329,7 +334,7 @@ class ProjectViewSet(BaseViewSet):
         ).exists()
 
         # Return error for if the user is neither workspace admin nor project admin
-        if not is_project_admin and not is_workspace_admin:
+        if not is_project_admin and not is_workspace_admin and not is_super_admin(request.user):
             return Response(
                 {"error": "You don't have the required permissions."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -338,6 +343,16 @@ class ProjectViewSet(BaseViewSet):
         workspace = Workspace.objects.get(slug=slug)
 
         project = Project.objects.get(pk=pk, workspace__slug=slug)
+
+        if "project_lead" in request.data:
+            new_lead = request.data.get("project_lead")
+            current_lead = str(project.project_lead_id) if project.project_lead_id else None
+            new_lead_str = str(new_lead) if new_lead is not None else None
+            if new_lead_str != current_lead and not is_super_admin(request.user):
+                return Response(
+                    {"error": "Chỉ Quản trị viên cấp cao (God Mode) mới có quyền chỉ định Trưởng bộ phận."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
         intake_view = request.data.get("inbox_view", project.intake_view)
         current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
         if project.archived_at:
