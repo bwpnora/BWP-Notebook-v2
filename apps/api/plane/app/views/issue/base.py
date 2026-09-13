@@ -32,7 +32,20 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ROLE, allow_permission, is_super_admin
+from plane.app.permissions import ROLE, allow_permission
+try:
+    from plane.app.permissions import is_super_admin
+except ImportError:
+    def is_super_admin(user):
+        if not user or user.is_anonymous:
+            return False
+        if getattr(user, "is_superuser", False):
+            return True
+        try:
+            from plane.license.models import InstanceAdmin
+            return InstanceAdmin.objects.filter(user=user, role__gte=15).exists()
+        except Exception:
+            return False
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,

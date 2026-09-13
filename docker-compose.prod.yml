@@ -64,6 +64,7 @@ x-app-env: &app-env
   API_KEY_RATE_LIMIT: 60/minute
   MINIO_ENDPOINT_SSL: 0
   LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY:-bwp-live-secret-key-2026}
+  TIME_ZONE: ${TIME_ZONE:-Asia/Ho_Chi_Minh}
 
 services:
   plane-db:
@@ -122,6 +123,7 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh
     volumes:
       - bwp_plane_logs_migrator:/code/plane/logs
+      - ./custom_backend/apps/api/plane/settings/common.py:/code/plane/settings/common.py
       - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
       - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
       - ./custom_backend/apps/api/plane/db/models/state.py:/code/plane/db/models/state.py
@@ -133,6 +135,22 @@ services:
       - ./custom_backend/apps/api/plane/app/serializers/__init__.py:/code/plane/app/serializers/__init__.py
       - ./custom_backend/apps/api/plane/app/views/issue/base.py:/code/plane/app/views/issue/base.py
       - ./custom_backend/apps/api/plane/bgtasks/issue_activities_task.py:/code/plane/bgtasks/issue_activities_task.py
+      - ./custom_backend/apps/api/plane/app/permissions/base.py:/code/plane/app/permissions/base.py
+      - ./custom_backend/apps/api/plane/app/permissions/project.py:/code/plane/app/permissions/project.py
+      - ./custom_backend/apps/api/plane/app/views/workspace/direct_member.py:/code/plane/app/views/workspace/direct_member.py
+      - ./custom_backend/apps/api/plane/app/views/workspace/base.py:/code/plane/app/views/workspace/base.py
+      - ./custom_backend/apps/api/plane/app/views/project/base.py:/code/plane/app/views/project/base.py
+      - ./custom_backend/apps/api/plane/app/views/project/member.py:/code/plane/app/views/project/member.py
+      - ./custom_backend/apps/api/plane/app/urls/workspace.py:/code/plane/app/urls/workspace.py
+      - ./custom_backend/apps/api/plane/authentication/views/app/check.py:/code/plane/authentication/views/app/check.py
+      - ./custom_backend/apps/api/plane/authentication/views/app/email.py:/code/plane/authentication/views/app/email.py
+      - ./custom_backend/apps/api/plane/authentication/provider/credentials/email.py:/code/plane/authentication/provider/credentials/email.py
+      - ./custom_backend/apps/api/plane/app/serializers/user.py:/code/plane/app/serializers/user.py
+      - ./custom_backend/apps/api/plane/app/views/__init__.py:/code/plane/app/views/__init__.py
+      - ./custom_backend/apps/api/plane/app/permissions/__init__.py:/code/plane/app/permissions/__init__.py
+      - ./custom_backend/apps/api/plane/app/permissions/workspace.py:/code/plane/app/permissions/workspace.py
+      - ./custom_backend/apps/api/plane/authentication/urls.py:/code/plane/authentication/urls.py
+      - ./custom_backend/apps/api/plane/urls.py:/code/plane/urls.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -150,6 +168,7 @@ services:
     command: ./bin/docker-entrypoint-api.sh
     volumes:
       - bwp_plane_logs_api:/code/plane/logs
+      - ./custom_backend/apps/api/plane/settings/common.py:/code/plane/settings/common.py
       - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
       - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
       - ./custom_backend/apps/api/plane/db/models/state.py:/code/plane/db/models/state.py
@@ -198,6 +217,7 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     volumes:
       - bwp_plane_logs_worker:/code/plane/logs
+      - ./custom_backend/apps/api/plane/settings/common.py:/code/plane/settings/common.py
       - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
       - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
       - ./custom_backend/apps/api/plane/db/models/state.py:/code/plane/db/models/state.py
@@ -242,6 +262,7 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     volumes:
       - bwp_plane_logs_beat_worker:/code/plane/logs
+      - ./custom_backend/apps/api/plane/settings/common.py:/code/plane/settings/common.py
       - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
       - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
       - ./custom_backend/apps/api/plane/db/models/state.py:/code/plane/db/models/state.py
