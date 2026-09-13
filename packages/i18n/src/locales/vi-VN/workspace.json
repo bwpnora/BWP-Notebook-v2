@@ -1,65 +1,65 @@
 {
   "workspace_creation": {
-    "heading": "Tạo không gian làm việc của bạn",
-    "subheading": "Để bắt đầu với Plane, bạn cần tạo hoặc tham gia một không gian làm việc.",
+    "heading": "Tạo đơn vị mới",
+    "subheading": "Để bắt đầu với BWP Notebook, bạn cần tạo hoặc tham gia một công ty / đơn vị.",
     "form": {
       "name": {
-        "label": "Đặt tên cho không gian làm việc của bạn",
+        "label": "Đặt tên cho công ty / đơn vị của bạn",
         "placeholder": "Một tên quen thuộc và dễ nhận diện luôn là tốt nhất."
       },
       "url": {
-        "label": "Thiết lập URL không gian làm việc của bạn",
+        "label": "Thiết lập URL cho đơn vị",
         "placeholder": "Nhập hoặc dán URL",
         "edit_slug": "Bạn chỉ có thể chỉnh sửa phần định danh của URL"
       },
       "organization_size": {
-        "label": "Có bao nhiêu người sẽ sử dụng không gian làm việc này?",
+        "label": "Có bao nhiêu người sẽ làm việc trong đơn vị này?",
         "placeholder": "Chọn một phạm vi"
       }
     },
     "errors": {
       "creation_disabled": {
-        "title": "Chỉ quản trị viên hệ thống của bạn mới có thể tạo không gian làm việc",
+        "title": "Chỉ quản trị viên hệ thống mới có thể tạo đơn vị",
         "description": "Nếu bạn biết địa chỉ email của quản trị viên hệ thống, hãy nhấp vào nút bên dưới để liên hệ với họ.",
         "request_button": "Yêu cầu quản trị viên hệ thống"
       },
       "validation": {
-        "name_alphanumeric": "Tên không gian làm việc chỉ có thể chứa (' '), ('-'), ('_') và các ký tự chữ số.",
+        "name_alphanumeric": "Tên đơn vị chỉ có thể chứa (' '), ('-'), ('_') và các ký tự chữ số.",
         "name_length": "Tên giới hạn trong 80 ký tự.",
         "url_alphanumeric": "URL chỉ có thể chứa ('-') và các ký tự chữ số.",
         "url_length": "URL giới hạn trong 48 ký tự.",
-        "url_already_taken": "URL không gian làm việc đã được sử dụng!"
+        "url_already_taken": "URL đơn vị đã được sử dụng!"
       }
     },
     "request_email": {
-      "subject": "Yêu cầu không gian làm việc mới",
-      "body": "Xin chào Quản trị viên hệ thống:\n\nVui lòng tạo một không gian làm việc mới có URL là [/workspace-name] cho [mục đích tạo không gian làm việc].\n\nCảm ơn,\n{firstName} {lastName}\n{email}"
+      "subject": "Yêu cầu đơn vị mới",
+      "body": "Xin chào Quản trị viên hệ thống:\n\nVui lòng tạo một đơn vị mới có URL là [/workspace-name] cho [mục đích tạo đơn vị].\n\nCảm ơn,\n{firstName} {lastName}\n{email}"
     },
     "button": {
-      "default": "Tạo không gian làm việc",
-      "loading": "Đang tạo không gian làm việc"
+      "default": "Tạo đơn vị mới",
+      "loading": "Đang tạo đơn vị"
     },
     "toast": {
       "success": {
         "title": "Thành công",
-        "message": "Đã tạo không gian làm việc thành công"
+        "message": "Đã tạo đơn vị thành công"
       },
       "error": {
         "title": "Lỗi",
-        "message": "Tạo không gian làm việc thất bại. Vui lòng thử lại."
+        "message": "Tạo đơn vị thất bại. Vui lòng thử lại."
       }
     }
   },
   "workspace_dashboard": {
     "empty_state": {
       "general": {
-        "title": "Tổng quan về dự án, hoạt động và chỉ số",
-        "description": "Chào mừng đến với Plane, chúng tôi rất vui khi bạn ở đây. Tạo dự án đầu tiên của bạn và theo dõi mục công việc, trang này sẽ trở thành không gian giúp bạn tiến triển. Quản trị viên cũng sẽ thấy dự án giúp nhóm tiến triển.",
+        "title": "Tổng quan về phòng ban, hoạt động và chỉ số",
+        "description": "Chào mừng đến với BWP Notebook. Tạo phòng ban đầu tiên và theo dõi công việc, nơi đây sẽ giúp bạn quản lý tiến độ hiệu quả.",
         "primary_button": {
-          "text": "Xây dựng dự án đầu tiên của bạn",
+          "text": "Tạo phòng ban đầu tiên của bạn",
           "comic": {
-            "title": "Trong Plane, mọi thứ đều bắt đầu với dự án",
-            "description": "Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới."
+            "title": "Trong BWP Notebook, mọi việc đều bắt đầu từ phòng ban",
+            "description": "Mỗi phòng ban là một notebook độc lập quản lý công việc và nhân sự."
           }
         }
       }
@@ -70,26 +70,26 @@
     "page_label": "{workspace} - Phân tích",
     "open_tasks": "Tổng nhiệm vụ đang mở",
     "error": "Đã xảy ra lỗi khi truy xuất dữ liệu.",
-    "work_items_closed_in": "Mục công việc đã đóng trong",
-    "selected_projects": "Dự án đã chọn",
-    "total_members": "Tổng số thành viên",
+    "work_items_closed_in": "Công việc đã đóng trong",
+    "selected_projects": "Phòng ban đã chọn",
+    "total_members": "Tổng số nhân sự",
     "total_cycles": "Tổng số chu kỳ",
     "total_modules": "Tổng số mô-đun",
     "pending_work_items": {
-      "title": "Mục công việc đang chờ xử lý",
-      "empty_state": "Phân tích mục công việc đang chờ xử lý của đồng nghiệp sẽ hiển thị ở đây."
+      "title": "Công việc đang chờ xử lý",
+      "empty_state": "Phân tích công việc đang chờ xử lý của nhân sự sẽ hiển thị ở đây."
     },
     "work_items_closed_in_a_year": {
-      "title": "Mục công việc đã đóng trong một năm",
-      "empty_state": "Đóng mục công việc để xem phân tích dưới dạng biểu đồ."
+      "title": "Công việc đã hoàn thành trong một năm",
+      "empty_state": "Hoàn thành công việc để xem phân tích dưới dạng biểu đồ."
     },
     "most_work_items_created": {
-      "title": "Tạo nhiều mục công việc nhất",
-      "empty_state": "Đồng nghiệp và số lượng mục công việc họ đã tạo sẽ hiển thị ở đây."
+      "title": "Tạo nhiều công việc nhất",
+      "empty_state": "Nhân sự và số lượng công việc họ đã tạo sẽ hiển thị ở đây."
     },
     "most_work_items_closed": {
-      "title": "Đóng nhiều mục công việc nhất",
-      "empty_state": "Đồng nghiệp và số lượng mục công việc họ đã đóng sẽ hiển thị ở đây."
+      "title": "Hoàn thành nhiều công việc nhất",
+      "empty_state": "Nhân sự và số lượng công việc họ đã hoàn thành sẽ hiển thị ở đây."
     },
     "tabs": {
       "scope_and_demand": "Phạm vi và nhu cầu",
@@ -100,60 +100,60 @@
     "backlog_work_items": "{entity} tồn đọng",
     "un_started_work_items": "{entity} chưa bắt đầu",
     "completed_work_items": "{entity} đã hoàn thành",
-    "project_insights": "Thông tin chi tiết dự án",
-    "summary_of_projects": "Tóm tắt dự án",
-    "all_projects": "Tất cả dự án",
+    "project_insights": "Thông tin chi tiết phòng ban",
+    "summary_of_projects": "Tóm tắt phòng ban",
+    "all_projects": "Tất cả phòng ban",
     "trend_on_charts": "Xu hướng trên biểu đồ",
-    "active_projects": "Dự án đang hoạt động",
+    "active_projects": "Phòng ban đang hoạt động",
     "customized_insights": "Thông tin chi tiết tùy chỉnh",
     "created_vs_resolved": "Đã tạo vs Đã giải quyết",
     "empty_state": {
       "project_insights": {
         "title": "Chưa có dữ liệu",
-        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
+        "description": "Các công việc được phân công cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
       },
       "created_vs_resolved": {
         "title": "Chưa có dữ liệu",
-        "description": "Các hạng mục công việc được tạo và giải quyết theo thời gian sẽ hiển thị tại đây."
+        "description": "Các công việc được tạo và hoàn thành theo thời gian sẽ hiển thị tại đây."
       },
       "customized_insights": {
         "title": "Chưa có dữ liệu",
-        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
+        "description": "Các công việc được phân công cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
       },
       "general": {
         "title": "Theo dõi tiến độ, khối lượng công việc và phân bổ. Phát hiện xu hướng, loại bỏ rào cản và tăng tốc công việc",
-        "description": "Xem phạm vi so với nhu cầu, ước tính và mở rộng phạm vi. Theo dõi hiệu suất của các thành viên trong nhóm và đội nhóm, đảm bảo dự án của bạn hoạt động đúng tiến độ.",
+        "description": "Xem phạm vi so với nhu cầu, ước tính và mở rộng. Theo dõi hiệu suất của nhân sự, đảm bảo phòng ban hoạt động đúng tiến độ.",
         "primary_button": {
-          "text": "Bắt đầu dự án đầu tiên của bạn",
+          "text": "Bắt đầu phòng ban đầu tiên của bạn",
           "comic": {
             "title": "Phân tích hoạt động tốt nhất với Chu kỳ + Mô-đun",
-            "description": "Đầu tiên, giới hạn thời gian các vấn đề của bạn trong Chu kỳ và, nếu có thể, nhóm các vấn đề kéo dài hơn một chu kỳ vào Mô-đun. Kiểm tra cả hai trong điều hướng bên trái."
+            "description": "Đầu tiên, giới hạn thời gian công việc trong Chu kỳ và nhóm các công việc kéo dài hơn một chu kỳ vào Mô-đun. Kiểm tra cả hai trong menu điều hướng bên trái."
           }
         }
       },
       "cycle_progress": {
         "title": "Chưa có dữ liệu",
-        "description": "Phân tích tiến độ chu kỳ sẽ hiển thị ở đây. Thêm các hạng mục công việc vào chu kỳ để bắt đầu theo dõi tiến độ."
+        "description": "Phân tích tiến độ chu kỳ sẽ hiển thị ở đây. Thêm công việc vào chu kỳ để bắt đầu theo dõi tiến độ."
       },
       "module_progress": {
         "title": "Chưa có dữ liệu",
-        "description": "Phân tích tiến độ mô-đun sẽ hiển thị ở đây. Thêm các hạng mục công việc vào mô-đun để bắt đầu theo dõi tiến độ."
+        "description": "Phân tích tiến độ mô-đun sẽ hiển thị ở đây. Thêm công việc vào mô-đun để bắt đầu theo dõi tiến độ."
       },
       "intake_trends": {
         "title": "Chưa có dữ liệu",
-        "description": "Phân tích xu hướng intake sẽ hiển thị ở đây. Thêm các hạng mục công việc vào intake để bắt đầu theo dõi xu hướng."
+        "description": "Phân tích xu hướng tiếp nhận sẽ hiển thị ở đây. Thêm công việc vào tiếp nhận để bắt đầu theo dõi xu hướng."
       }
     },
     "upgrade_to_plan": "Nâng cấp lên {plan} để mở khóa {tab}",
-    "workitem_resolved_vs_pending": "Mục công việc đã giải quyết vs đang chờ",
-    "projects_by_status": "Dự án theo trạng thái",
+    "workitem_resolved_vs_pending": "Công việc đã xử lý vs đang chờ",
+    "projects_by_status": "Phòng ban theo trạng thái",
     "active_users": "Người dùng hoạt động",
     "intake_trends": "Xu hướng tiếp nhận"
   },
   "workspace_projects": {
-    "label": "{count, plural, one {dự án} other {dự án}}",
+    "label": "{count, plural, one {phòng ban} other {phòng ban}}",
     "create": {
-      "label": "Thêm dự án"
+      "label": "Thêm phòng ban"
     },
     "network": {
       "label": "Mạng",
@@ -163,14 +163,14 @@
       },
       "public": {
         "title": "Công khai",
-        "description": "Bất kỳ ai trong không gian làm việc ngoại trừ khách đều có thể tham gia"
+        "description": "Bất kỳ ai trong đơn vị ngoại trừ khách đều có thể tham gia"
       }
     },
     "error": {
       "permission": "Bạn không có quyền thực hiện thao tác này.",
       "cycle_delete": "Xóa chu kỳ thất bại",
       "module_delete": "Xóa mô-đun thất bại",
-      "issue_delete": "Xóa mục công việc thất bại"
+      "issue_delete": "Xóa công việc thất bại"
     },
     "state": {
       "backlog": "Tồn đọng",
@@ -186,8 +186,8 @@
       "members_length": "Số lượng thành viên"
     },
     "scope": {
-      "my_projects": "Dự án của tôi",
-      "archived_projects": "Đã lưu trữ"
+      "my_projects": "Phòng ban của tôi",
+      "archived_projects": "Phòng ban đã lưu trữ"
     },
     "common": {
       "months_count": "{months, plural, one{# tháng} other{# tháng}}",
@@ -195,33 +195,33 @@
     },
     "empty_state": {
       "general": {
-        "title": "Không có dự án hoạt động",
-        "description": "Coi mỗi dự án như là cấp cha của công việc định hướng mục tiêu. Dự án là nơi chứa mục công việc, chu kỳ và mô-đun, cùng với đồng nghiệp giúp bạn đạt được mục tiêu. Tạo dự án mới hoặc lọc dự án đã lưu trữ.",
+        "title": "Không có phòng ban hoạt động",
+        "description": "Mỗi phòng ban là một notebook độc lập quản lý công việc theo mục tiêu. Phòng ban là nơi chứa công việc, chu kỳ và mô-đun, cùng với nhân sự giúp bạn hoàn thành nhiệm vụ. Tạo phòng ban mới hoặc xem phòng ban đã lưu trữ.",
         "primary_button": {
-          "text": "Bắt đầu dự án đầu tiên của bạn",
+          "text": "Tạo phòng ban đầu tiên của bạn",
           "comic": {
-            "title": "Trong Plane, mọi thứ đều bắt đầu với dự án",
-            "description": "Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới."
+            "title": "Trong BWP Notebook, mọi việc đều bắt đầu từ phòng ban",
+            "description": "Phòng ban có thể là Nhân sự, Kế toán, Kinh doanh, Vận hành, Kỹ thuật hoặc Chăm sóc khách hàng."
           }
         }
       },
       "no_projects": {
-        "title": "Không có dự án",
-        "description": "Để tạo mục công việc hoặc quản lý công việc của bạn, bạn cần tạo dự án hoặc trở thành một phần của dự án.",
+        "title": "Không có phòng ban",
+        "description": "Để tạo và quản lý công việc, bạn cần tạo phòng ban hoặc tham gia vào một phòng ban.",
         "primary_button": {
-          "text": "Bắt đầu dự án đầu tiên của bạn",
+          "text": "Tạo phòng ban đầu tiên của bạn",
           "comic": {
-            "title": "Trong Plane, mọi thứ đều bắt đầu với dự án",
-            "description": "Dự án có thể là lộ trình sản phẩm, chiến dịch tiếp thị hoặc ra mắt xe mới."
+            "title": "Trong BWP Notebook, mọi việc đều bắt đầu từ phòng ban",
+            "description": "Phòng ban có thể là Nhân sự, Kế toán, Kinh doanh, Vận hành, Kỹ thuật hoặc Chăm sóc khách hàng."
           }
         }
       },
       "filter": {
-        "title": "Không có dự án phù hợp",
-        "description": "Không phát hiện dự án nào phù hợp với điều kiện tìm kiếm.\nTạo dự án mới."
+        "title": "Không có phòng ban phù hợp",
+        "description": "Không phát hiện phòng ban nào phù hợp với điều kiện tìm kiếm.\nTạo phòng ban mới."
       },
       "search": {
-        "description": "Không phát hiện dự án nào phù hợp với điều kiện tìm kiếm.\nTạo dự án mới"
+        "description": "Không phát hiện phòng ban nào phù hợp với điều kiện tìm kiếm.\nTạo phòng ban mới"
       }
     }
   },
@@ -229,33 +229,33 @@
     "add_view": "Thêm chế độ xem",
     "empty_state": {
       "all-issues": {
-        "title": "Không có mục công việc trong dự án",
-        "description": "Dự án đầu tiên hoàn thành! Bây giờ, hãy chia nhỏ công việc của bạn thành các mục công việc có thể theo dõi. Hãy bắt đầu nào!",
+        "title": "Không có công việc trong phòng ban",
+        "description": "Phòng ban đầu tiên hoàn thành! Bây giờ, hãy chia nhỏ công việc thành các công việc có thể theo dõi. Hãy bắt đầu nào!",
         "primary_button": {
-          "text": "Tạo mục công việc mới"
+          "text": "Tạo công việc mới"
         }
       },
       "assigned": {
-        "title": "Chưa có mục công việc",
-        "description": "Mục công việc được giao cho bạn có thể được theo dõi tại đây.",
+        "title": "Chưa có công việc",
+        "description": "Công việc được phân công cho bạn có thể được theo dõi tại đây.",
         "primary_button": {
-          "text": "Tạo mục công việc mới"
+          "text": "Tạo công việc mới"
         }
       },
       "created": {
-        "title": "Chưa có mục công việc",
-        "description": "Tất cả mục công việc bạn tạo sẽ xuất hiện ở đây, theo dõi chúng trực tiếp tại đây.",
+        "title": "Chưa có công việc",
+        "description": "Tất cả công việc bạn tạo sẽ xuất hiện ở đây, theo dõi chúng trực tiếp tại đây.",
         "primary_button": {
-          "text": "Tạo mục công việc mới"
+          "text": "Tạo công việc mới"
         }
       },
       "subscribed": {
-        "title": "Chưa có mục công việc",
-        "description": "Đăng ký mục công việc bạn quan tâm, theo dõi tất cả chúng tại đây."
+        "title": "Chưa có công việc",
+        "description": "Theo dõi công việc bạn quan tâm tại đây."
       },
       "custom-view": {
-        "title": "Chưa có mục công việc",
-        "description": "Mục công việc phù hợp với bộ lọc, theo dõi tất cả chúng tại đây."
+        "title": "Chưa có công việc",
+        "description": "Công việc phù hợp với bộ lọc, theo dõi tất cả tại đây."
       }
     },
     "delete_view": {
@@ -264,10 +264,10 @@
     }
   },
   "workspace_draft_issues": {
-    "draft_an_issue": "Nháp một mục công việc",
+    "draft_an_issue": "Nháp một công việc",
     "empty_state": {
-      "title": "Mục công việc viết dở và bình luận sắp ra mắt sẽ hiển thị ở đây.",
-      "description": "Để thử tính năng này, hãy bắt đầu thêm mục công việc và rời đi giữa chừng, hoặc tạo bản nháp đầu tiên của bạn bên dưới. 😉",
+      "title": "Công việc viết dở và bình luận sẽ hiển thị ở đây.",
+      "description": "Để thử tính năng này, hãy bắt đầu thêm công việc và rời đi giữa chừng, hoặc tạo bản nháp đầu tiên của bạn bên dưới. 😉",
       "primary_button": {
         "text": "Tạo bản nháp đầu tiên của bạn"
       }
@@ -279,7 +279,7 @@
     "toasts": {
       "created": {
         "success": "Đã tạo bản nháp",
-        "error": "Không thể tạo mục công việc. Vui lòng thử lại."
+        "error": "Không thể tạo công việc. Vui lòng thử lại."
       },
       "deleted": {
         "success": "Đã xóa bản nháp"
@@ -289,8 +289,8 @@
   "workspace_pages": {
     "empty_state": {
       "general": {
-        "title": "Viết ghi chú, tài liệu, hoặc cơ sở kiến thức đầy đủ. Nhờ Galileo, trợ lý AI của Plane, giúp bạn bắt đầu",
-        "description": "Trang là không gian lưu trữ ý tưởng trong Plane. Ghi lại ghi chú cuộc họp, định dạng chúng dễ dàng, nhúng mục công việc, bố trí chúng bằng thư viện các thành phần, và giữ tất cả trong ngữ cảnh dự án của bạn. Để làm ngắn gọn bất kỳ tài liệu nào, gọi Galileo, AI của Plane, bằng phím tắt hoặc nhấp vào nút.",
+        "title": "Viết ghi chú, tài liệu hoặc cơ sở kiến thức",
+        "description": "Trang là không gian lưu trữ tài liệu trong BWP Notebook. Ghi lại biên bản cuộc họp, quy trình làm việc, nhúng công việc, và giữ tất cả trong ngữ cảnh phòng ban của bạn.",
         "primary_button": {
           "text": "Tạo trang đầu tiên của bạn"
         }
@@ -303,8 +303,8 @@
         }
       },
       "public": {
-        "title": "Chưa có trang không gian làm việc",
-        "description": "Xem các trang được chia sẻ với mọi người trong không gian làm việc của bạn ngay tại đây.",
+        "title": "Chưa có trang đơn vị",
+        "description": "Xem các trang được chia sẻ với mọi người trong đơn vị của bạn ngay tại đây.",
         "primary_button": {
           "text": "Tạo trang đầu tiên của bạn"
         }
@@ -323,7 +323,7 @@
     "empty_state": {
       "active": {
         "title": "Không có chu kỳ đang hoạt động",
-        "description": "Chu kỳ của các dự án của bạn bao gồm bất kỳ khoảng thời gian nào bao gồm ngày hôm nay trong phạm vi của nó. Tìm tiến độ và chi tiết của tất cả chu kỳ đang hoạt động của bạn tại đây."
+        "description": "Chu kỳ của các phòng ban bao gồm bất kỳ khoảng thời gian nào bao gồm ngày hôm nay trong phạm vi của nó. Tìm tiến độ và chi tiết của tất cả chu kỳ đang hoạt động tại đây."
       }
     }
   },
@@ -354,7 +354,7 @@
         },
         "message": {
           "seat_limit": "Không thể nhập thành viên do hạn chế số ghế.",
-          "success": "Đã thêm thành công {count} thành viên vào không gian làm việc.",
+          "success": "Đã thêm thành công {count} thành viên vào đơn vị.",
           "no_imports": "Không có thành viên nào được nhập từ tệp CSV."
         },
         "stats": {

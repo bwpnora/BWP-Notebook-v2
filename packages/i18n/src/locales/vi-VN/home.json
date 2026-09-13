@@ -1,25 +1,25 @@
 {
   "home": {
     "empty": {
-      "quickstart_guide": "Hướng dẫn nhanh",
+      "quickstart_guide": "Hướng dẫn khởi đầu nhanh",
       "not_right_now": "Không phải bây giờ",
       "create_project": {
-        "title": "Tạo dự án",
-        "description": "Trong Plane, hầu hết mọi thứ đều bắt đầu từ dự án.",
+        "title": "Tạo phòng ban / Notebook",
+        "description": "Trong BWP Notebook, mọi công việc đều được quản lý theo phòng ban.",
         "cta": "Bắt đầu"
       },
       "invite_team": {
-        "title": "Mời nhóm của bạn",
-        "description": "Xây dựng, phát hành và quản lý cùng với đồng nghiệp.",
+        "title": "Mời nhân sự vào hệ thống",
+        "description": "Cộng tác, phân công và xử lý công việc cùng đồng nghiệp.",
         "cta": "Mời họ tham gia"
       },
       "configure_workspace": {
-        "title": "Thiết lập không gian làm việc của bạn",
-        "description": "Bật hoặc tắt tính năng, hoặc thiết lập thêm.",
-        "cta": "Cấu hình không gian làm việc này"
+        "title": "Cấu hình đơn vị / công ty",
+        "description": "Bật hoặc tắt tính năng, hoặc thiết lập thêm cho đơn vị.",
+        "cta": "Cấu hình đơn vị này"
       },
       "personalize_account": {
-        "title": "Cá nhân hóa Plane cho bạn",
+        "title": "Cá nhân hóa tài khoản",
         "description": "Chọn ảnh đại diện, màu sắc và nhiều hơn nữa.",
         "cta": "Cá nhân hóa ngay"
       },
@@ -40,20 +40,20 @@
     "recents": {
       "title": "Gần đây",
       "empty": {
-        "project": "Sau khi truy cập dự án, các dự án gần đây của bạn sẽ xuất hiện ở đây.",
+        "project": "Sau khi truy cập phòng ban, các phòng ban gần đây của bạn sẽ xuất hiện ở đây.",
         "page": "Sau khi truy cập trang, các trang gần đây của bạn sẽ xuất hiện ở đây.",
-        "issue": "Sau khi truy cập mục công việc, các mục công việc gần đây của bạn sẽ xuất hiện ở đây.",
-        "default": "Bạn chưa có dự án gần đây nào."
+        "issue": "Sau khi truy cập công việc, các công việc gần đây của bạn sẽ xuất hiện ở đây.",
+        "default": "Bạn chưa có phòng ban gần đây nào."
       },
       "filters": {
         "all": "Tất cả",
-        "projects": "Dự án",
+        "projects": "Phòng ban / Notebook",
         "pages": "Trang",
-        "issues": "Mục công việc"
+        "issues": "Công việc"
       }
     },
     "new_at_plane": {
-      "title": "Tính năng mới của Plane"
+      "title": "Tính năng mới của BWP Notebook"
     },
     "quick_tutorial": {
       "title": "Hướng dẫn nhanh"

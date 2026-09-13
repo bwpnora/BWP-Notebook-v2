@@ -1,6 +1,6 @@
 {
   "workspace_settings": {
-    "label": "Cài đặt không gian làm việc",
+    "label": "Cài đặt đơn vị",
     "page_label": "{workspace} - Cài đặt chung",
     "key_created": "Đã tạo khóa",
     "copy_key": "Sao chép và lưu khóa này trong Plane Pages. Bạn sẽ không thể thấy khóa này sau khi đóng. Tệp CSV chứa khóa đã được tải xuống.",
@@ -10,20 +10,20 @@
         "title": "Chung",
         "upload_logo": "Tải lên logo",
         "edit_logo": "Chỉnh sửa logo",
-        "name": "Tên không gian làm việc",
+        "name": "Tên đơn vị",
         "company_size": "Quy mô công ty",
-        "url": "URL không gian làm việc",
-        "workspace_timezone": "Múi giờ không gian làm việc",
-        "update_workspace": "Cập nhật không gian làm việc",
-        "delete_workspace": "Xóa không gian làm việc này",
-        "delete_workspace_description": "Khi xóa không gian làm việc, tất cả dữ liệu và tài nguyên trong không gian làm việc đó sẽ bị xóa vĩnh viễn và không thể khôi phục.",
-        "delete_btn": "Xóa không gian làm việc này",
+        "url": "URL đơn vị",
+        "workspace_timezone": "Múi giờ đơn vị",
+        "update_workspace": "Cập nhật đơn vị",
+        "delete_workspace": "Xóa đơn vị này",
+        "delete_workspace_description": "Khi xóa đơn vị, tất cả dữ liệu và tài nguyên trong đơn vị đó sẽ bị xóa vĩnh viễn và không thể khôi phục.",
+        "delete_btn": "Xóa đơn vị này",
         "delete_modal": {
-          "title": "Bạn có chắc chắn muốn xóa không gian làm việc này không?",
+          "title": "Bạn có chắc chắn muốn xóa đơn vị này không?",
           "description": "Bạn hiện đang dùng thử gói trả phí của chúng tôi. Vui lòng hủy dùng thử trước khi tiếp tục.",
           "dismiss": "Đóng",
           "cancel": "Hủy dùng thử",
-          "success_title": "Đã xóa không gian làm việc.",
+          "success_title": "Đã xóa đơn vị.",
           "success_message": "Sắp chuyển hướng đến trang hồ sơ của bạn.",
           "error_title": "Thao tác thất bại.",
           "error_message": "Vui lòng thử lại."
@@ -31,7 +31,7 @@
         "errors": {
           "name": {
             "required": "Tên là bắt buộc",
-            "max_length": "Tên không gian làm việc không nên vượt quá 80 ký tự"
+            "max_length": "Tên đơn vị không nên vượt quá 80 ký tự"
           },
           "company_size": {
             "required": "Quy mô công ty là bắt buộc",
@@ -40,11 +40,11 @@
         }
       },
       "members": {
-        "title": "Thành viên",
+        "title": "Thành viên đơn vị",
         "add_member": "Thêm thành viên",
         "pending_invites": "Lời mời đang chờ xử lý",
         "invitations_sent_successfully": "Đã gửi lời mời thành công",
-        "leave_confirmation": "Bạn có chắc chắn muốn rời khỏi không gian làm việc này không? Bạn sẽ không thể truy cập không gian làm việc này nữa. Hành động này không thể hoàn tác.",
+        "leave_confirmation": "Bạn có chắc chắn muốn rời khỏi đơn vị này không? Bạn sẽ không thể truy cập đơn vị này nữa. Hành động này không thể hoàn tác.",
         "details": {
           "full_name": "Tên đầy đủ",
           "display_name": "Tên hiển thị",
@@ -55,7 +55,7 @@
         },
         "modal": {
           "title": "Mời người cộng tác",
-          "description": "Mời người cộng tác trong không gian làm việc của bạn.",
+          "description": "Mời nhân sự cộng tác trong đơn vị của bạn.",
           "button": "Gửi lời mời",
           "button_loading": "Đang gửi lời mời",
           "placeholder": "name@company.com",
@@ -75,14 +75,14 @@
       },
       "exports": {
         "heading": "Xuất",
-        "description": "Xuất dữ liệu dự án của bạn dưới nhiều định dạng và truy cập lịch sử xuất với các liên kết tải xuống.",
+        "description": "Xuất dữ liệu phòng ban của bạn dưới nhiều định dạng và truy cập lịch sử xuất với các liên kết tải xuống.",
         "title": "Xuất",
         "exporting": "Đang xuất",
         "previous_exports": "Xuất trước đây",
         "export_separate_files": "Xuất dữ liệu thành các tệp riêng biệt",
-        "exporting_projects": "Đang xuất dự án",
+        "exporting_projects": "Đang xuất phòng ban",
         "format": "Định dạng",
-        "filters_info": "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
+        "filters_info": "Áp dụng bộ lọc để xuất các công việc cụ thể dựa trên tiêu chí của bạn.",
         "modal": {
           "title": "Xuất đến",
           "toasts": {
@@ -99,7 +99,7 @@
       },
       "webhooks": {
         "heading": "Webhook",
-        "description": "Tự động hóa thông báo đến các dịch vụ bên ngoài khi các sự kiện dự án xảy ra.",
+        "description": "Tự động hóa thông báo đến các dịch vụ bên ngoài khi các sự kiện phòng ban xảy ra.",
         "title": "Webhooks",
         "add_webhook": "Thêm webhook",
         "modal": {
@@ -177,32 +177,32 @@
         "heading": "Tích hợp",
         "description": "Kết nối với các công cụ và dịch vụ phổ biến để đồng bộ hóa công việc của bạn trong toàn bộ hệ sinh thái quy trình làm việc.",
         "page_title": "Làm việc với dữ liệu Plane của bạn trong các ứng dụng có sẵn hoặc ứng dụng riêng của bạn.",
-        "page_description": "Xem tất cả các tích hợp được workspace này hoặc bạn đang sử dụng."
+        "page_description": "Xem tất cả các tích hợp được đơn vị này hoặc bạn đang sử dụng."
       },
       "imports": {
         "title": "Nhập dữ liệu",
         "heading": "Nhập",
-        "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý dự án hiện có của bạn để tinh giản việc tích hợp quy trình làm việc."
+        "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý công việc hiện có của bạn để tinh giản việc tích hợp quy trình làm việc."
       },
       "worklogs": {
         "title": "Nhật ký công việc",
         "heading": "Nhật ký công việc",
-        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ dự án nào."
+        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ phòng ban nào."
       },
       "group_syncing": {
         "title": "Đồng bộ nhóm",
         "heading": "Đồng bộ nhóm",
-        "description": "Liên kết các nhóm nhà cung cấp danh tính với dự án và vai trò. Quyền truy cập người dùng được cập nhật tự động khi thành viên nhóm thay đổi trong IdP của bạn, đơn giản hóa quy trình onboarding và offboarding.",
+        "description": "Liên kết các nhóm nhà cung cấp danh tính với phòng ban và vai trò. Quyền truy cập người dùng được cập nhật tự động khi thành viên nhóm thay đổi trong IdP của bạn, đơn giản hóa quy trình onboarding và offboarding.",
         "enable": {
           "title": "Bật đồng bộ nhóm",
-          "description": "Tự động thêm người dùng vào dự án dựa trên các nhóm nhà cung cấp danh tính."
+          "description": "Tự động thêm người dùng vào phòng ban dựa trên các nhóm nhà cung cấp danh tính."
         },
         "config": {
           "title": "Cấu hình đồng bộ nhóm",
-          "description": "Thiết lập cách các nhóm nhà cung cấp danh tính được ánh xạ tới dự án và vai trò.",
+          "description": "Thiết lập cách các nhóm nhà cung cấp danh tính được ánh xạ tới phòng ban và vai trò.",
           "sync_on_login": {
             "title": "Đồng bộ khi đăng nhập",
-            "description": "Cập nhật thành viên nhóm và quyền truy cập dự án khi người dùng đăng nhập."
+            "description": "Cập nhật thành viên nhóm và quyền truy cập phòng ban khi người dùng đăng nhập."
           },
           "sync_offline": {
             "title": "Đồng bộ ngoại tuyến",
@@ -210,7 +210,7 @@
           },
           "auto_remove": {
             "title": "Tự động xóa",
-            "description": "Tự động xóa người dùng khỏi dự án khi họ không còn khớp với nhóm."
+            "description": "Tự động xóa người dùng khỏi phòng ban khi họ không còn khớp với nhóm."
           },
           "group_attribute_key": {
             "title": "Khóa thuộc tính nhóm",
@@ -220,7 +220,7 @@
         },
         "group_mapping": {
           "title": "Ánh xạ nhóm",
-          "description": "Liên kết các nhóm nhà cung cấp danh tính với dự án và vai trò.",
+          "description": "Liên kết các nhóm nhà cung cấp danh tính với phòng ban và vai trò.",
           "button_text": "Thêm đồng bộ nhóm mới"
         },
         "toast": {
@@ -230,7 +230,7 @@
         },
         "delete_modal": {
           "title": "Xóa đồng bộ nhóm",
-          "content": "Người dùng mới từ nhóm danh tính này sẽ không còn được thêm vào dự án. Người dùng đã thêm sẽ giữ vai trò hiện tại của họ."
+          "content": "Người dùng mới từ nhóm danh tính này sẽ không còn được thêm vào phòng ban. Người dùng đã thêm sẽ giữ vai trò hiện tại của họ."
         },
         "modal": {
           "idp_group_name": {
@@ -239,14 +239,14 @@
             "placeholder": "Nhập tên nhóm IdP"
           },
           "project": {
-            "text": "Dự án",
-            "required": "Dự án là bắt buộc",
-            "placeholder": "Chọn dự án"
+            "text": "Phòng ban",
+            "required": "Phòng ban là bắt buộc",
+            "placeholder": "Chọn phòng ban"
           },
           "default_role": {
-            "text": "Vai trò dự án",
-            "required": "Vai trò dự án là bắt buộc",
-            "placeholder": "Chọn vai trò dự án"
+            "text": "Vai trò phòng ban",
+            "required": "Vai trò phòng ban là bắt buộc",
+            "placeholder": "Chọn vai trò phòng ban"
           }
         }
       },
@@ -256,28 +256,28 @@
         "description": "Cấu hình miền của bạn và bật Đăng nhập một lần"
       },
       "project_states": {
-        "title": "Trạng thái dự án",
-        "heading": "Xem tổng quan tiến độ cho tất cả dự án.",
-        "description": "Trạng thái Dự án là tính năng chỉ có trong Plane để theo dõi tiến độ của tất cả các dự án của bạn theo bất kỳ thuộc tính dự án nào.",
+        "title": "Trạng thái phòng ban",
+        "heading": "Xem tổng quan tiến độ cho tất cả phòng ban.",
+        "description": "Trạng thái Phòng ban là tính năng theo dõi tiến độ của tất cả các phòng ban của bạn theo bất kỳ thuộc tính nào.",
         "go_to_settings": "Đi đến cài đặt"
       },
       "projects": {
-        "title": "Dự án",
-        "description": "Quản lý trạng thái dự án, bật nhãn dự án và các cấu hình khác.",
+        "title": "Phòng ban / Notebook",
+        "description": "Quản lý trạng thái phòng ban, bật nhãn phòng ban và các cấu hình khác.",
         "tabs": {
-          "states": "Trạng thái dự án",
-          "labels": "Nhãn dự án"
+          "states": "Trạng thái phòng ban",
+          "labels": "Nhãn phòng ban"
         }
       },
       "templates": {
         "title": "Mẫu",
         "heading": "Mẫu",
-        "description": "Tiết kiệm 80% thời gian dành cho việc tạo dự án, mục công việc và trang khi bạn sử dụng mẫu."
+        "description": "Tiết kiệm 80% thời gian dành cho việc tạo phòng ban, công việc và trang khi bạn sử dụng mẫu."
       },
       "relations": {
         "title": "Quan hệ",
         "heading": "Quan hệ",
-        "description": "Tạo và quản lý các loại quan hệ kết nối các mục công việc trong không gian làm việc của bạn."
+        "description": "Tạo và quản lý các loại quan hệ kết nối các công việc trong đơn vị của bạn."
       },
       "cancel_trial": {
         "title": "Hủy bỏ dùng thử trước.",
@@ -285,7 +285,7 @@
         "dismiss": "Bỏ qua",
         "cancel": "Hủy dùng thử",
         "cancel_success_title": "Đã hủy dùng thử.",
-        "cancel_success_message": "Bây giờ bạn có thể xóa workspace.",
+        "cancel_success_message": "Bây giờ bạn có thể xóa đơn vị.",
         "cancel_error_title": "Điều đó không hoạt động.",
         "cancel_error_message": "Vui lòng thử lại."
       },
@@ -303,14 +303,14 @@
         "install": "Cài đặt",
         "installed": "Đã cài đặt",
         "configure": "Cấu hình",
-        "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Plane",
+        "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một đơn vị",
         "app_credentials_regenrated": {
           "title": "Thông tin xác thực ứng dụng đã được tạo lại thành công",
           "description": "Thay thế client secret ở mọi nơi nó được sử dụng. Secret trước đó không còn hợp lệ."
         },
         "app_created": {
           "title": "Ứng dụng đã được tạo thành công",
-          "description": "Sử dụng thông tin xác thực để cài đặt ứng dụng trong không gian làm việc Plane"
+          "description": "Sử dụng thông tin xác thực để cài đặt ứng dụng trong đơn vị"
         },
         "installed_apps": "Ứng dụng đã cài đặt",
         "all_apps": "Tất cả ứng dụng",
@@ -322,7 +322,7 @@
         },
         "authorization_grant_type": {
           "title": "Loại kết nối",
-          "description": "Chọn liệu ứng dụng của bạn nên được cài đặt một lần cho không gian làm việc hay để mỗi người dùng kết nối tài khoản riêng của họ"
+          "description": "Chọn liệu ứng dụng của bạn nên được cài đặt một lần cho đơn vị hay để mỗi người dùng kết nối tài khoản riêng của họ"
         },
         "website": {
           "title": "Trang web",
@@ -341,7 +341,7 @@
         },
         "webhook_url": {
           "label": "URL webhook",
-          "description": "Đây là nơi chúng tôi sẽ gửi các sự kiện và cập nhật webhook từ các workspace nơi ứng dụng của bạn được cài đặt.",
+          "description": "Đây là nơi chúng tôi sẽ gửi các sự kiện và cập nhật webhook từ các đơn vị nơi ứng dụng của bạn được cài đặt.",
           "placeholder": "https://example.com/webhook"
         },
         "webhook_secret": {
@@ -354,7 +354,7 @@
           "description": "Người dùng sẽ được chuyển hướng đến đường dẫn này sau khi xác thực với Plane.",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "Kết nối một workspace Plane để bắt đầu sử dụng nó",
+        "app_available_description": "Kết nối một đơn vị để bắt đầu sử dụng nó",
         "client_id_and_secret": "ID khách hàng và Secret",
         "client_id_and_secret_description": "Sao chép và lưu khóa bí mật này trong Pages. Bạn không thể nhìn thấy khóa này lại sau khi bạn đóng.",
         "client_id_and_secret_download": "Bạn có thể tải xuống một CSV với khóa từ đây.",
@@ -393,18 +393,18 @@
         "regenerate_client_secret_confirm_description": "Ứng dụng sử dụng khóa này sẽ ngừng hoạt động. Bạn sẽ cần cập nhật khóa trong ứng dụng.",
         "regenerate_client_secret_confirm_cancel": "Hủy bỏ",
         "regenerate_client_secret_confirm_regenerate": "Regenerate",
-        "read_only_access_to_workspace": "Truy cập chỉ đọc vào workspace của bạn",
-        "write_access_to_workspace": "Truy cập viết vào workspace của bạn",
+        "read_only_access_to_workspace": "Truy cập chỉ đọc vào đơn vị của bạn",
+        "write_access_to_workspace": "Truy cập ghi vào đơn vị của bạn",
         "read_only_access_to_user_profile": "Truy cập chỉ đọc vào hồ sơ người dùng của bạn",
         "write_access_to_user_profile": "Truy cập viết vào hồ sơ người dùng của bạn",
-        "connect_app_to_workspace": "Kết nối {app} vào workspace của bạn {workspace}",
+        "connect_app_to_workspace": "Kết nối {app} vào đơn vị của bạn {workspace}",
         "user_permissions": "Quyền người dùng",
         "user_permissions_description": "Quyền người dùng được sử dụng để cấp quyền truy cập vào hồ sơ người dùng.",
-        "workspace_permissions": "Quyền workspace",
-        "workspace_permissions_description": "Quyền workspace được sử dụng để cấp quyền truy cập vào workspace.",
+        "workspace_permissions": "Quyền đơn vị",
+        "workspace_permissions_description": "Quyền đơn vị được sử dụng để cấp quyền truy cập vào đơn vị.",
         "with_the_permissions": "với quyền",
-        "app_consent_title": "{app} đang yêu cầu truy cập vào workspace Plane của bạn và hồ sơ.",
-        "choose_workspace_to_connect_app_with": "Chọn một workspace để kết nối ứng dụng",
+        "app_consent_title": "{app} đang yêu cầu truy cập vào đơn vị và hồ sơ của bạn.",
+        "choose_workspace_to_connect_app_with": "Chọn một đơn vị để kết nối ứng dụng",
         "app_consent_workspace_permissions_title": "{app} muốn",
         "app_consent_user_permissions_title": "{app} cũng có thể yêu cầu quyền của người dùng cho các tài nguyên sau. Các quyền này sẽ được yêu cầu và được cấp phép chỉ bởi một người dùng.",
         "app_consent_accept_title": "Bằng cách chấp nhận, bạn",
@@ -419,7 +419,7 @@
         "invalid_categories_error": "Danh mục không hợp lệ",
         "categories_description": "Chọn các danh mục phù hợp nhất với ứng dụng",
         "supported_plans": "Gói được Hỗ trợ",
-        "supported_plans_description": "Chọn các gói không gian làm việc có thể cài đặt ứng dụng này. Để trống để cho phép tất cả các gói.",
+        "supported_plans_description": "Chọn các gói đơn vị có thể cài đặt ứng dụng này. Để trống để cho phép tất cả các gói.",
         "select_plans": "Chọn Gói",
         "privacy_policy_url_title": "URL Chính sách bảo mật",
         "privacy_policy_url_error": "URL Chính sách bảo mật là bắt buộc",
@@ -449,9 +449,9 @@
         "uploading": "Đang tải lên...",
         "upload_and_save": "Tải lên và lưu",
         "app_consent_no_access_title": "Yêu cầu cài đặt",
-        "app_consent_no_access_description": "Ứng dụng này chỉ có thể được cài đặt sau khi quản trị viên workspace cài đặt nó. Liên hệ với quản trị viên workspace của bạn để tiếp tục.",
+        "app_consent_no_access_description": "Ứng dụng này chỉ có thể được cài đặt sau khi quản trị viên đơn vị cài đặt nó. Liên hệ với quản trị viên đơn vị của bạn để tiếp tục.",
         "app_consent_unapproved_title": "Ứng dụng này chưa được Plane xem xét hoặc phê duyệt.",
-        "app_consent_unapproved_description": "Hãy chắc chắn rằng bạn tin tưởng ứng dụng này trước khi kết nối nó với không gian làm việc của bạn.",
+        "app_consent_unapproved_description": "Hãy chắc chắn rằng bạn tin tưởng ứng dụng này trước khi kết nối nó với đơn vị của bạn.",
         "go_to_app": "Đi đến ứng dụng",
         "enable_app_mentions": "Bật đề cập ứng dụng",
         "enable_app_mentions_tooltip": "Khi bật tính năng này, người dùng có thể đề cập hoặc gán Work Items cho ứng dụng này.",
@@ -465,9 +465,9 @@
         "read": "Đọc",
         "write": "Ghi",
         "scope_description": {
-          "projects": "Truy cập dự án và mọi thực thể liên quan đến dự án",
+          "projects": "Truy cập phòng ban và mọi thực thể liên quan đến phòng ban",
           "wiki": "Truy cập wiki và mọi thực thể liên quan đến wiki",
-          "workspaces": "Truy cập không gian làm việc và mọi thực thể liên quan",
+          "workspaces": "Truy cập đơn vị và mọi thực thể liên quan",
           "stickies": "Truy cập ghi chú dán và mọi thực thể liên quan",
           "profile": "Truy cập thông tin hồ sơ người dùng",
           "agents": "Truy cập vào agents và tất cả các thực thể liên quan đến agent",
