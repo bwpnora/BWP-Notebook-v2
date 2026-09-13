@@ -10,6 +10,7 @@ import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { DoorClosed } from "lucide-react";
 import { ParentPropertyIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
@@ -169,8 +170,9 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         control={control}
         name="room"
         render={({ field: { value, onChange } }) => (
-          <div className="text-xs flex h-7 items-center rounded-sm border-[0.5px] border-strong bg-layer-2 px-2 text-secondary">
-            <span className="mr-1.5 font-medium whitespace-nowrap text-secondary">Phòng:</span>
+          <div className="focus-within:border-secondary flex h-7 items-center gap-1 rounded-sm border-[0.5px] border-strong bg-transparent px-2 py-0.5 text-caption-sm-regular text-secondary transition-colors hover:bg-layer-1">
+            <DoorClosed className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />
+            <span className="whitespace-nowrap text-secondary">Phòng:</span>
             <input
               type="number"
               value={value ?? ""}
@@ -179,8 +181,8 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                 onChange(val);
                 handleFormChange();
               }}
-              placeholder="Số phòng"
-              className="text-xs w-20 bg-transparent text-primary outline-none placeholder:text-placeholder"
+              placeholder="Số"
+              className="w-10 [appearance:textfield] bg-transparent text-caption-sm-regular text-primary outline-none placeholder:text-placeholder [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
           </div>
         )}
