@@ -25,6 +25,7 @@ from plane.db.models import (
     ProjectUserProperty,
     IssueAssignee,
     IssueSubscriber,
+    IssueSupporter,
     IssueLabel,
     Label,
     CycleIssue,
@@ -97,6 +98,12 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    # BWP-Notebook-v2 supporters - Code by IT Leon
+    supporter_ids = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        write_only=True,
+        required=False,
+    )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
     workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
 
@@ -119,6 +126,8 @@ class IssueCreateSerializer(BaseSerializer):
         data["assignee_ids"] = assignee_ids if assignee_ids else []
         label_ids = self.initial_data.get("label_ids")
         data["label_ids"] = label_ids if label_ids else []
+        supporter_ids = self.initial_data.get("supporter_ids")
+        data["supporter_ids"] = supporter_ids if supporter_ids else []
         return data
 
     def validate(self, attrs):
@@ -153,6 +162,15 @@ class IssueCreateSerializer(BaseSerializer):
                 role__gte=15,
                 is_active=True,
                 member_id__in=attrs["assignee_ids"],
+            ).values_list("member_id", flat=True)
+
+        # Validate supporters are from project - Code by IT Leon
+        if attrs.get("supporter_ids", []):
+            attrs["supporter_ids"] = ProjectMember.objects.filter(
+                project_id=self.context["project_id"],
+                role__gte=5,
+                is_active=True,
+                member_id__in=attrs["supporter_ids"],
             ).values_list("member_id", flat=True)
 
         # Validate labels are from project
@@ -199,6 +217,7 @@ class IssueCreateSerializer(BaseSerializer):
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
+        supporters = validated_data.pop("supporter_ids", None)
 
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
@@ -271,11 +290,32 @@ class IssueCreateSerializer(BaseSerializer):
             except IntegrityError:
                 pass
 
+        # BWP-Notebook-v2 supporters - Code by IT Leon
+        if supporters is not None and len(supporters):
+            try:
+                IssueSupporter.objects.bulk_create(
+                    [
+                        IssueSupporter(
+                            supporter_id=supporter_id,
+                            issue=issue,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for supporter_id in supporters
+                    ],
+                    batch_size=10,
+                )
+            except IntegrityError:
+                pass
+
         return issue
 
     def update(self, instance, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
         labels = validated_data.pop("label_ids", None)
+        supporters = validated_data.pop("supporter_ids", None)
 
         # Related models
         project_id = instance.project_id
@@ -318,6 +358,28 @@ class IssueCreateSerializer(BaseSerializer):
                             updated_by_id=updated_by_id,
                         )
                         for label_id in labels
+                    ],
+                    batch_size=10,
+                    ignore_conflicts=True,
+                )
+            except IntegrityError:
+                pass
+
+        # BWP-Notebook-v2 supporters update - Code by IT Leon
+        if supporters is not None:
+            IssueSupporter.objects.filter(issue=instance).delete()
+            try:
+                IssueSupporter.objects.bulk_create(
+                    [
+                        IssueSupporter(
+                            supporter_id=supporter_id,
+                            issue=instance,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
+                            created_by_id=created_by_id,
+                            updated_by_id=updated_by_id,
+                        )
+                        for supporter_id in supporters
                     ],
                     batch_size=10,
                     ignore_conflicts=True,
@@ -775,6 +837,7 @@ class IssueSerializer(DynamicBaseSerializer):
     # Many to many
     label_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
     assignee_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
+    supporter_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
 
     # Count items
     sub_issues_count = serializers.IntegerField(read_only=True)
@@ -800,6 +863,10 @@ class IssueSerializer(DynamicBaseSerializer):
             "module_ids",
             "label_ids",
             "assignee_ids",
+            "supporter_ids",
+            "type_id",
+            "room",
+            "notes",
             "sub_issues_count",
             "created_at",
             "updated_at",
@@ -838,6 +905,11 @@ class IssueListDetailSerializer(serializers.Serializer):
     def get_assignee_ids(self, obj):
         return [assignee.assignee_id for assignee in obj.issue_assignee.all()]
 
+    def get_supporter_ids(self, obj):
+        if hasattr(obj, "issue_supporter"):
+            return [supporter.supporter_id for supporter in obj.issue_supporter.all()]
+        return []
+
     def to_representation(self, instance):
         data = {
             # Basic fields
@@ -859,11 +931,16 @@ class IssueListDetailSerializer(serializers.Serializer):
             "updated_by": instance.updated_by_id,
             "is_draft": instance.is_draft,
             "archived_at": instance.archived_at,
+            # BWP-Notebook-v2 domain fields - Code by IT Leon
+            "type_id": getattr(instance, "type_id", None),
+            "room": getattr(instance, "room", None),
+            "notes": getattr(instance, "notes", None),
             # Computed fields
             "cycle_id": instance.cycle_id,
             "module_ids": self.get_module_ids(instance),
             "label_ids": self.get_label_ids(instance),
             "assignee_ids": self.get_assignee_ids(instance),
+            "supporter_ids": getattr(instance, "supporter_ids", self.get_supporter_ids(instance)),
             "sub_issues_count": instance.sub_issues_count,
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
@@ -974,6 +1051,16 @@ class IssuePublicSerializer(BaseSerializer):
 class IssueSubscriberSerializer(BaseSerializer):
     class Meta:
         model = IssueSubscriber
+        fields = "__all__"
+        read_only_fields = ["workspace", "project", "issue"]
+
+
+# BWP-Notebook-v2 extension - Code by IT Leon
+class IssueSupporterSerializer(BaseSerializer):
+    supporter_detail = UserLiteSerializer(source="supporter", read_only=True)
+
+    class Meta:
+        model = IssueSupporter
         fields = "__all__"
         read_only_fields = ["workspace", "project", "issue"]
 
