@@ -54,30 +54,40 @@ class EmailCheckEndpoint(APIView):
         smtp_configured = bool(EMAIL_HOST)
         is_magic_login_enabled = ENABLE_MAGIC_LINK_LOGIN == "1"
 
-        email = request.data.get("email", False)
+        identifier = request.data.get("email") or request.data.get("identifier")
 
-        # Return error if email is not present
-        if not email:
+        # Return error if identifier is not present
+        if not identifier:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["EMAIL_REQUIRED"],
                 error_message="EMAIL_REQUIRED",
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
 
-        # Lower the email
-        email = str(email).lower().strip()
-
-        # Validate email
-        try:
-            validate_email(email)
-        except ValidationError:
+        identifier = str(identifier).strip()
+        if not identifier:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
-                error_message="INVALID_EMAIL",
+                error_code=AUTHENTICATION_ERROR_CODES["EMAIL_REQUIRED"],
+                error_message="EMAIL_REQUIRED",
             )
             return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
-        # Check if a user already exists with the given email
-        existing_user = User.objects.filter(email=email).first()
+
+        if "@" in identifier:
+            email = identifier.lower()
+            # Validate email
+            try:
+                validate_email(email)
+            except ValidationError:
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
+                    error_message="INVALID_EMAIL",
+                )
+                return Response(exc.get_error_dict(), status=status.HTTP_400_BAD_REQUEST)
+            # Check if a user already exists with the given email
+            existing_user = User.objects.filter(email__iexact=email).first()
+        else:
+            # Check if a user already exists with the given username
+            existing_user = User.objects.filter(username__iexact=identifier).first()
 
         # If existing user
         if existing_user:
@@ -87,7 +97,10 @@ class EmailCheckEndpoint(APIView):
                     "existing": True,
                     "status": (
                         "MAGIC_CODE"
-                        if existing_user.is_password_autoset and smtp_configured and is_magic_login_enabled
+                        if existing_user.is_password_autoset
+                        and smtp_configured
+                        and is_magic_login_enabled
+                        and existing_user.email
                         else "CREDENTIAL"
                     ),
                 },
@@ -97,7 +110,11 @@ class EmailCheckEndpoint(APIView):
         return Response(
             {
                 "existing": False,
-                "status": ("MAGIC_CODE" if smtp_configured and is_magic_login_enabled else "CREDENTIAL"),
+                "status": (
+                    "MAGIC_CODE"
+                    if smtp_configured and is_magic_login_enabled and "@" in identifier
+                    else "CREDENTIAL"
+                ),
             },
             status=status.HTTP_200_OK,
         )

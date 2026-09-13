@@ -44,8 +44,20 @@ class SignInAuthEndpoint(View):
             return HttpResponseRedirect(url)
 
         # set the referer as session to redirect after login
-        email = request.POST.get("email", False)
-        password = request.POST.get("password", False)
+        email = request.POST.get("email") or request.POST.get("identifier")
+        password = request.POST.get("password")
+        if not email and request.body:
+            try:
+                import json
+
+                data = json.loads(request.body)
+                email = data.get("email") or data.get("identifier")
+                if not password:
+                    password = data.get("password")
+                if not next_path:
+                    next_path = data.get("next_path")
+            except Exception:
+                pass
 
         ## Raise exception if any of the above are missing
         if not email or not password:
@@ -53,7 +65,7 @@ class SignInAuthEndpoint(View):
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_IN"],
                 error_message="REQUIRED_EMAIL_PASSWORD_SIGN_IN",
-                payload={"email": str(email)},
+                payload={"email": str(email) if email else ""},
             )
             params = exc.get_error_dict()
             # Next path
@@ -64,15 +76,12 @@ class SignInAuthEndpoint(View):
             )
             return HttpResponseRedirect(url)
 
-        # Validate email
-        email = email.strip().lower()
-        try:
-            validate_email(email)
-        except ValidationError:
+        identifier = str(email).strip()
+        if not identifier:
             exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL_SIGN_IN"],
-                error_message="INVALID_EMAIL_SIGN_IN",
-                payload={"email": str(email)},
+                error_code=AUTHENTICATION_ERROR_CODES["REQUIRED_EMAIL_PASSWORD_SIGN_IN"],
+                error_message="REQUIRED_EMAIL_PASSWORD_SIGN_IN",
+                payload={"email": ""},
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
@@ -82,13 +91,33 @@ class SignInAuthEndpoint(View):
             )
             return HttpResponseRedirect(url)
 
-        existing_user = User.objects.filter(email=email).first()
+        if "@" in identifier:
+            identifier = identifier.lower()
+            try:
+                validate_email(identifier)
+            except ValidationError:
+                exc = AuthenticationException(
+                    error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL_SIGN_IN"],
+                    error_message="INVALID_EMAIL_SIGN_IN",
+                    payload={"email": str(identifier)},
+                )
+                params = exc.get_error_dict()
+                url = get_safe_redirect_url(
+                    base_url=base_host(request=request, is_app=True),
+                    next_path=next_path,
+                    params=params,
+                )
+                return HttpResponseRedirect(url)
+
+            existing_user = User.objects.filter(email__iexact=identifier).first()
+        else:
+            existing_user = User.objects.filter(username__iexact=identifier).first()
 
         if not existing_user:
             exc = AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["USER_DOES_NOT_EXIST"],
                 error_message="USER_DOES_NOT_EXIST",
-                payload={"email": str(email)},
+                payload={"email": str(identifier)},
             )
             params = exc.get_error_dict()
             url = get_safe_redirect_url(
@@ -101,7 +130,7 @@ class SignInAuthEndpoint(View):
         try:
             provider = EmailProvider(
                 request=request,
-                key=email,
+                key=identifier,
                 code=password,
                 is_signup=False,
                 callback=post_user_auth_workflow,

@@ -116,6 +116,7 @@ urlpatterns = [
         name="space-gitlab-callback",
     ),
     # Email Check
+    path("check/", EmailCheckEndpoint.as_view(), name="check"),
     path("email-check/", EmailCheckEndpoint.as_view(), name="email-check"),
     path("spaces/email-check/", EmailCheckSpaceEndpoint.as_view(), name="email-check"),
     # Password

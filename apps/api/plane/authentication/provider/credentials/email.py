@@ -59,9 +59,12 @@ class EmailProvider(CredentialAdapter):
             })
             return
         else:
-            user = User.objects.filter(email=self.key).first()
+            if "@" in str(self.key):
+                user = User.objects.filter(email__iexact=self.key).first()
+            else:
+                user = User.objects.filter(username__iexact=self.key).first()
 
-            # User does not exists
+            # User does not exist
             if not user:
                 self.logger.warning("User does not exist")
                 raise AuthenticationException(
@@ -83,8 +86,11 @@ class EmailProvider(CredentialAdapter):
                     payload={"email": self.key},
                 )
 
+            self.authenticated_user = user
+            effective_email = user.email or f"{user.username}@local"
+
             super().set_user_data({
-                "email": self.key,
+                "email": effective_email,
                 "user": {
                     "avatar": "",
                     "first_name": "",
@@ -94,3 +100,42 @@ class EmailProvider(CredentialAdapter):
                 },
             })
             return
+
+    def complete_login_or_signup(self):
+        if self.is_signup:
+            return super().complete_login_or_signup()
+
+        user = getattr(self, "authenticated_user", None)
+        if not user:
+            return super().complete_login_or_signup()
+
+        # Reject explicitly-deactivated accounts (GHSA-rmmf-rj2q-3rrg).
+        if not user.is_active and user.last_logout_time is not None:
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["USER_ACCOUNT_DEACTIVATED"],
+                error_message="USER_ACCOUNT_DEACTIVATED",
+                payload={"email": self.key},
+            )
+
+        # Reject bot service accounts (BOT_USER_LOGIN_FORBIDDEN).
+        if user.is_bot:
+            raise AuthenticationException(
+                error_code=AUTHENTICATION_ERROR_CODES["BOT_USER_LOGIN_FORBIDDEN"],
+                error_message="BOT_USER_LOGIN_FORBIDDEN",
+                payload={"email": self.key},
+            )
+
+        is_signup = False
+
+        if self.check_sync_enabled() and not is_signup:
+            user = self.sync_user_data(user=user)
+
+        user = self.save_user_data(user=user)
+
+        if self.callback:
+            self.callback(user, is_signup, self.request)
+
+        if self.token_data:
+            self.create_update_account(user=user)
+
+        return user
