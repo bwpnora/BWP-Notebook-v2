@@ -5,12 +5,12 @@
 from django.urls import path
 
 
+from plane.app.views.workspace.direct_member import DirectMemberCreateEndpoint
 from plane.app.views import (
     UserWorkspaceInvitationsViewSet,
     WorkSpaceViewSet,
     WorkspaceJoinEndpoint,
     WorkSpaceMemberViewSet,
-    DirectMemberCreateEndpoint,
     WorkspaceInvitationsViewset,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,

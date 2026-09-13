@@ -170,6 +170,11 @@ services:
       - ./custom_backend/apps/api/plane/authentication/views/app/email.py:/code/plane/authentication/views/app/email.py
       - ./custom_backend/apps/api/plane/authentication/provider/credentials/email.py:/code/plane/authentication/provider/credentials/email.py
       - ./custom_backend/apps/api/plane/app/serializers/user.py:/code/plane/app/serializers/user.py
+      - ./custom_backend/apps/api/plane/app/views/__init__.py:/code/plane/app/views/__init__.py
+      - ./custom_backend/apps/api/plane/app/permissions/__init__.py:/code/plane/app/permissions/__init__.py
+      - ./custom_backend/apps/api/plane/app/permissions/workspace.py:/code/plane/app/permissions/workspace.py
+      - ./custom_backend/apps/api/plane/authentication/urls.py:/code/plane/authentication/urls.py
+      - ./custom_backend/apps/api/plane/urls.py:/code/plane/urls.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -212,6 +217,11 @@ services:
       - ./custom_backend/apps/api/plane/authentication/views/app/email.py:/code/plane/authentication/views/app/email.py
       - ./custom_backend/apps/api/plane/authentication/provider/credentials/email.py:/code/plane/authentication/provider/credentials/email.py
       - ./custom_backend/apps/api/plane/app/serializers/user.py:/code/plane/app/serializers/user.py
+      - ./custom_backend/apps/api/plane/app/views/__init__.py:/code/plane/app/views/__init__.py
+      - ./custom_backend/apps/api/plane/app/permissions/__init__.py:/code/plane/app/permissions/__init__.py
+      - ./custom_backend/apps/api/plane/app/permissions/workspace.py:/code/plane/app/permissions/workspace.py
+      - ./custom_backend/apps/api/plane/authentication/urls.py:/code/plane/authentication/urls.py
+      - ./custom_backend/apps/api/plane/urls.py:/code/plane/urls.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -250,6 +260,11 @@ services:
       - ./custom_backend/apps/api/plane/authentication/views/app/email.py:/code/plane/authentication/views/app/email.py
       - ./custom_backend/apps/api/plane/authentication/provider/credentials/email.py:/code/plane/authentication/provider/credentials/email.py
       - ./custom_backend/apps/api/plane/app/serializers/user.py:/code/plane/app/serializers/user.py
+      - ./custom_backend/apps/api/plane/app/views/__init__.py:/code/plane/app/views/__init__.py
+      - ./custom_backend/apps/api/plane/app/permissions/__init__.py:/code/plane/app/permissions/__init__.py
+      - ./custom_backend/apps/api/plane/app/permissions/workspace.py:/code/plane/app/permissions/workspace.py
+      - ./custom_backend/apps/api/plane/authentication/urls.py:/code/plane/authentication/urls.py
+      - ./custom_backend/apps/api/plane/urls.py:/code/plane/urls.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
