@@ -9,7 +9,13 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import type { EUserPermissions } from "@plane/constants";
-import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
+import type {
+  IDirectMemberCreateData,
+  IDirectMemberCreateResponse,
+  IWorkspaceBulkInviteFormData,
+  IWorkspaceMember,
+  IWorkspaceMemberInvitation,
+} from "@plane/types";
 // services
 import { WorkspaceService } from "@/services/workspace.service";
 // types
@@ -53,6 +59,7 @@ export interface IWorkspaceMemberStore {
   removeMemberFromWorkspace: (workspaceSlug: string, userId: string) => Promise<void>;
   // invite actions
   inviteMembersToWorkspace: (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => Promise<void>;
+  directCreateMember: (workspaceSlug: string, data: IDirectMemberCreateData) => Promise<IDirectMemberCreateResponse>;
   updateMemberInvitation: (
     workspaceSlug: string,
     invitationId: string,
@@ -93,6 +100,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       fetchWorkspaceMemberInvitations: action,
       updateMemberInvitation: action,
       deleteMemberInvitation: action,
+      directCreateMember: action,
     });
     // initialize filters store
     this.filtersStore = new WorkspaceMemberFiltersStore();
@@ -309,6 +317,20 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   inviteMembersToWorkspace = async (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => {
     const response = await this.workspaceService.inviteWorkspace(workspaceSlug, data);
     await this.fetchWorkspaceMemberInvitations(workspaceSlug);
+    return response;
+  };
+
+  /**
+   * @description directly create a member in a workspace
+   * @param workspaceSlug
+   * @param data
+   */
+  directCreateMember = async (
+    workspaceSlug: string,
+    data: IDirectMemberCreateData
+  ): Promise<IDirectMemberCreateResponse> => {
+    const response = await this.workspaceService.directCreateMember(workspaceSlug, data);
+    await this.fetchWorkspaceMembers(workspaceSlug);
     return response;
   };
 

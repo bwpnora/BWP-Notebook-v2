@@ -26,6 +26,8 @@ import type {
   IWorkspaceSidebarNavigationItem,
   IWorkspaceSidebarNavigation,
   IWorkspaceUserPropertiesResponse,
+  IDirectMemberCreateData,
+  IDirectMemberCreateResponse,
 } from "@plane/types";
 // services
 import { APIService } from "@/services/api.service";
@@ -155,6 +157,14 @@ export class WorkspaceService extends APIService {
 
   async deleteWorkspaceMember(workspaceSlug: string, memberId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/members/${memberId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async directCreateMember(workspaceSlug: string, data: IDirectMemberCreateData): Promise<IDirectMemberCreateResponse> {
+    return this.post(`/api/workspaces/${workspaceSlug}/members/direct-create/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
