@@ -7,8 +7,7 @@
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel, PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
+import { PROJECT_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { PlusIcon, SearchIcon } from "@plane/propel/icons";
@@ -37,7 +36,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
   const { t } = useTranslation();
   const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar } = useAppTheme();
   const { getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { isSuperAdmin } = useUserPermissions();
 
   const handleOnProjectDrop = (
     sourceId: string | undefined,
@@ -76,22 +75,19 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
     return project.name.toLowerCase().includes(searchQuery.toLowerCase()) || project.identifier.includes(searchQuery);
   });
 
-  // auth
-  const isAuthorizedUser = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
-
   const handleClose = useCallback(() => toggleExtendedProjectSidebar(false), [toggleExtendedProjectSidebar]);
 
-  const handleCopyText = (projectId: string) => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
+  const handleCopyText = async (projectId: string) => {
+    try {
+      await copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("link_copied"),
         message: t("project_link_copied_to_clipboard"),
       });
-    });
+    } catch (err) {
+      console.error(err);
+    }
   };
   return (
     <>
@@ -113,7 +109,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
         <div className="sticky top-4 flex w-full flex-col gap-1 px-4">
           <div className="flex items-center justify-between">
             <span className="py-1.5 text-13 font-semibold text-tertiary">Projects</span>
-            {isAuthorizedUser && (
+            {isSuperAdmin && (
               <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                 <button
                   type="button"
@@ -134,6 +130,7 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
               className="w-full max-w-[234px] border-none bg-transparent text-13 outline-none placeholder:text-placeholder"
               placeholder={t("search")}
               value={searchQuery}
+              // oxlint-disable-next-line jsx_a11y/no-autofocus
               autoFocus
               onChange={(e) => setSearchQuery(e.target.value)}
             />

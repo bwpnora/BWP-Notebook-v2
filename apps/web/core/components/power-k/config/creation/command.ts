@@ -57,6 +57,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       ctx.params.projectId?.toString()
     );
   const isWorkspaceCreationDisabled = config?.is_workspace_creation_disabled ?? false;
+  const canCreateWorkspace = Boolean(isSuperAdmin) && !isWorkspaceCreationDisabled;
 
   const getProjectDetails = (ctx: TPowerKContext) =>
     ctx.params.projectId ? getPartialProjectById(ctx.params.projectId.toString()) : undefined;
@@ -147,8 +148,8 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       i18n_title: "power_k.creation_actions.create_workspace",
       icon: SquarePlus,
       action: (ctx) => ctx.router.push("/create-workspace"),
-      isEnabled: () => Boolean(!isWorkspaceCreationDisabled),
-      isVisible: () => Boolean(!isWorkspaceCreationDisabled),
+      isEnabled: () => Boolean(canCreateWorkspace),
+      isVisible: () => Boolean(canCreateWorkspace),
       closeOnSelect: true,
     },
   };

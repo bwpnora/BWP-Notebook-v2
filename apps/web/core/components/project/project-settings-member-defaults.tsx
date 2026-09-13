@@ -115,6 +115,11 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       });
     } catch (err) {
       console.error(err);
+      setToast({
+        title: `${t("error")}!`,
+        type: TOAST_TYPE.ERROR,
+        message: t("project_settings.general.toast.error"),
+      });
     }
   };
 
@@ -132,6 +137,11 @@ export const ProjectSettingsMemberDefaults = observer(function ProjectSettingsMe
       });
     } catch (err) {
       console.error(err);
+      setToast({
+        title: `${t("error")}!`,
+        type: TOAST_TYPE.ERROR,
+        message: t("project_settings.general.toast.error"),
+      });
     }
   };
 
