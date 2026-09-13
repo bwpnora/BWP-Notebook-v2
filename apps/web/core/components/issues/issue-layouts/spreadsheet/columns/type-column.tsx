@@ -41,20 +41,20 @@ export const SpreadsheetTypeColumn = observer(function SpreadsheetTypeColumn(pro
     <div className="flex h-11 items-center border-b-[0.5px] border-subtle px-3">
       <CustomMenu
         customButton={
-          <button
-            type="button"
+          <span
             className={cn(
-              "flex h-6 items-center gap-1.5 rounded border px-2 text-[11px] font-medium transition-colors",
+              "flex h-6 items-center gap-1.5 rounded-sm border-[0.5px] px-2 text-[11px] font-medium whitespace-nowrap transition-colors",
               isOther
                 ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
                 : "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400"
             )}
-            disabled={disabled || !isManager}
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-current" />
-            <span>{label}</span>
-          </button>
+            <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-current" />
+            <span className="whitespace-nowrap">{label}</span>
+          </span>
         }
+        className="flex items-center"
+        customButtonClassName="flex items-center"
         closeOnSelect
         disabled={disabled || !isManager}
       >

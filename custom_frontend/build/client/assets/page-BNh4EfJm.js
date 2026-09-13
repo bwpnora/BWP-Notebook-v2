@@ -1,1 +1,0 @@
-import{j as e}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{t}from"./jsx-runtime-noaePsda.js";import{t as n}from"./page-Cnf5Sk2Z.js";var r=t();function i(){return(0,r.jsx)(n,{})}var a=e(i);export{a as default};

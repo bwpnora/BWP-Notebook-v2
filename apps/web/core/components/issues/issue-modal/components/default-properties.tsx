@@ -100,19 +100,20 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
             <div className="h-7">
               <CustomMenu
                 customButton={
-                  <button
-                    type="button"
+                  <span
                     className={cn(
-                      "text-xs flex h-7 items-center gap-1.5 rounded border px-2.5 font-medium transition-colors",
+                      "text-xs flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5 font-medium whitespace-nowrap transition-colors",
                       currentType === "other"
                         ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
                         : "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400"
                     )}
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                    <span>{typeLabel}</span>
-                  </button>
+                    <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-current" />
+                    <span className="whitespace-nowrap">{typeLabel}</span>
+                  </span>
                 }
+                className="h-full"
+                customButtonClassName="h-full flex items-center"
                 closeOnSelect
                 disabled={!isManager}
               >
@@ -123,7 +124,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                   }}
                   className="text-xs flex items-center gap-2"
                 >
-                  <span className="bg-blue-500 h-2 w-2 rounded-full" />
+                  <span className="bg-blue-500 h-2 w-2 flex-shrink-0 rounded-full" />
                   <span>Công việc vận hành</span>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
@@ -136,7 +137,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                   disabled={!isManager}
                   className={cn("text-xs flex items-center gap-2", !isManager && "cursor-not-allowed opacity-50")}
                 >
-                  <span className="bg-amber-500 h-2 w-2 rounded-full" />
+                  <span className="bg-amber-500 h-2 w-2 flex-shrink-0 rounded-full" />
                   <span>Công việc khác {!isManager && "(Chỉ quản lý)"}</span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
@@ -228,8 +229,8 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         control={control}
         name="room"
         render={({ field: { value, onChange } }) => (
-          <div className="border-custom-border-200 bg-custom-background-100 text-xs text-custom-text-200 flex h-7 items-center rounded border px-2">
-            <span className="text-custom-text-400 mr-1 font-medium">Phòng:</span>
+          <div className="text-xs flex h-7 items-center rounded-sm border-[0.5px] border-strong bg-layer-2 px-2 text-secondary">
+            <span className="mr-1.5 font-medium whitespace-nowrap text-secondary">Phòng:</span>
             <input
               type="number"
               value={value ?? ""}
@@ -239,7 +240,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                 handleFormChange();
               }}
               placeholder="Số phòng"
-              className="text-xs text-custom-text-100 placeholder:text-custom-text-400 w-16 bg-transparent outline-none"
+              className="text-xs w-20 bg-transparent text-primary outline-none placeholder:text-placeholder"
             />
           </div>
         )}
@@ -249,8 +250,8 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         control={control}
         name="notes"
         render={({ field: { value, onChange } }) => (
-          <div className="border-custom-border-200 bg-custom-background-100 text-xs text-custom-text-200 flex h-7 items-center rounded border px-2">
-            <span className="text-custom-text-400 mr-1 font-medium">Ghi chú:</span>
+          <div className="text-xs flex h-7 items-center rounded-sm border-[0.5px] border-strong bg-layer-2 px-2 text-secondary">
+            <span className="mr-1.5 font-medium whitespace-nowrap text-secondary">Ghi chú:</span>
             <input
               type="text"
               value={value ?? ""}
@@ -259,7 +260,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
                 handleFormChange();
               }}
               placeholder="Ghi chú công việc"
-              className="text-xs text-custom-text-100 placeholder:text-custom-text-400 w-32 bg-transparent outline-none"
+              className="text-xs w-36 bg-transparent text-primary outline-none placeholder:text-placeholder"
             />
           </div>
         )}

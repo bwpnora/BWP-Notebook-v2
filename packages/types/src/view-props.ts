@@ -144,6 +144,7 @@ export interface IIssueFilterOptions {
   subscriber?: string[] | null;
   target_date?: string[] | null;
   issue_type?: string[] | null;
+  supporters?: string[] | null;
 }
 
 export interface IIssueDisplayFilterOptions {

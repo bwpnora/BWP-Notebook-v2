@@ -177,7 +177,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
             {/* BWP-Notebook-v2 Supporters */}
             <SidebarPropertyListItem icon={MembersPropertyIcon} label="Người hỗ trợ">
               <MemberDropdown
-                value={issue?.supporter_ids ?? undefined}
+                value={issue?.supporter_ids ?? []}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { supporter_ids: val })}
                 disabled={!isEditable}
                 projectId={projectId?.toString() ?? ""}

@@ -29,6 +29,7 @@
     "*.config.{js,mjs,cjs,ts}",
     "build/**",
     "coverage/**",
+    "custom_frontend/**",
     "dist/**",
     "**/public/**",
     "storybook-static/**"
