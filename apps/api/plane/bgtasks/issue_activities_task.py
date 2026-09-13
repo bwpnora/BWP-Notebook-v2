@@ -25,6 +25,8 @@ from plane.db.models import (
     IssueComment,
     IssueReaction,
     IssueSubscriber,
+    IssueSupporter,
+    IssueType,
     Label,
     Module,
     Project,
@@ -430,6 +432,172 @@ def track_assignees(
         )
 
 
+# BWP-Notebook-v2 supporters, type, room, and notes tracking - Code by IT Leon
+def track_supporters(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    requested_supporters = extract_ids(requested_data, "supporter_ids", "supporters")
+    current_supporters = extract_ids(current_instance, "supporter_ids", "supporters")
+
+    added_supporters = requested_supporters - current_supporters
+    dropped_supporters = current_supporters - requested_supporters
+
+    bulk_subscribers = []
+    for added_supporter in added_supporters:
+        if not is_valid_uuid(added_supporter):
+            continue
+
+        supporter = User.objects.filter(pk=added_supporter).first()
+        if not supporter:
+            continue
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value="",
+                new_value=supporter.display_name,
+                field="supporters",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="added supporter ",
+                new_identifier=supporter.id,
+                epoch=epoch,
+            )
+        )
+        bulk_subscribers.append(
+            IssueSubscriber(
+                subscriber_id=supporter.id,
+                issue_id=issue_id,
+                workspace_id=workspace_id,
+                project_id=project_id,
+                created_by_id=supporter.id,
+                updated_by_id=supporter.id,
+            )
+        )
+
+    IssueSubscriber.objects.bulk_create(bulk_subscribers, batch_size=10, ignore_conflicts=True)
+
+    for dropped_supporter in dropped_supporters:
+        if not is_valid_uuid(dropped_supporter):
+            continue
+
+        supporter = User.objects.filter(pk=dropped_supporter).first()
+        if not supporter:
+            continue
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=supporter.display_name,
+                new_value="",
+                field="supporters",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="removed supporter ",
+                old_identifier=supporter.id,
+                epoch=epoch,
+            )
+        )
+
+
+def track_type(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    current_type_id = current_instance.get("type_id") or current_instance.get("type")
+    requested_type_id = requested_data.get("type_id") or requested_data.get("type")
+
+    if current_type_id != requested_type_id:
+        old_type = IssueType.objects.filter(pk=current_type_id).first() if current_type_id else None
+        new_type = IssueType.objects.filter(pk=requested_type_id).first() if requested_type_id else None
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old_type.name if old_type else None,
+                new_value=new_type.name if new_type else None,
+                field="type",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the task type to",
+                old_identifier=old_type.id if old_type else None,
+                new_identifier=new_type.id if new_type else None,
+                epoch=epoch,
+            )
+        )
+
+
+def track_room(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    if current_instance.get("room") != requested_data.get("room"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=str(current_instance.get("room")) if current_instance.get("room") is not None else "",
+                new_value=str(requested_data.get("room")) if requested_data.get("room") is not None else "",
+                field="room",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the room to",
+                epoch=epoch,
+            )
+        )
+
+
+def track_notes(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    if current_instance.get("notes") != requested_data.get("notes"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=current_instance.get("notes") or "",
+                new_value=requested_data.get("notes") or "",
+                field="notes",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the notes to",
+                epoch=epoch,
+            )
+        )
+
+
 def track_estimate_points(
     requested_data,
     current_instance,
@@ -589,6 +757,18 @@ def create_issue_activity(
             issue_activities,
             epoch,
         )
+    # BWP-Notebook-v2 track supporters in create - Code by IT Leon
+    if requested_data.get("supporter_ids") is not None:
+        track_supporters(
+            requested_data,
+            current_instance,
+            issue_id,
+            project_id,
+            workspace_id,
+            actor_id,
+            issue_activities,
+            epoch,
+        )
 
 
 def update_issue_activity(
@@ -619,6 +799,13 @@ def update_issue_activity(
         "state": track_state,
         "assignees": track_assignees,
         "labels": track_labels,
+        # BWP-Notebook-v2 activity tracking - Code by IT Leon
+        "supporter_ids": track_supporters,
+        "supporters": track_supporters,
+        "type_id": track_type,
+        "type": track_type,
+        "room": track_room,
+        "notes": track_notes,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None

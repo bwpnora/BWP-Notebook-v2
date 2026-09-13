@@ -55,6 +55,8 @@ from plane.db.models import (
     IssueReaction,
     IssueRelation,
     IssueSubscriber,
+    IssueSupporter,
+    IssueType,
     ProjectUserProperty,
     ModuleIssue,
     Project,
@@ -257,6 +259,21 @@ class IssueViewSet(BaseViewSet):
                     .values("count")
                 )
             )
+            .annotate(
+                supporter_ids=Coalesce(
+                    Subquery(
+                        IssueSupporter.objects.filter(
+                            issue_id=OuterRef("id"),
+                            supporter__member_project__is_active=True,
+                            deleted_at__isnull=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("supporter_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                )
+            )
         )
 
         return issues
@@ -405,8 +422,33 @@ class IssueViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
+        # BWP-Notebook-v2 Business Rules: Task Type Auto-Classification - Code by IT Leon
+        data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
+
+        member = ProjectMember.objects.filter(
+            project_id=project_id, member=request.user, is_active=True
+        ).first()
+        user_role = member.role if member else 5
+        is_admin_or_manager = (user_role >= 20)
+
+        operational_type = IssueType.objects.filter(
+            workspace_id=project.workspace_id, external_id="operational"
+        ).first()
+        other_type = IssueType.objects.filter(
+            workspace_id=project.workspace_id, external_id="other"
+        ).first()
+
+        # Rule 1: Regular users creating tasks -> always Operational Task
+        if not is_admin_or_manager:
+            if operational_type:
+                data["type_id"] = str(operational_type.id)
+        # Rule 2: Manager creating and assigning task -> default to Other Task if not set
+        else:
+            if not data.get("type_id") and other_type:
+                data["type_id"] = str(other_type.id)
+
         serializer = IssueCreateSerializer(
-            data=request.data,
+            data=data,
             context={
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
@@ -454,6 +496,10 @@ class IssueViewSet(BaseViewSet):
                     "module_ids",
                     "label_ids",
                     "assignee_ids",
+                    "supporter_ids",
+                    "type_id",
+                    "room",
+                    "notes",
                     "sub_issues_count",
                     "created_at",
                     "updated_at",
@@ -546,6 +592,20 @@ class IssueViewSet(BaseViewSet):
                         )
                         .values("issue_id")
                         .annotate(arr=ArrayAgg("assignee_id", distinct=True))
+                        .values("arr")
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
+                # BWP-Notebook-v2 supporters - Code by IT Leon
+                supporter_ids=Coalesce(
+                    Subquery(
+                        IssueSupporter.objects.filter(
+                            issue_id=OuterRef("pk"),
+                            supporter__member_project__is_active=True,
+                            deleted_at__isnull=True,
+                        )
+                        .values("issue_id")
+                        .annotate(arr=ArrayAgg("supporter_id", distinct=True))
                         .values("arr")
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
@@ -666,6 +726,19 @@ class IssueViewSet(BaseViewSet):
                     ),
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
+                # BWP-Notebook-v2 supporters - Code by IT Leon
+                supporter_ids=Coalesce(
+                    ArrayAgg(
+                        "supporters__id",
+                        distinct=True,
+                        filter=Q(
+                            ~Q(supporters__id__isnull=True)
+                            & Q(supporters__member_project__is_active=True)
+                            & Q(issue_supporter__deleted_at__isnull=True)
+                        ),
+                    ),
+                    Value([], output_field=ArrayField(UUIDField())),
+                ),
             )
             .filter(pk=pk)
             .first()
@@ -673,6 +746,41 @@ class IssueViewSet(BaseViewSet):
 
         if not issue:
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # BWP-Notebook-v2 Business Rules: Code & Architecture by IT Leon
+        member = ProjectMember.objects.filter(
+            project_id=project_id, member=request.user, is_active=True
+        ).first()
+        user_role = member.role if member else 5
+        is_admin_or_manager = (user_role >= 20)
+
+        # Rule 1: Permission check for Task Type change to 'other'
+        if "type_id" in request.data and request.data["type_id"]:
+            target_type = IssueType.objects.filter(id=request.data["type_id"]).first()
+            if target_type and target_type.external_id == "other" and not is_admin_or_manager:
+                return Response(
+                    {"error": "Bạn không có quyền chuyển công việc sang loại Công việc khác."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+        # Rule 2: Reassignment Guard for Other Tasks
+        if "assignee_ids" in request.data:
+            current_type_id = issue.type_id
+            is_other_task = False
+            if current_type_id:
+                current_type = IssueType.objects.filter(id=current_type_id).first()
+                if current_type and current_type.external_id == "other":
+                    is_other_task = True
+
+            if is_other_task and not is_admin_or_manager:
+                current_assignee_ids = [str(uid) for uid in (getattr(issue, "assignee_ids", []) or [])]
+                is_current_assignee = str(request.user.id) in current_assignee_ids
+                is_creator = (issue.created_by_id == request.user.id)
+                if not (is_current_assignee or is_creator):
+                    return Response(
+                        {"error": "Bạn không có quyền giao lại công việc này cho người khác."},
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
 
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 
