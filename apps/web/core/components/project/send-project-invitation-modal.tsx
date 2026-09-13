@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 // plane imports
@@ -15,10 +15,14 @@ import { PlusIcon, CloseIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar, CustomSelect, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { getFileURL, cn } from "@plane/utils";
+import { Users, UserPlus } from "lucide-react";
+import type { IDirectMemberCreateResponse } from "@plane/types";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
+import { DirectMemberCreateForm, CredentialSummaryCard } from "@/components/workspace/members";
 
 type Props = {
   isOpen: boolean;
@@ -56,6 +60,14 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     project: { getProjectMemberDetails, bulkAddMembersToProject },
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails },
   } = useMember();
+  const { getProjectById } = useProject();
+  const project = getProjectById(projectId);
+  const projectName = project?.name;
+
+  // tab states
+  const [activeTab, setActiveTab] = useState<"existing" | "direct">("existing");
+  const [createdDirectMember, setCreatedDirectMember] = useState<IDirectMemberCreateResponse | null>(null);
+
   // form info
   const {
     formState: { errors, isSubmitting },
@@ -82,22 +94,20 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
 
     const payload = { ...formData };
 
-    await bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
-      .then(() => {
-        if (onSuccess) onSuccess();
-        onClose();
-        setToast({
-          title: "Success!",
-          type: TOAST_TYPE.SUCCESS,
-          message: "Members added successfully.",
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        reset(defaultValues);
+    try {
+      await bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload);
+      if (onSuccess) onSuccess();
+      onClose();
+      setToast({
+        title: "Success!",
+        type: TOAST_TYPE.SUCCESS,
+        message: "Members added successfully.",
       });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      reset(defaultValues);
+    }
   };
 
   const handleClose = () => {
@@ -105,6 +115,8 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
 
     const timeout = setTimeout(() => {
       reset(defaultValues);
+      setActiveTab("existing");
+      setCreatedDirectMember(null);
       clearTimeout(timeout);
     }, 500);
   };
@@ -173,141 +185,204 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <form onSubmit={handleSubmit(onSubmit)} className="p-5">
-        <div className="space-y-5">
-          <h3 className="text-16 leading-6 font-medium text-primary">
-            {t("project_settings.members.invite_members.title")}
-          </h3>
-          <div className="mt-2">
-            <p className="text-13 text-secondary">{t("project_settings.members.invite_members.sub_heading")}</p>
+      {createdDirectMember ? (
+        <CredentialSummaryCard
+          displayName={createdDirectMember.display_name}
+          username={createdDirectMember.credentials?.username || createdDirectMember.username}
+          password={createdDirectMember.credentials?.password || ""}
+          role={createdDirectMember.role}
+          email={createdDirectMember.email}
+          projectName={projectName}
+          projectRole={createdDirectMember.project_role}
+          onClose={handleClose}
+          onReset={() => setCreatedDirectMember(null)}
+        />
+      ) : (
+        <div className="w-full">
+          {/* Dual Tabs */}
+          <div className="flex gap-4 border-b border-subtle px-5 pt-4 pb-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab("existing")}
+              className={cn(
+                "flex items-center gap-1.5 border-b-2 pb-2 text-13 font-medium transition-colors",
+                activeTab === "existing"
+                  ? "border-accent-primary text-accent-primary"
+                  : "border-transparent text-secondary hover:text-primary"
+              )}
+            >
+              <Users className="h-4 w-4" />
+              Thêm từ đơn vị
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("direct")}
+              className={cn(
+                "flex items-center gap-1.5 border-b-2 pb-2 text-13 font-medium transition-colors",
+                activeTab === "direct"
+                  ? "border-accent-primary text-accent-primary"
+                  : "border-transparent text-secondary hover:text-primary"
+              )}
+            >
+              <UserPlus className="h-4 w-4" />
+              Tạo tài khoản mới
+            </button>
           </div>
 
-          <div className="mb-3 space-y-4">
-            {fields.map((field, index) => (
-              <div key={field.id} className="group mb-1 flex w-full items-start justify-between gap-x-4 text-13">
-                <div className="flex w-full grow flex-col gap-1">
-                  <Controller
-                    control={control}
-                    name={`members.${index}.member_id`}
-                    rules={{ required: "Please select a member" }}
-                    render={({ field: { value, onChange } }) => {
-                      const selectedMember = getWorkspaceMemberDetails(value);
-                      return (
-                        <CustomSearchSelect
-                          value={value}
-                          customButton={
-                            <button className="shadow-sm flex w-full items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
-                              {value && value !== "" ? (
-                                <div className="flex items-center gap-2">
-                                  <Avatar
-                                    name={selectedMember?.member.display_name}
-                                    src={getFileURL(selectedMember?.member.avatar_url ?? "")}
-                                  />
-                                  {selectedMember?.member.display_name}
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
-                              )}
-                              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                            </button>
-                          }
-                          onChange={(val: string) => {
-                            onChange(val);
-                            // Update the role to the workspace role when member ID changes
-                            const workspaceMemberDetails = getWorkspaceMemberDetails(val);
-                            const workspaceRole = workspaceMemberDetails?.role ?? 5;
-                            const newValue = ROLE[workspaceRole].toUpperCase();
-                            setValue(
-                              `members.${index}.role`,
-                              EUserPermissions[newValue as keyof typeof EUserPermissions]
+          {activeTab === "existing" ? (
+            <form onSubmit={handleSubmit(onSubmit)} className="p-5">
+              <div className="space-y-5">
+                <h3 className="text-16 leading-6 font-medium text-primary">
+                  {t("project_settings.members.invite_members.title")}
+                </h3>
+                <div className="mt-2">
+                  <p className="text-13 text-secondary">{t("project_settings.members.invite_members.sub_heading")}</p>
+                </div>
+
+                <div className="mb-3 space-y-4">
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="group mb-1 flex w-full items-start justify-between gap-x-4 text-13">
+                      <div className="flex w-full grow flex-col gap-1">
+                        <Controller
+                          control={control}
+                          name={`members.${index}.member_id`}
+                          rules={{ required: "Please select a member" }}
+                          render={({ field: { value, onChange } }) => {
+                            const selectedMember = getWorkspaceMemberDetails(value);
+                            return (
+                              <CustomSearchSelect
+                                value={value}
+                                customButton={
+                                  <button className="shadow-sm flex w-full items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
+                                    {value && value !== "" ? (
+                                      <div className="flex items-center gap-2">
+                                        <Avatar
+                                          name={selectedMember?.member.display_name}
+                                          src={getFileURL(selectedMember?.member.avatar_url ?? "")}
+                                        />
+                                        {selectedMember?.member.display_name}
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center gap-2 py-0.5">Select co-worker</div>
+                                    )}
+                                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                                  </button>
+                                }
+                                onChange={(val: string) => {
+                                  onChange(val);
+                                  // Update the role to the workspace role when member ID changes
+                                  const workspaceMemberDetails = getWorkspaceMemberDetails(val);
+                                  const workspaceRole = workspaceMemberDetails?.role ?? 5;
+                                  const newValue = ROLE[workspaceRole].toUpperCase();
+                                  setValue(
+                                    `members.${index}.role`,
+                                    EUserPermissions[newValue as keyof typeof EUserPermissions]
+                                  );
+                                }}
+                                options={options}
+                                optionsClassName="w-48"
+                              />
                             );
                           }}
-                          options={options}
-                          optionsClassName="w-48"
                         />
-                      );
-                    }}
-                  />
-                  {errors.members && errors.members[index]?.member_id && (
-                    <span className="px-1 text-13 text-danger-primary">
-                      {errors.members[index]?.member_id?.message}
-                    </span>
-                  )}
-                </div>
+                        {errors.members && errors.members[index]?.member_id && (
+                          <span className="px-1 text-13 text-danger-primary">
+                            {errors.members[index]?.member_id?.message}
+                          </span>
+                        )}
+                      </div>
 
-                <div className="flex shrink-0 items-center justify-between gap-2">
-                  <div className="flex flex-col gap-1">
-                    <Controller
-                      name={`members.${index}.role`}
-                      control={control}
-                      rules={{ required: "Select Role" }}
-                      render={({ field }) => (
-                        <CustomSelect
-                          {...field}
-                          customButton={
-                            <div className="shadow-sm flex w-24 items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2.5 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
-                              <span className="capitalize">{field.value ? ROLE[field.value] : "Select role"}</span>
-                              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                            </div>
-                          }
-                          input
-                        >
-                          {Object.entries(checkCurrentOptionWorkspaceRole(watch(`members.${index}.member_id`))).map(
-                            ([key, label]) => {
-                              if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
+                      <div className="flex shrink-0 items-center justify-between gap-2">
+                        <div className="flex flex-col gap-1">
+                          <Controller
+                            name={`members.${index}.role`}
+                            control={control}
+                            rules={{ required: "Select Role" }}
+                            render={({ field: roleField }) => (
+                              <CustomSelect
+                                {...roleField}
+                                customButton={
+                                  <div className="shadow-sm flex w-24 items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2.5 text-left text-13 text-secondary duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
+                                    <span className="capitalize">
+                                      {roleField.value ? ROLE[roleField.value] : "Select role"}
+                                    </span>
+                                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                                  </div>
+                                }
+                                input
+                              >
+                                {Object.entries(
+                                  checkCurrentOptionWorkspaceRole(watch(`members.${index}.member_id`))
+                                ).map(([key, label]) => {
+                                  if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
 
-                              return (
-                                <CustomSelect.Option key={key} value={key}>
-                                  {label}
-                                </CustomSelect.Option>
-                              );
-                            }
+                                  return (
+                                    <CustomSelect.Option key={key} value={key}>
+                                      {label}
+                                    </CustomSelect.Option>
+                                  );
+                                })}
+                              </CustomSelect>
+                            )}
+                          />
+                          {errors.members && errors.members[index]?.role && (
+                            <span className="px-1 text-13 text-danger-primary">
+                              {errors.members[index]?.role?.message}
+                            </span>
                           )}
-                        </CustomSelect>
-                      )}
-                    />
-                    {errors.members && errors.members[index]?.role && (
-                      <span className="px-1 text-13 text-danger-primary">{errors.members[index]?.role?.message}</span>
-                    )}
-                  </div>
+                        </div>
 
-                  {fields.length > 1 && (
-                    <div className="flex-item flex w-6">
-                      <button
-                        type="button"
-                        className="place-items-center self-center rounded-sm"
-                        onClick={() => remove(index)}
-                      >
-                        <CloseIcon className="h-4 w-4 text-secondary" />
-                      </button>
+                        {fields.length > 1 && (
+                          <div className="flex-item flex w-6">
+                            <button
+                              type="button"
+                              className="place-items-center self-center rounded-sm"
+                              onClick={() => remove(index)}
+                            >
+                              <CloseIcon className="h-4 w-4 text-secondary" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
+              <div className="mt-5 flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-accent-primary outline-accent-strong"
+                  onClick={appendField}
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  {t("common.add_more")}
+                </button>
+                <div className="flex items-center gap-2">
+                  <Button variant="secondary" size="lg" onClick={handleClose}>
+                    {t("cancel")}
+                  </Button>
+                  <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
+                    {isSubmitting
+                      ? `${fields && fields.length > 1 ? `${t("add_members")}...` : `${t("add_member")}...`}`
+                      : `${fields && fields.length > 1 ? t("add_members") : t("add_member")}`}
+                  </Button>
+                </div>
+              </div>
+            </form>
+          ) : (
+            <DirectMemberCreateForm
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              projectName={projectName}
+              onSuccess={(data) => {
+                setCreatedDirectMember(data);
+                if (onSuccess) onSuccess();
+              }}
+              onCancel={handleClose}
+            />
+          )}
         </div>
-        <div className="mt-5 flex items-center justify-between gap-2">
-          <button
-            type="button"
-            className="flex items-center gap-2 bg-transparent py-2 pr-3 text-13 font-medium text-accent-primary outline-accent-strong"
-            onClick={appendField}
-          >
-            <PlusIcon className="h-4 w-4" />
-            {t("common.add_more")}
-          </button>
-          <div className="flex items-center gap-2">
-            <Button variant="secondary" size="lg" onClick={handleClose}>
-              {t("cancel")}
-            </Button>
-            <Button variant="primary" size="lg" type="submit" loading={isSubmitting}>
-              {isSubmitting
-                ? `${fields && fields.length > 1 ? `${t("add_members")}...` : `${t("add_member")}...`}`
-                : `${fields && fields.length > 1 ? t("add_members") : t("add_member")}`}
-            </Button>
-          </div>
-        </div>
-      </form>
+      )}
     </ModalCore>
   );
 });
