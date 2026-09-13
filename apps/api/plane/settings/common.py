@@ -288,7 +288,7 @@ USE_I18N = True
 
 # Timezones
 USE_TZ = True
-TIME_ZONE = "UTC"
+TIME_ZONE = os.environ.get("TIME_ZONE", "Asia/Ho_Chi_Minh")
 
 # Default Auto Field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

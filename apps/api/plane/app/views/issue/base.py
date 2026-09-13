@@ -32,7 +32,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ROLE, allow_permission
+from plane.app.permissions import ROLE, allow_permission, is_super_admin
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,
@@ -57,12 +57,28 @@ from plane.db.models import (
     IssueSubscriber,
     IssueSupporter,
     IssueType,
+    ProjectIssueType,
     ProjectUserProperty,
     ModuleIssue,
     Project,
     ProjectMember,
     UserRecentVisit,
+    WorkspaceMember,
 )
+
+
+def check_is_admin_or_manager(user, project):
+    if not user or user.is_anonymous:
+        return False
+    if is_super_admin(user):
+        return True
+    if WorkspaceMember.objects.filter(workspace_id=project.workspace_id, member=user, role__gte=20, is_active=True).exists():
+        return True
+    member = ProjectMember.objects.filter(project_id=project.id, member=user, is_active=True).first()
+    if member and member.role >= 20:
+        return True
+    return False
+
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.global_paginator import paginate
 from plane.utils.grouper import (
@@ -424,31 +440,49 @@ class IssueViewSet(BaseViewSet):
 
         # BWP-Notebook-v2 Business Rules: Task Type Auto-Classification
         data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
+        is_admin_or_manager = check_is_admin_or_manager(request.user, project)
 
-        member = ProjectMember.objects.filter(
-            project_id=project_id, member=request.user, is_active=True
-        ).first()
-        user_role = member.role if member else 5
-        is_admin_or_manager = (user_role >= 20)
-
-        operational_type = IssueType.objects.filter(
-            workspace_id=project.workspace_id, external_id="operational"
-        ).first()
-        other_type = IssueType.objects.filter(
-            workspace_id=project.workspace_id, external_id="other"
-        ).first()
+        operational_type, _ = IssueType.objects.get_or_create(
+            workspace_id=project.workspace_id,
+            external_id="operational",
+            defaults={
+                "name": "Công việc vận hành",
+                "description": "Công việc phát sinh hằng ngày, thực hiện trong ngày",
+                "is_default": True,
+                "is_active": True,
+            },
+        )
+        other_type, _ = IssueType.objects.get_or_create(
+            workspace_id=project.workspace_id,
+            external_id="other",
+            defaults={
+                "name": "Công việc khác",
+                "description": "Công việc được nhận từ cấp trên hoặc người có thẩm quyền giao việc",
+                "is_default": False,
+                "is_active": True,
+            },
+        )
+        ProjectIssueType.objects.get_or_create(
+            project=project,
+            issue_type=operational_type,
+            defaults={"workspace": project.workspace, "is_default": True},
+        )
+        ProjectIssueType.objects.get_or_create(
+            project=project,
+            issue_type=other_type,
+            defaults={"workspace": project.workspace, "is_default": False},
+        )
 
         # Rule 1: Regular users creating tasks -> always Operational Task
         if not is_admin_or_manager:
-            if operational_type:
-                data["type_id"] = str(operational_type.id)
+            data["type_id"] = str(operational_type.id)
         # Rule 2: Manager creating and assigning task -> default to Other Task if not set
         else:
-            if not data.get("type_id") and other_type:
+            if not data.get("type_id"):
                 data["type_id"] = str(other_type.id)
-            elif data.get("type_id") == "operational" and operational_type:
+            elif data.get("type_id") == "operational":
                 data["type_id"] = str(operational_type.id)
-            elif data.get("type_id") == "other" and other_type:
+            elif data.get("type_id") == "other":
                 data["type_id"] = str(other_type.id)
 
         serializer = IssueCreateSerializer(
@@ -752,30 +786,48 @@ class IssueViewSet(BaseViewSet):
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
         # BWP-Notebook-v2 Business Rules: Code & Architecture by BWP Engineering Team
-        member = ProjectMember.objects.filter(
-            project_id=project_id, member=request.user, is_active=True
-        ).first()
-        user_role = member.role if member else 5
-        is_admin_or_manager = (user_role >= 20)
+        is_admin_or_manager = check_is_admin_or_manager(request.user, project)
+        data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
 
-        # Rule 1: Permission check for Task Type change to 'other'
-        if "type_id" in request.data and request.data["type_id"]:
-            req_type = str(request.data["type_id"])
+        # Rule 1: Permission check for Task Type change (both directions: operational <-> other)
+        if "type_id" in data and data["type_id"]:
+            req_type = str(data["type_id"])
             if req_type in ["operational", "other"]:
-                target_type = IssueType.objects.filter(workspace_id=project.workspace_id, external_id=req_type).first()
-                if target_type:
-                    request.data["type_id"] = str(target_type.id)
+                target_type, _ = IssueType.objects.get_or_create(
+                    workspace_id=project.workspace_id,
+                    external_id=req_type,
+                    defaults={
+                        "name": "Công việc vận hành" if req_type == "operational" else "Công việc khác",
+                        "description": (
+                            "Công việc phát sinh hằng ngày, thực hiện trong ngày"
+                            if req_type == "operational"
+                            else "Công việc được nhận từ cấp trên hoặc người có thẩm quyền giao việc"
+                        ),
+                        "is_default": (req_type == "operational"),
+                        "is_active": True,
+                    },
+                )
+                data["type_id"] = str(target_type.id)
             else:
                 target_type = IssueType.objects.filter(id=req_type).first()
 
-            if target_type and target_type.external_id == "other" and not is_admin_or_manager:
+            if target_type:
+                ProjectIssueType.objects.get_or_create(
+                    project=project,
+                    issue_type=target_type,
+                    defaults={"workspace": project.workspace, "is_default": (target_type.external_id == "operational")},
+                )
+
+            current_type_id = str(issue.type_id) if issue.type_id else None
+            new_type_id = str(target_type.id) if target_type else None
+            if current_type_id != new_type_id and not is_admin_or_manager:
                 return Response(
-                    {"error": "Bạn không có quyền chuyển công việc sang loại Công việc khác."},
+                    {"error": "Bạn không có quyền thay đổi loại công việc."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
         # Rule 2: Reassignment Guard for Other Tasks
-        if "assignee_ids" in request.data:
+        if "assignee_ids" in data:
             current_type_id = issue.type_id
             is_other_task = False
             if current_type_id:
@@ -795,8 +847,8 @@ class IssueViewSet(BaseViewSet):
 
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 
-        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
+        requested_data = json.dumps(data, cls=DjangoJSONEncoder)
+        serializer = IssueCreateSerializer(issue, data=data, partial=True, context={"project_id": project_id})
         if serializer.is_valid():
             serializer.save()
             # Check if the update is a migration description update

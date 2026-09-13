@@ -118,11 +118,31 @@ def bwp_setup(db, workspace, create_user):
     ProjectIssueType.objects.create(project=project, issue_type=operational_type, workspace=workspace, is_default=True)
     ProjectIssueType.objects.create(project=project, issue_type=other_type, workspace=workspace, is_default=False)
 
+    # SuperAdmin
+    super_admin = User.objects.create(
+        email=f"superadmin-{u1_id}@bwp.vn",
+        username=f"superadmin_{u1_id}",
+        is_superuser=True,
+    )
+    super_admin.set_password("bwp2026")
+    super_admin.save()
+
+    # Workspace Admin (role=20 in workspace, not added to project)
+    ws_admin = User.objects.create(
+        email=f"wsadmin-{u1_id}@bwp.vn",
+        username=f"wsadmin_{u1_id}",
+    )
+    ws_admin.set_password("bwp2026")
+    ws_admin.save()
+    WorkspaceMember.objects.create(workspace=workspace, member=ws_admin, role=20)
+
     return {
         "workspace": workspace,
         "project": project,
         "state": state,
         "manager": manager,
+        "super_admin": super_admin,
+        "ws_admin": ws_admin,
         "regular_user": regular_user,
         "supporter_user": supporter_user,
         "other_member": other_member,
@@ -249,3 +269,131 @@ def test_supporters_room_notes_save_and_retrieve(bwp_setup):
     assert get_resp.data["notes"] == "Bring replacement CAT6 cables"
     assert len(get_resp.data["supporter_details"]) == 1
     assert str(get_resp.data["supporter_details"][0]["id"]) == str(bwp_setup["supporter_user"].id)
+
+
+@pytest.mark.unit
+def test_regular_user_cannot_change_type_from_other_to_operational(bwp_setup):
+    # Manager creates an other task
+    issue = Issue.objects.create(
+        name="Urgent client visit",
+        project=bwp_setup["project"],
+        workspace=bwp_setup["workspace"],
+        type=bwp_setup["other_type"],
+        created_by=bwp_setup["manager"],
+        state=bwp_setup["state"],
+    )
+
+    client = APIClient()
+    client.force_authenticate(user=bwp_setup["regular_user"])
+
+    url = f"/api/workspaces/{bwp_setup['workspace'].slug}/projects/{bwp_setup['project'].id}/issues/{issue.id}/"
+    payload = {
+        "type_id": str(bwp_setup["operational_type"].id),
+    }
+
+    response = client.patch(url, payload, format="json")
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert "error" in response.data
+
+
+@pytest.mark.unit
+def test_auto_lock_regular_user_cannot_override_task_type_on_create(bwp_setup):
+    client = APIClient()
+    client.force_authenticate(user=bwp_setup["regular_user"])
+
+    url = f"/api/workspaces/{bwp_setup['workspace'].slug}/projects/{bwp_setup['project'].id}/issues/"
+    # Regular user deliberately tries to pass 'other' type_id
+    payload = {
+        "name": "Member attempt to create other task",
+        "state_id": str(bwp_setup["state"].id),
+        "type_id": str(bwp_setup["other_type"].id),
+    }
+
+    response = client.post(url, payload, format="json")
+    assert response.status_code == status.HTTP_201_CREATED
+    # System must auto-lock and enforce operational_type
+    assert str(response.data["type_id"]) == str(bwp_setup["operational_type"].id)
+
+
+@pytest.mark.unit
+def test_superadmin_can_convert_task_type_both_directions(bwp_setup):
+    # Create an issue as Other Task
+    issue = Issue.objects.create(
+        name="Server maintenance",
+        project=bwp_setup["project"],
+        workspace=bwp_setup["workspace"],
+        type=bwp_setup["other_type"],
+        created_by=bwp_setup["manager"],
+        state=bwp_setup["state"],
+    )
+
+    client = APIClient()
+    client.force_authenticate(user=bwp_setup["super_admin"])
+
+    url = f"/api/workspaces/{bwp_setup['workspace'].slug}/projects/{bwp_setup['project'].id}/issues/{issue.id}/"
+
+    # 1. Convert from Other to Operational
+    resp1 = client.patch(url, {"type_id": "operational"}, format="json")
+    assert resp1.status_code == status.HTTP_200_OK
+    assert str(resp1.data["type_id"]) == str(bwp_setup["operational_type"].id)
+
+    # 2. Convert back from Operational to Other
+    resp2 = client.patch(url, {"type_id": "other"}, format="json")
+    assert resp2.status_code == status.HTTP_200_OK
+    assert str(resp2.data["type_id"]) == str(bwp_setup["other_type"].id)
+
+
+@pytest.mark.unit
+def test_workspace_admin_can_convert_task_type_both_directions(bwp_setup):
+    # Create an issue as Other Task
+    issue = Issue.objects.create(
+        name="Office inspection",
+        project=bwp_setup["project"],
+        workspace=bwp_setup["workspace"],
+        type=bwp_setup["other_type"],
+        created_by=bwp_setup["manager"],
+        state=bwp_setup["state"],
+    )
+
+    client = APIClient()
+    client.force_authenticate(user=bwp_setup["ws_admin"])
+
+    url = f"/api/workspaces/{bwp_setup['workspace'].slug}/projects/{bwp_setup['project'].id}/issues/{issue.id}/"
+
+    # 1. Convert from Other to Operational
+    resp1 = client.patch(url, {"type_id": "operational"}, format="json")
+    assert resp1.status_code == status.HTTP_200_OK
+    assert str(resp1.data["type_id"]) == str(bwp_setup["operational_type"].id)
+
+    # 2. Convert back from Operational to Other
+    resp2 = client.patch(url, {"type_id": "other"}, format="json")
+    assert resp2.status_code == status.HTTP_200_OK
+    assert str(resp2.data["type_id"]) == str(bwp_setup["other_type"].id)
+
+
+@pytest.mark.unit
+def test_manager_can_convert_task_type_both_directions(bwp_setup):
+    # Create an issue as Other Task
+    issue = Issue.objects.create(
+        name="HVAC filter replacement",
+        project=bwp_setup["project"],
+        workspace=bwp_setup["workspace"],
+        type=bwp_setup["other_type"],
+        created_by=bwp_setup["manager"],
+        state=bwp_setup["state"],
+    )
+
+    client = APIClient()
+    client.force_authenticate(user=bwp_setup["manager"])
+
+    url = f"/api/workspaces/{bwp_setup['workspace'].slug}/projects/{bwp_setup['project'].id}/issues/{issue.id}/"
+
+    # 1. Convert from Other to Operational
+    resp1 = client.patch(url, {"type_id": "operational"}, format="json")
+    assert resp1.status_code == status.HTTP_200_OK
+    assert str(resp1.data["type_id"]) == str(bwp_setup["operational_type"].id)
+
+    # 2. Convert back from Operational to Other
+    resp2 = client.patch(url, {"type_id": "other"}, format="json")
+    assert resp2.status_code == status.HTTP_200_OK
+    assert str(resp2.data["type_id"]) == str(bwp_setup["other_type"].id)

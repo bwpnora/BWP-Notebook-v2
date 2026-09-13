@@ -20,9 +20,11 @@ type TIssueTaskTypeSelectProps = {
 
 export const IssueTaskTypeSelect = observer(function IssueTaskTypeSelect(props: TIssueTaskTypeSelectProps) {
   const { control, projectId, workspaceSlug, handleFormChange } = props;
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, isSuperAdmin } = useUserPermissions();
   const isManager = Boolean(
-    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId)
+    isSuperAdmin ||
+    (workspaceSlug && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug)) ||
+    (projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId))
   );
 
   return (

@@ -81,11 +81,13 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, isSuperAdmin } = useUserPermissions();
   const isManager = Boolean(
-    workspaceSlug &&
-    projectId &&
-    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId)
+    isSuperAdmin ||
+    (workspaceSlug && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug)) ||
+    (workspaceSlug &&
+      projectId &&
+      allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId))
   );
 
   return (

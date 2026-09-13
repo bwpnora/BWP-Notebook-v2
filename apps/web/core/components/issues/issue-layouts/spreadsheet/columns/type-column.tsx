@@ -26,12 +26,19 @@ type Props = {
 export const SpreadsheetTypeColumn = observer(function SpreadsheetTypeColumn(props: Props) {
   const { issue, onChange, disabled, onClose } = props;
   const { currentWorkspace } = useWorkspace();
-  const { allowPermissions } = useUserPermissions();
+  const { allowPermissions, isSuperAdmin } = useUserPermissions();
 
   const isManager = Boolean(
-    currentWorkspace?.slug &&
-    issue.project_id &&
-    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, currentWorkspace.slug, issue.project_id)
+    isSuperAdmin ||
+    (currentWorkspace?.slug &&
+      (allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, currentWorkspace.slug) ||
+        (issue.project_id &&
+          allowPermissions(
+            [EUserPermissions.ADMIN],
+            EUserPermissionsLevel.PROJECT,
+            currentWorkspace.slug,
+            issue.project_id
+          ))))
   );
 
   const isOther = issue.type_detail?.name === "Công việc khác" || issue.type_id === "other";

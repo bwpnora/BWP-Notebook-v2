@@ -1,0 +1,9 @@
+Build an automated account creation system for administrators:
+
++ User Creation & Credentials: Integrate this with the existing permission/RBAC system. In the Unit Members section, clicking "Thêm thành viên" should allow auto-generating the username and password for the new member; entering an email address should be optional (not strictly required).
+
++ Super Admin / "God Mode": Only the highest-level administrator with "God Mode" access can assign a Project Lead to each department, create new units/departments, and manage global organization structures.
+
++ Department-Level Scoping: Department admins can only add users to their own assigned department; they must not be able to add users to or interfere with other departments.
+
++ Review & Refactor: Please review, audit, and clearly redefine the permission hierarchy and access controls.

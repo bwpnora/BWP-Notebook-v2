@@ -1,0 +1,19 @@
+1. [Bug] Reassigning Task Type:
+   - Issue: Unable to switch/move tasks from "Other Tasks" to "Operational Tasks" using Admin and SuperAdmin accounts.
+   - Expected: Admin and SuperAdmin should be able to switch task types without error.
+
+2. [Permission] Task Conversion:
+   - Admin accounts must be granted permission to convert tasks into Operational tasks and vice versa.
+
+3. [Verification] Member Task Creation:
+   - Check and verify whether the auto-locking mechanism functions properly when a regular member creates an Operational task.
+
+4. [Bug / Localization] Greeting Issue:
+   - The "Good morning / Good afternoon" greeting is not translated.
+   - There appears to be a time-sync bug causing the greeting to display the wrong time of day (e.g., showing morning in the afternoon). Please review and fix.
+
+5. [Localization] Project Settings:
+   - Translate the entire "Project Settings" section into English.
+
+6. [Configuration] Timezone Setting:
+   - Set the default system timezone to UTC+7.

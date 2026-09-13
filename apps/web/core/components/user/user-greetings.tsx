@@ -22,22 +22,27 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   // store hooks
   const { t } = useTranslation();
 
+  const userTz = user?.user_timezone || "Asia/Ho_Chi_Minh";
+
   const hour = new Intl.DateTimeFormat("en-US", {
+    timeZone: userTz,
     hour12: false,
     hour: "numeric",
   }).format(currentTime);
 
   const date = new Intl.DateTimeFormat("en-US", {
+    timeZone: userTz,
     month: "short",
     day: "numeric",
   }).format(currentTime);
 
   const weekDay = new Intl.DateTimeFormat("en-US", {
+    timeZone: userTz,
     weekday: "long",
   }).format(currentTime);
 
   const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: user?.user_timezone,
+    timeZone: userTz,
     hour12: false, // Use 24-hour format
     hour: "2-digit",
     minute: "2-digit",

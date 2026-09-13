@@ -1,522 +1,522 @@
 {
   "project_settings": {
     "general": {
-      "enter_project_id": "Nhập ID phòng ban",
-      "please_select_a_timezone": "Vui lòng chọn múi giờ",
+      "enter_project_id": "Enter project ID",
+      "please_select_a_timezone": "Please select a timezone",
       "archive_project": {
-        "title": "Lưu trữ phòng ban",
-        "description": "Lưu trữ phòng ban sẽ hủy liệt kê phòng ban của bạn khỏi thanh điều hướng bên, nhưng bạn vẫn có thể truy cập từ danh sách phòng ban. Bạn có thể khôi phục hoặc xóa phòng ban bất cứ lúc nào.",
-        "button": "Lưu trữ phòng ban"
+        "title": "Archive project",
+        "description": "Archiving a project will unlist your project from your side navigation although you will still be able to access it from your projects page. You can restore the project or delete it whenever you want.",
+        "button": "Archive project"
       },
       "delete_project": {
-        "title": "Xóa phòng ban",
-        "description": "Khi xóa phòng ban, tất cả dữ liệu và tài nguyên trong phòng ban đó sẽ bị xóa vĩnh viễn và không thể khôi phục.",
-        "button": "Xóa phòng ban của tôi"
+        "title": "Delete project",
+        "description": "When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.",
+        "button": "Delete my project"
       },
       "toast": {
-        "success": "Phòng ban đã được cập nhật thành công",
-        "error": "Không thể cập nhật phòng ban. Vui lòng thử lại."
+        "success": "Project updated successfully",
+        "error": "Project could not be updated. Please try again."
       }
     },
     "members": {
-      "label": "Thành viên phòng ban",
-      "project_lead": "Trưởng phòng ban / Phụ trách phòng ban",
-      "project_lead_description": "Chọn trưởng phòng ban phụ trách.",
-      "default_assignee": "Người phụ trách mặc định",
-      "default_assignee_description": "Chọn người phụ trách mặc định cho phòng ban.",
-      "project_subscribers": "Người theo dõi phòng ban",
-      "project_subscribers_description": "Chọn các thành viên sẽ nhận thông báo cho phòng ban này.",
+      "label": "Members",
+      "project_lead": "Project lead",
+      "project_lead_description": "Select the project lead for the project.",
+      "default_assignee": "Default assignee",
+      "default_assignee_description": "Select the default assignee for the project.",
+      "project_subscribers": "Project subscribers",
+      "project_subscribers_description": "Select members who will receive notifications for this project.",
       "guest_super_permissions": {
-        "title": "Cấp quyền cho người dùng khách xem tất cả công việc:",
-        "sub_heading": "Điều này sẽ cho phép khách xem tất cả công việc của phòng ban."
+        "title": "Grant view access to all work items for guest users:",
+        "sub_heading": "This will allow guests to have view access to all the project work items."
       },
       "invite_members": {
-        "title": "Mời thành viên",
-        "sub_heading": "Mời thành viên tham gia phòng ban của bạn.",
-        "select_co_worker": "Chọn đồng nghiệp"
+        "title": "Invite members",
+        "sub_heading": "Invite members to work on your project.",
+        "select_co_worker": "Select co-worker"
       }
     },
     "states": {
-      "heading": "Trạng thái",
-      "description": "Xác định và tùy chỉnh trạng thái quy trình làm việc để theo dõi tiến độ các công việc của bạn.",
-      "describe_this_state_for_your_members": "Mô tả trạng thái này cho thành viên của bạn.",
+      "heading": "States",
+      "description": "Define and customize workflow states to track the progress of your work items.",
+      "describe_this_state_for_your_members": "Describe this state for your members.",
       "empty_state": {
-        "title": "Không có trạng thái trong nhóm {groupKey}",
-        "description": "Vui lòng tạo một trạng thái mới"
+        "title": "No states available for the {groupKey} group",
+        "description": "Please create a new state"
       }
     },
     "labels": {
-      "heading": "Nhãn",
-      "description": "Tạo nhãn tùy chỉnh để phân loại và tổ chức các công việc của bạn",
-      "label_title": "Tiêu đề nhãn",
-      "label_title_is_required": "Tiêu đề nhãn là bắt buộc",
-      "label_max_char": "Tên nhãn không nên vượt quá 255 ký tự",
+      "heading": "Labels",
+      "description": "Create custom labels to categorize and organize your work items",
+      "label_title": "Label title",
+      "label_title_is_required": "Label title is required",
+      "label_max_char": "Label name should not exceed 255 characters",
       "toast": {
-        "error": "Đã xảy ra lỗi khi cập nhật nhãn"
+        "error": "Error while updating the label"
       }
     },
     "estimates": {
-      "heading": "Ước tính",
-      "description": "Thiết lập hệ thống ước tính để theo dõi và truyền đạt nỗ lực cần thiết cho mỗi công việc.",
-      "label": "Ước tính",
-      "title": "Bật ước tính cho phòng ban của tôi",
-      "enable_description": "Chúng giúp bạn truyền đạt độ phức tạp và khối lượng công việc của nhóm.",
-      "no_estimate": "Không có ước tính",
-      "new": "Hệ thống ước tính mới",
+      "heading": "Estimates",
+      "description": "Set up estimation systems to track and communicate the effort required for each work item.",
+      "label": "Estimates",
+      "title": "Enable estimates for my project",
+      "enable_description": "They help you in communicating complexity and workload of the team.",
+      "no_estimate": "No estimate",
+      "new": "New estimate system",
       "create": {
-        "custom": "Tùy chỉnh",
-        "start_from_scratch": "Bắt đầu từ đầu",
-        "choose_template": "Chọn mẫu",
-        "choose_estimate_system": "Chọn hệ thống ước tính",
-        "enter_estimate_point": "Nhập điểm ước tính",
-        "step": "Bước {step} của {total}",
-        "label": "Tạo ước tính"
+        "custom": "Custom",
+        "start_from_scratch": "Start from scratch",
+        "choose_template": "Choose a template",
+        "choose_estimate_system": "Choose an estimate system",
+        "enter_estimate_point": "Enter estimate",
+        "step": "Step {step} of {total}",
+        "label": "Create estimate"
       },
       "toasts": {
         "created": {
           "success": {
-            "title": "Đã tạo điểm ước tính",
-            "message": "Điểm ước tính đã được tạo thành công"
+            "title": "Estimate created",
+            "message": "The estimate has been created successfully"
           },
           "error": {
-            "title": "Không thể tạo điểm ước tính",
-            "message": "Không thể tạo điểm ước tính mới, vui lòng thử lại"
+            "title": "Estimate creation failed",
+            "message": "We were unable to create the new estimate, please try again."
           }
         },
         "updated": {
           "success": {
-            "title": "Đã cập nhật ước tính",
-            "message": "Điểm ước tính đã được cập nhật trong phòng ban của bạn"
+            "title": "Estimate modified",
+            "message": "The estimate has been updated in your project."
           },
           "error": {
-            "title": "Không thể cập nhật ước tính",
-            "message": "Không thể cập nhật ước tính, vui lòng thử lại"
+            "title": "Estimate modification failed",
+            "message": "We were unable to modify the estimate, please try again"
           }
         },
         "enabled": {
           "success": {
-            "title": "Thành công!",
-            "message": "Đã bật ước tính"
+            "title": "Success!",
+            "message": "Estimates have been enabled."
           }
         },
         "disabled": {
           "success": {
-            "title": "Thành công!",
-            "message": "Đã tắt ước tính"
+            "title": "Success!",
+            "message": "Estimates have been disabled."
           },
           "error": {
-            "title": "Lỗi!",
-            "message": "Không thể tắt ước tính. Vui lòng thử lại"
+            "title": "Error!",
+            "message": "Estimate could not be disabled. Please try again"
           }
         },
         "reorder": {
           "success": {
-            "title": "Đã sắp xếp lại ước tính",
-            "message": "Ước tính đã được sắp xếp lại trong phòng ban của bạn."
+            "title": "Estimates re-ordered",
+            "message": "Estimates have been re-ordered in your project."
           },
           "error": {
-            "title": "Sắp xếp lại ước tính thất bại",
-            "message": "Chúng tôi không thể sắp xếp lại ước tính, vui lòng thử lại"
+            "title": "Estimate re-order failed",
+            "message": "We were unable to re-order the estimates, please try again"
           }
         },
         "switch": {
           "success": {
-            "title": "Đã tạo hệ thống ước tính",
-            "message": "Đã tạo và bật thành công"
+            "title": "Estimate system created",
+            "message": "Created and Enabled successfully"
           },
           "error": {
-            "title": "Lỗi",
-            "message": "Đã xảy ra lỗi"
+            "title": "Error",
+            "message": "Something went wrong"
           }
         }
       },
       "validation": {
-        "min_length": "Điểm ước tính phải lớn hơn 0",
-        "unable_to_process": "Không thể xử lý yêu cầu của bạn, vui lòng thử lại",
-        "numeric": "Điểm ước tính phải là số",
-        "character": "Điểm ước tính phải là ký tự",
-        "empty": "Giá trị ước tính không được để trống",
-        "already_exists": "Giá trị ước tính này đã tồn tại",
-        "unsaved_changes": "Bạn có thay đổi chưa lưu. Vui lòng lưu trước khi nhấn 'xong'",
-        "remove_empty": "Ước tính không thể để trống. Hãy nhập giá trị vào mỗi trường hoặc xóa những trường bạn không có giá trị.",
-        "fill": "Vui lòng điền vào trường ước tính này",
-        "repeat": "Giá trị ước tính không thể lặp lại"
+        "min_length": "Estimate needs to be greater than 0.",
+        "unable_to_process": "We are unable to process your request, please try again.",
+        "numeric": "Estimate needs to be a numeric value.",
+        "character": "Estimate needs to be a character value.",
+        "empty": "Estimate value cannot be empty.",
+        "already_exists": "Estimate value already exists.",
+        "unsaved_changes": "You have some unsaved changes, Please save them before clicking on done",
+        "remove_empty": "Estimate can't be empty. Enter a value in each field or remove those you don't have values for.",
+        "fill": "Please fill this estimate field",
+        "repeat": "Estimate value cannot be repeated"
       },
       "systems": {
         "points": {
-          "label": "Điểm",
+          "label": "Points",
           "fibonacci": "Fibonacci",
-          "linear": "Tuyến tính",
-          "squares": "Bình phương",
-          "custom": "Tùy chỉnh"
+          "linear": "Linear",
+          "squares": "Squares",
+          "custom": "Custom"
         },
         "categories": {
-          "label": "Danh mục",
-          "t_shirt_sizes": "Kích cỡ áo",
-          "easy_to_hard": "Dễ đến khó",
-          "custom": "Tùy chỉnh"
+          "label": "Categories",
+          "t_shirt_sizes": "T-Shirt Sizes",
+          "easy_to_hard": "Easy to hard",
+          "custom": "Custom"
         },
         "time": {
-          "label": "Thời gian",
-          "hours": "Giờ"
+          "label": "Time",
+          "hours": "Hours"
         }
       },
       "edit": {
-        "title": "Chỉnh sửa hệ thống ước tính",
+        "title": "Edit estimate system",
         "add_or_update": {
-          "title": "Thêm, cập nhật hoặc xóa ước tính",
-          "description": "Quản lý hệ thống hiện tại bằng cách thêm, cập nhật hoặc xóa điểm hoặc danh mục."
+          "title": "Add, update or remove estimates",
+          "description": "Manage current system either adding, updating or removing the points or categories."
         },
         "switch": {
-          "title": "Thay đổi loại ước tính",
-          "description": "Chuyển đổi hệ thống điểm của bạn thành hệ thống danh mục và ngược lại."
+          "title": "Change estimate type",
+          "description": "Convert your points system to categories system and vice versa."
         }
       },
-      "switch": "Chuyển đổi hệ thống ước tính",
-      "current": "Hệ thống ước tính hiện tại",
-      "select": "Chọn hệ thống ước tính"
+      "switch": "Switch estimate system",
+      "current": "Current estimate system",
+      "select": "Select an estimate system"
     },
     "automations": {
-      "label": "Tự động hóa",
-      "heading": "Tự động hóa",
-      "description": "Cấu hình các hành động tự động để tinh giản quy trình quản lý phòng ban và giảm thao tác thủ công.",
+      "label": "Automations",
+      "heading": "Automations",
+      "description": "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
       "auto-archive": {
-        "title": "Tự động lưu trữ công việc đã đóng",
-        "description": "Hệ thống sẽ tự động lưu trữ các công việc đã hoàn thành hoặc đã hủy.",
-        "duration": "Tự động lưu trữ đã đóng"
+        "title": "Auto-archive closed work items",
+        "description": "Plane will auto archive work items that have been completed or canceled.",
+        "duration": "Auto-archive work items that are closed for"
       },
       "auto-close": {
-        "title": "Tự động đóng công việc",
-        "description": "Hệ thống sẽ tự động đóng các công việc chưa hoàn thành hoặc hủy.",
-        "duration": "Tự động đóng không hoạt động",
-        "auto_close_status": "Trạng thái tự động đóng"
+        "title": "Auto-close work items",
+        "description": "Plane will automatically close work items that haven't been completed or canceled.",
+        "duration": "Auto-close work items that are inactive for",
+        "auto_close_status": "Auto-close status"
       },
       "auto-remind": {
-        "title": "Nhắc nhở tự động",
-        "description": "Plane sẽ tự động gửi nhắc nhở qua email và thông báo trong ứng dụng để giữ cho nhóm của bạn trên đường đến các hạn chót.",
-        "duration": "Gửi nhắc nhở trước"
+        "title": "Auto-reminders",
+        "description": "Plane will automatically send reminders via email and in-app notifications to keep your team on track with deadlines.",
+        "duration": "Send reminder before"
       }
     },
     "empty_state": {
       "labels": {
-        "title": "Chưa có nhãn",
-        "description": "Tạo nhãn để giúp tổ chức và lọc công việc trong phòng ban của bạn."
+        "title": "No labels yet",
+        "description": "Create labels to help organize and filter work items in you project."
       },
       "estimates": {
-        "title": "Chưa có hệ thống ước tính",
-        "description": "Tạo một tập hợp ước tính để truyền đạt khối lượng công việc cho mỗi công việc.",
-        "primary_button": "Thêm hệ thống ước tính"
+        "title": "No estimate systems yet",
+        "description": "Create a set of estimates to communicate the amount of work per work item.",
+        "primary_button": "Add estimate system"
       },
       "integrations": {
-        "title": "Không có tích hợp nào được cấu hình",
-        "description": "Cấu hình GitHub và các tích hợp khác để đồng bộ hóa các công việc của phòng ban."
+        "title": "No integrations configured",
+        "description": "Configure GitHub and other integrations to sync your project work items."
       }
     },
     "workflows": {
       "toggle": {
-        "title": "Bật quy trình làm việc",
-        "description": "Thiết lập quy trình làm việc để kiểm soát việc chuyển đổi công việc",
-        "no_states_tooltip": "Chưa có trạng thái nào được thêm vào quy trình làm việc.",
-        "no_work_item_types_tooltip": "Chưa có loại công việc nào được thêm vào quy trình làm việc.",
-        "no_states_or_work_item_types_tooltip": "Chưa có trạng thái hoặc loại công việc nào được thêm vào quy trình làm việc.",
+        "title": "Enable workflows",
+        "description": "Set workflows to control work item movement",
+        "no_states_tooltip": "No states are added to the workflow.",
+        "no_work_item_types_tooltip": "No work item types are added to the workflow.",
+        "no_states_or_work_item_types_tooltip": "No states or work item types are added to the workflow.",
         "toast": {
           "loading": {
-            "enabling": "Đang bật quy trình làm việc",
-            "disabling": "Đang tắt quy trình làm việc"
+            "enabling": "Enabling workflows",
+            "disabling": "Disabling workflows"
           },
           "success": {
-            "title": "Thành công!",
-            "message": "Đã bật quy trình làm việc thành công."
+            "title": "Success!",
+            "message": "Workflows enabled successfully."
           },
           "error": {
-            "title": "Lỗi!",
-            "message": "Không thể bật quy trình làm việc. Vui lòng thử lại."
+            "title": "Error!",
+            "message": "Failed to enable workflows. Please try again."
           }
         }
       },
-      "heading": "Quy trình làm việc",
-      "description": "Tự động hóa việc chuyển đổi công việc và đặt quy tắc để kiểm soát cách các nhiệm vụ chuyển tiếp trong phòng ban của bạn.",
-      "add_button": "Thêm quy trình làm việc mới",
-      "search": "Tìm kiếm quy trình làm việc",
+      "heading": "Workflows",
+      "description": "Automate work item transitions and set rules to control how tasks move through your project pipeline.",
+      "add_button": "Add new workflow",
+      "search": "Search workflows",
       "detail": {
-        "define": "Xác định quy trình làm việc",
-        "add_states": "Thêm trạng thái",
+        "define": "Define workflow",
+        "add_states": "Add states",
         "unmapped_states": {
-          "title": "Đã phát hiện trạng thái chưa ánh xạ",
-          "description": "Một số công việc của các loại đã chọn hiện đang ở trạng thái không tồn tại trong quy trình làm việc này.",
-          "note": "Nếu bạn bật quy trình làm việc này, các mục này sẽ tự động chuyển sang trạng thái ban đầu của quy trình làm việc.",
-          "label": "Trạng thái bị thiếu",
-          "tooltip": "Một số công việc đang ở trạng thái không được ánh xạ đến quy trình làm việc này. Mở quy trình làm việc để xem xét."
+          "title": "Unmapped states detected",
+          "description": "Some work items for the selected types are currently in states that do not exist in this workflow.",
+          "note": "If you enable this workflow, these items will automatically move to the initial state for this workflow.",
+          "label": "Missing states",
+          "tooltip": "Some work items are in states that are not mapped to this workflow. Open the workflow to review."
         }
       },
       "select_states": {
         "empty_state": {
-          "title": "Tất cả trạng thái đang được sử dụng",
-          "description": "Tất cả trạng thái đã xác định cho phòng ban này đã có trong quy trình làm việc hiện tại của bạn."
+          "title": "All states are in use",
+          "description": "All defined states for this project are already present in your current workflow."
         }
       },
       "default_footer": {
-        "fallback_message": "Quy trình làm việc này áp dụng cho bất kỳ loại công việc nào không được gán cho một quy trình làm việc."
+        "fallback_message": "This workflow applies to any work item type that is not assigned to a workflow."
       },
       "create": {
-        "heading": "Tạo quy trình làm việc mới",
+        "heading": "Create new workflow",
         "name": {
-          "placeholder": "Thêm tên duy nhất",
+          "placeholder": "Add a unique name",
           "validation": {
-            "max_length": "Tên phải ít hơn 255 ký tự",
-            "required": "Tên là bắt buộc",
-            "invalid": "Tên chỉ có thể chứa chữ cái, số, khoảng trắng, dấu gạch nối và dấu nháy đơn"
+            "max_length": "Name must be less than 255 characters",
+            "required": "Name is required",
+            "invalid": "Name can only contain letters, numbers, spaces, hyphens, and apostrophes"
           }
         },
         "description": {
-          "placeholder": "Thêm mô tả ngắn",
+          "placeholder": "Add a short description",
           "validation": {
-            "invalid": "Mô tả chỉ có thể chứa chữ cái, số, khoảng trắng, dấu gạch nối và dấu nháy đơn"
+            "invalid": "Description can only contain letters, numbers, spaces, hyphens, and apostrophes"
           }
         },
         "work_item_type": {
-          "label": "Loại công việc"
+          "label": "Work item type"
         },
         "success": {
-          "title": "Thành công!",
-          "message": "Đã tạo quy trình làm việc thành công."
+          "title": "Success!",
+          "message": "Workflow created successfully."
         },
         "error": {
-          "title": "Lỗi!",
-          "message": "Không thể tạo quy trình làm việc. Vui lòng thử lại."
+          "title": "Error!",
+          "message": "Failed to create workflow. Please try again."
         }
       },
       "update": {
         "success": {
-          "title": "Thành công!",
-          "message": "Đã cập nhật quy trình làm việc thành công."
+          "title": "Success!",
+          "message": "Workflow updated successfully."
         },
         "error": {
-          "title": "Lỗi!",
-          "message": "Không thể cập nhật quy trình làm việc. Vui lòng thử lại."
+          "title": "Error!",
+          "message": "Failed to update workflow. Please try again."
         }
       },
       "delete": {
-        "loading": "Đang xóa quy trình làm việc",
+        "loading": "Deleting workflow",
         "success": {
-          "title": "Thành công!",
-          "message": "Đã xóa quy trình làm việc thành công."
+          "title": "Success!",
+          "message": "Workflow deleted successfully."
         },
         "error": {
-          "title": "Lỗi!",
-          "message": "Không thể xóa quy trình làm việc. Vui lòng thử lại."
+          "title": "Error!",
+          "message": "Failed to delete workflow. Please try again."
         }
       },
       "add_states": {
         "success": {
-          "title": "Thành công!",
-          "message": "Đã thêm trạng thái thành công."
+          "title": "Success!",
+          "message": "States added successfully."
         },
         "error": {
-          "title": "Lỗi!",
-          "message": "Không thể thêm trạng thái. Vui lòng thử lại."
+          "title": "Error!",
+          "message": "Failed to add states. Please try again."
         }
       }
     },
     "work_item_types": {
-      "heading": "Loại công việc",
-      "description": "Tạo và tùy chỉnh các loại công việc khác nhau với các thuộc tính riêng"
+      "heading": "Work item Types",
+      "description": "Create and customize different types of work items with unique properties"
     },
     "features": {
       "cycles": {
-        "title": "Chu kỳ",
-        "short_title": "Chu kỳ",
-        "description": "Lên lịch công việc trong các khoảng thời gian linh hoạt thích ứng với nhịp điệu của phòng ban này.",
-        "toggle_title": "Bật chu kỳ",
-        "toggle_description": "Lập kế hoạch công việc trong khung thời gian tập trung."
+        "title": "Cycles",
+        "short_title": "Cycles",
+        "description": "Schedule work in flexible periods that adapt to this project's unique rhythm and pace.",
+        "toggle_title": "Enable cycles",
+        "toggle_description": "Plan work in focused timeframes."
       },
       "modules": {
-        "title": "Mô-đun",
-        "short_title": "Mô-đun",
-        "description": "Tổ chức công việc thành các cấu phần với người phụ trách chuyên trách.",
-        "toggle_title": "Bật mô-đun",
-        "toggle_description": "Thành viên phòng ban sẽ có thể tạo và chỉnh sửa mô-đun."
+        "title": "Modules",
+        "short_title": "Modules",
+        "description": "Organize work into sub-projects with dedicated leads and assignees.",
+        "toggle_title": "Enable modules",
+        "toggle_description": "Project members will be able to create and edit modules."
       },
       "views": {
-        "title": "Chế độ xem",
-        "short_title": "Chế độ xem",
-        "description": "Lưu các tùy chọn sắp xếp, bộ lọc và hiển thị tùy chỉnh hoặc chia sẻ chúng với nhóm của bạn.",
-        "toggle_title": "Bật chế độ xem",
-        "toggle_description": "Thành viên phòng ban sẽ có thể tạo và chỉnh sửa chế độ xem."
+        "title": "Views",
+        "short_title": "Views",
+        "description": "Save custom sorts, filters, and display options or share them with your team.",
+        "toggle_title": "Enable views",
+        "toggle_description": "Project members will be able to create and edit views."
       },
       "pages": {
-        "title": "Trang",
-        "short_title": "Trang",
-        "description": "Tạo và chỉnh sửa nội dung tự do: ghi chú, tài liệu, bất cứ thứ gì.",
-        "toggle_title": "Bật trang",
-        "toggle_description": "Thành viên phòng ban sẽ có thể tạo và chỉnh sửa trang."
+        "title": "Pages",
+        "short_title": "Pages",
+        "description": "Create and edit free-form content; notes, docs, anything.",
+        "toggle_title": "Enable pages",
+        "toggle_description": "Project members will be able to create and edit pages."
       },
       "intake": {
-        "intake_responsibility": "Trách nhiệm tiếp nhận",
-        "intake_sources": "Nguồn tiếp nhận",
-        "title": "Tiếp nhận",
-        "short_title": "Tiếp nhận",
-        "description": "Cho phép những người không phải thành viên chia sẻ lỗi, phản hồi và đề xuất; mà không làm gián đoạn quy trình làm việc của bạn.",
-        "toggle_title": "Bật tiếp nhận",
-        "toggle_description": "Cho phép thành viên phòng ban tạo yêu cầu tiếp nhận trong ứng dụng.",
-        "toggle_tooltip_on": "Yêu cầu Quản trị viên Phòng ban bật tính năng này.",
-        "toggle_tooltip_off": "Yêu cầu Quản trị viên Phòng ban tắt tính năng này.",
+        "intake_responsibility": "Intake responsibility",
+        "intake_sources": "Intake sources",
+        "title": "Intake",
+        "short_title": "Intake",
+        "description": "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
+        "toggle_title": "Enable intake",
+        "toggle_description": "Let project members create in app intake requests.",
+        "toggle_tooltip_on": "Ask your Project Admin to turn this on.",
+        "toggle_tooltip_off": "Ask your Project Admin to turn this off.",
         "notify_assignee": {
-          "title": "Thông báo người được chỉ định",
-          "description": "Đối với yêu cầu tiếp nhận mới, người được chỉ định mặc định sẽ được cảnh báo qua thông báo"
+          "title": "Notify assignees",
+          "description": "For a new request to intake, default assignees will be alerted via notifications"
         },
         "in_app": {
-          "title": "Trong ứng dụng",
-          "description": "Nhận công việc mới từ Thành viên và Khách trong đơn vị mà không ảnh hưởng đến mục hiện có."
+          "title": "In-app",
+          "description": "Get new work items from Members and Guests in your workspace without disruption to your existing work items."
         },
         "email": {
           "title": "Email",
-          "description": "Thu thập công việc mới từ bất kỳ ai gửi email đến địa chỉ email tiếp nhận.",
-          "fieldName": "ID email"
+          "description": "Collect new work items from anyone who sends an email to a Plane email address.",
+          "fieldName": "Email ID"
         },
         "form": {
-          "title": "Biểu mẫu",
-          "description": "Cho phép người ngoài đơn vị tạo công việc mới tiềm năng cho bạn qua biểu mẫu chuyên dụng và an toàn.",
-          "fieldName": "URL biểu mẫu mặc định",
-          "create_forms": "Tạo biểu mẫu bằng loại công việc",
-          "manage_forms": "Quản lý biểu mẫu",
-          "manage_forms_tooltip": "Yêu cầu Quản trị viên Đơn vị quản lý.",
-          "create_form": "Tạo biểu mẫu",
-          "edit_form": "Chỉnh sửa chi tiết biểu mẫu",
-          "form_title": "Tiêu đề biểu mẫu",
-          "form_title_required": "Tiêu đề biểu mẫu là bắt buộc",
-          "work_item_type": "Loại công việc",
-          "remove_property": "Xóa thuộc tính",
-          "select_properties": "Chọn thuộc tính",
-          "search_placeholder": "Tìm thuộc tính",
+          "title": "Forms",
+          "description": "Let folks outside your workspace create potential new work items for you via a dedicated and secure form.",
+          "fieldName": "Default form URL",
+          "create_forms": "Create Forms using work item types",
+          "manage_forms": "Manage forms",
+          "manage_forms_tooltip": "Ask your Workspace Admin to manage this.",
+          "create_form": "Create form",
+          "edit_form": "Edit form details",
+          "form_title": "Form title",
+          "form_title_required": "Form title is required",
+          "work_item_type": "Work item type",
+          "remove_property": "Remove property",
+          "select_properties": "Select properties",
+          "search_placeholder": "Search for properties",
           "toasts": {
-            "success_create": "Đã tạo biểu mẫu tiếp nhận thành công",
-            "success_update": "Đã cập nhật biểu mẫu tiếp nhận thành công",
-            "error_create": "Không thể tạo biểu mẫu tiếp nhận",
-            "error_update": "Không thể cập nhật biểu mẫu tiếp nhận"
+            "success_create": "Intake form created successfully",
+            "success_update": "Intake form updated successfully",
+            "error_create": "Failed to create intake form",
+            "error_update": "Failed to update intake form"
           }
         },
         "toasts": {
           "set": {
-            "loading": "Đang đặt người được chỉ định...",
+            "loading": "Setting assignees...",
             "success": {
-              "title": "Thành công!",
-              "message": "Người được chỉ định đã được đặt thành công."
+              "title": "Success!",
+              "message": "Assignees set successfully."
             },
             "error": {
-              "title": "Lỗi!",
-              "message": "Đã xảy ra lỗi khi đặt người được chỉ định. Vui lòng thử lại."
+              "title": "Error!",
+              "message": "Something went wrong while setting assignees. Please try again."
             }
           }
         }
       },
       "time_tracking": {
-        "title": "Theo dõi thời gian",
-        "short_title": "Theo dõi thời gian",
-        "description": "Ghi lại thời gian dành cho các công việc và phòng ban.",
-        "toggle_title": "Bật theo dõi thời gian",
-        "toggle_description": "Thành viên phòng ban sẽ có thể ghi lại thời gian làm việc."
+        "title": "Time tracking",
+        "short_title": "Time tracking",
+        "description": "Log time spent on work items and projects.",
+        "toggle_title": "Enable time tracking",
+        "toggle_description": "Project members will be able to log time worked."
       },
       "milestones": {
-        "title": "Cột mốc",
-        "short_title": "Cột mốc",
-        "description": "Cột mốc cung cấp một lớp để điều chỉnh các công việc theo các ngày hoàn thành chung.",
-        "toggle_title": "Bật cột mốc",
-        "toggle_description": "Tổ chức các công việc theo thời hạn cột mốc."
+        "title": "Milestones",
+        "short_title": "Milestones",
+        "description": "Milestones provide a layer to align work items toward shared completion dates.",
+        "toggle_title": "Enable milestones",
+        "toggle_description": "Organize work items by milestone deadlines."
       },
       "toasts": {
-        "loading": "Đang cập nhật tính năng phòng ban...",
-        "success": "Đã cập nhật tính năng phòng ban thành công.",
-        "error": "Đã xảy ra lỗi khi cập nhật tính năng phòng ban. Vui lòng thử lại."
+        "loading": "Updating project feature...",
+        "success": "Project feature updated successfully.",
+        "error": "Something went wrong while updating project feature. Please try again."
       }
     },
     "project_updates": {
-      "heading": "Cập nhật phòng ban",
-      "description": "Theo dõi và giám sát tiến độ được hợp nhất cho phòng ban này"
+      "heading": "Project Updates",
+      "description": "Consolidated tracking and progress monitoring for this project"
     },
     "templates": {
-      "heading": "Mẫu",
-      "description": "Tiết kiệm 80% thời gian dành cho việc tạo phòng ban, công việc và trang khi bạn sử dụng mẫu."
+      "heading": "Templates",
+      "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
     },
     "cycles": {
       "auto_schedule": {
-        "heading": "Tự động lên lịch chu kỳ",
-        "description": "Duy trì chu kỳ hoạt động mà không cần thiết lập thủ công.",
-        "tooltip": "Tự động tạo chu kỳ mới dựa trên lịch trình bạn chọn.",
-        "edit_button": "Chỉnh sửa",
+        "heading": "Auto-schedule cycles",
+        "description": "Keep cycles moving without manual setup.",
+        "tooltip": "Automatically create new cycles based on your chosen schedule.",
+        "edit_button": "Edit",
         "form": {
           "cycle_title": {
-            "label": "Tiêu đề chu kỳ",
-            "placeholder": "Tiêu đề",
-            "tooltip": "Tiêu đề sẽ được thêm số cho các chu kỳ tiếp theo. Ví dụ: Thiết kế - 1/2/3",
+            "label": "Cycle Title",
+            "placeholder": "Title",
+            "tooltip": "The title will be appended with numbers for subsequent cycles. For eg: Design - 1/2/3",
             "validation": {
-              "required": "Tiêu đề chu kỳ là bắt buộc",
-              "max_length": "Tiêu đề không được vượt quá 255 ký tự"
+              "required": "Cycle title is required",
+              "max_length": "Title must not exceed 255 characters"
             }
           },
           "cycle_duration": {
-            "label": "Thời lượng chu kỳ",
-            "unit": "Tuần",
+            "label": "Cycle Duration",
+            "unit": "Weeks",
             "validation": {
-              "required": "Thời lượng chu kỳ là bắt buộc",
-              "min": "Thời lượng chu kỳ phải ít nhất 1 tuần",
-              "max": "Thời lượng chu kỳ không được vượt quá 30 tuần",
-              "positive": "Thời lượng chu kỳ phải là số dương"
+              "required": "Cycle duration is required",
+              "min": "Cycle duration must be at least 1 week",
+              "max": "Cycle duration cannot exceed 30 weeks",
+              "positive": "Cycle duration must be positive"
             }
           },
           "cooldown_period": {
-            "label": "Thời gian nghỉ",
-            "unit": "ngày",
-            "tooltip": "Khoảng nghỉ giữa các chu kỳ trước khi bắt đầu chu kỳ tiếp theo.",
+            "label": "Cooldown Period",
+            "unit": "days",
+            "tooltip": "Pause between cycles before the next begins.",
             "validation": {
-              "required": "Thời gian nghỉ là bắt buộc",
-              "negative": "Thời gian nghỉ không thể là số âm"
+              "required": "Cooldown period is required",
+              "negative": "Cooldown period cannot be negative"
             }
           },
           "start_date": {
-            "label": "Ngày bắt đầu chu kỳ",
+            "label": "Cycle starts day",
             "validation": {
-              "required": "Ngày bắt đầu là bắt buộc",
-              "past": "Ngày bắt đầu không thể ở quá khứ"
+              "required": "Start date is required",
+              "past": "Start date cannot be in the past"
             }
           },
           "number_of_cycles": {
-            "label": "Số chu kỳ tương lai",
+            "label": "Number of future cycles",
             "validation": {
-              "required": "Số chu kỳ là bắt buộc",
-              "min": "Cần ít nhất 1 chu kỳ",
-              "max": "Không thể lên lịch nhiều hơn 3 chu kỳ"
+              "required": "Number of cycles is required",
+              "min": "At least 1 cycle is required",
+              "max": "Cannot schedule more than 3 cycles"
             }
           },
           "auto_rollover": {
-            "label": "Tự động chuyển các công việc",
-            "tooltip": "Vào ngày hoàn thành chu kỳ, chuyển tất cả các công việc chưa hoàn thành sang chu kỳ tiếp theo."
+            "label": "Auto-rollover work items",
+            "tooltip": "On the day a cycle completes, move all unfinished work items into the next cycle."
           }
         },
         "toast": {
           "toggle": {
-            "loading_enable": "Đang bật tự động lên lịch chu kỳ",
-            "loading_disable": "Đang tắt tự động lên lịch chu kỳ",
+            "loading_enable": "Enabling auto-schedule cycles",
+            "loading_disable": "Disabling auto-schedule cycles",
             "success": {
-              "title": "Thành công!",
-              "message": "Đã chuyển đổi tự động lên lịch chu kỳ thành công."
+              "title": "Success!",
+              "message": "Auto-schedule cycles toggled successfully."
             },
             "error": {
-              "title": "Lỗi!",
-              "message": "Không thể chuyển đổi tự động lên lịch chu kỳ."
+              "title": "Error!",
+              "message": "Failed to toggle auto-schedule cycles."
             }
           },
           "save": {
-            "loading": "Đang lưu cấu hình tự động lên lịch chu kỳ",
+            "loading": "Saving auto-schedule cycles configuration",
             "success": {
-              "title": "Thành công!",
-              "message_create": "Đã lưu cấu hình tự động lên lịch chu kỳ thành công.",
-              "message_update": "Đã cập nhật cấu hình tự động lên lịch chu kỳ thành công."
+              "title": "Success!",
+              "message_create": "Auto-schedule cycles configuration saved successfully.",
+              "message_update": "Auto-schedule cycles configuration updated successfully."
             },
             "error": {
-              "title": "Lỗi!",
-              "message_create": "Không thể lưu cấu hình tự động lên lịch chu kỳ.",
-              "message_update": "Không thể cập nhật cấu hình tự động lên lịch chu kỳ."
+              "title": "Error!",
+              "message_create": "Failed to save auto-schedule cycles configuration.",
+              "message_update": "Failed to update auto-schedule cycles configuration."
             }
           }
         }
