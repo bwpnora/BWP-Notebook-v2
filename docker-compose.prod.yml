@@ -122,6 +122,15 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh
     volumes:
       - bwp_plane_logs_migrator:/code/plane/logs
+      - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
+      - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
+      - ./custom_backend/apps/api/plane/db/models/__init__.py:/code/plane/db/models/__init__.py
+      - ./custom_backend/apps/api/plane/db/migrations/0123_issue_supporters_room_notes.py:/code/plane/db/migrations/0123_issue_supporters_room_notes.py
+      - ./custom_backend/apps/api/plane/db/management/commands/seed_task_types.py:/code/plane/db/management/commands/seed_task_types.py
+      - ./custom_backend/apps/api/plane/app/serializers/issue.py:/code/plane/app/serializers/issue.py
+      - ./custom_backend/apps/api/plane/app/serializers/__init__.py:/code/plane/app/serializers/__init__.py
+      - ./custom_backend/apps/api/plane/app/views/issue/base.py:/code/plane/app/views/issue/base.py
+      - ./custom_backend/apps/api/plane/bgtasks/issue_activities_task.py:/code/plane/bgtasks/issue_activities_task.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -139,6 +148,15 @@ services:
     command: ./bin/docker-entrypoint-api.sh
     volumes:
       - bwp_plane_logs_api:/code/plane/logs
+      - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
+      - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
+      - ./custom_backend/apps/api/plane/db/models/__init__.py:/code/plane/db/models/__init__.py
+      - ./custom_backend/apps/api/plane/db/migrations/0123_issue_supporters_room_notes.py:/code/plane/db/migrations/0123_issue_supporters_room_notes.py
+      - ./custom_backend/apps/api/plane/db/management/commands/seed_task_types.py:/code/plane/db/management/commands/seed_task_types.py
+      - ./custom_backend/apps/api/plane/app/serializers/issue.py:/code/plane/app/serializers/issue.py
+      - ./custom_backend/apps/api/plane/app/serializers/__init__.py:/code/plane/app/serializers/__init__.py
+      - ./custom_backend/apps/api/plane/app/views/issue/base.py:/code/plane/app/views/issue/base.py
+      - ./custom_backend/apps/api/plane/bgtasks/issue_activities_task.py:/code/plane/bgtasks/issue_activities_task.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -160,6 +178,15 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     volumes:
       - bwp_plane_logs_worker:/code/plane/logs
+      - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
+      - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
+      - ./custom_backend/apps/api/plane/db/models/__init__.py:/code/plane/db/models/__init__.py
+      - ./custom_backend/apps/api/plane/db/migrations/0123_issue_supporters_room_notes.py:/code/plane/db/migrations/0123_issue_supporters_room_notes.py
+      - ./custom_backend/apps/api/plane/db/management/commands/seed_task_types.py:/code/plane/db/management/commands/seed_task_types.py
+      - ./custom_backend/apps/api/plane/app/serializers/issue.py:/code/plane/app/serializers/issue.py
+      - ./custom_backend/apps/api/plane/app/serializers/__init__.py:/code/plane/app/serializers/__init__.py
+      - ./custom_backend/apps/api/plane/app/views/issue/base.py:/code/plane/app/views/issue/base.py
+      - ./custom_backend/apps/api/plane/bgtasks/issue_activities_task.py:/code/plane/bgtasks/issue_activities_task.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -177,6 +204,15 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     volumes:
       - bwp_plane_logs_beat_worker:/code/plane/logs
+      - ./custom_backend/apps/api/plane/db/models/issue.py:/code/plane/db/models/issue.py
+      - ./custom_backend/apps/api/plane/db/models/issue_type.py:/code/plane/db/models/issue_type.py
+      - ./custom_backend/apps/api/plane/db/models/__init__.py:/code/plane/db/models/__init__.py
+      - ./custom_backend/apps/api/plane/db/migrations/0123_issue_supporters_room_notes.py:/code/plane/db/migrations/0123_issue_supporters_room_notes.py
+      - ./custom_backend/apps/api/plane/db/management/commands/seed_task_types.py:/code/plane/db/management/commands/seed_task_types.py
+      - ./custom_backend/apps/api/plane/app/serializers/issue.py:/code/plane/app/serializers/issue.py
+      - ./custom_backend/apps/api/plane/app/serializers/__init__.py:/code/plane/app/serializers/__init__.py
+      - ./custom_backend/apps/api/plane/app/views/issue/base.py:/code/plane/app/views/issue/base.py
+      - ./custom_backend/apps/api/plane/bgtasks/issue_activities_task.py:/code/plane/bgtasks/issue_activities_task.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
