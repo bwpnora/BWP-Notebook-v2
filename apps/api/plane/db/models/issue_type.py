@@ -53,3 +53,25 @@ class ProjectIssueType(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.project} - {self.issue_type}"
+
+
+# BWP-Notebook-v2 task type constants - Code by IT Leon
+TASK_TYPE_OPERATIONAL = "operational"
+TASK_TYPE_OTHER = "other"
+
+DEFAULT_TASK_TYPES = [
+    {
+        "name": "Công việc vận hành",
+        "description": "Công việc phát sinh hằng ngày, thực hiện trong ngày",
+        "external_id": TASK_TYPE_OPERATIONAL,
+        "is_default": True,
+        "is_active": True,
+    },
+    {
+        "name": "Công việc khác",
+        "description": "Công việc được nhận từ cấp trên hoặc người có thẩm quyền giao việc",
+        "external_id": TASK_TYPE_OTHER,
+        "is_default": False,
+        "is_active": True,
+    },
+]
