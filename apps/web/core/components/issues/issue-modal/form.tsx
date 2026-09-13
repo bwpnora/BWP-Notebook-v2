@@ -32,8 +32,10 @@ import {
 import {
   IssueDefaultProperties,
   IssueDescriptionEditor,
+  IssueNotesInput,
   IssueParentTag,
   IssueProjectSelect,
+  IssueTaskTypeSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
 // helpers
@@ -361,11 +363,22 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
           >
             <div className="rounded-t-lg bg-surface-1 p-5">
               <h3 className="pb-2 text-h4-medium text-secondary">{modalTitle}</h3>
-              <div className="flex items-center justify-between pt-2 pb-4">
-                <div className="flex items-center gap-x-1">
+              <div className="flex flex-wrap items-center gap-3 pt-2 pb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium whitespace-nowrap text-secondary">Phòng ban:</span>
                   <IssueProjectSelect
                     control={control}
                     disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
+                    handleFormChange={handleFormChange}
+                  />
+                </div>
+                <div className="bg-subtle-1 hidden h-4 w-[1px] sm:block" />
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium whitespace-nowrap text-secondary">Loại công việc:</span>
+                  <IssueTaskTypeSelect
+                    control={control}
+                    projectId={projectId}
+                    workspaceSlug={workspaceSlug?.toString()}
                     handleFormChange={handleFormChange}
                   />
                 </div>
@@ -417,6 +430,9 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   onAssetUpload={onAssetUpload}
                   onClose={onClose}
                 />
+              </div>
+              <div className="px-5">
+                <IssueNotesInput control={control} handleFormChange={handleFormChange} />
               </div>
             </div>
             <div

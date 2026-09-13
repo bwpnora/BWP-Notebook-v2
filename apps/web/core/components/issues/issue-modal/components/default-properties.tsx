@@ -15,7 +15,7 @@ import { ParentPropertyIcon } from "@plane/propel/icons";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
-import { getDate, renderFormattedPayloadDate, getTabIndex, cn } from "@plane/utils";
+import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 // components
 import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -83,68 +83,8 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
   const maxDate = getDate(targetDate);
   maxDate?.setDate(maxDate.getDate());
 
-  const isManager = Boolean(
-    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId)
-  );
-
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {/* BWP-Notebook-v2 task type selector */}
-      <Controller
-        control={control}
-        name="type_id"
-        render={({ field: { value, onChange } }) => {
-          const currentType = value === "other" ? "other" : "operational";
-          const typeLabel = currentType === "other" ? "Công việc khác" : "Công việc vận hành";
-          return (
-            <div className="h-7">
-              <CustomMenu
-                customButton={
-                  <span
-                    className={cn(
-                      "text-xs flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5 font-medium whitespace-nowrap transition-colors",
-                      currentType === "other"
-                        ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                        : "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                    )}
-                  >
-                    <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-current" />
-                    <span className="whitespace-nowrap">{typeLabel}</span>
-                  </span>
-                }
-                className="h-full"
-                customButtonClassName="h-full flex items-center"
-                closeOnSelect
-                disabled={!isManager}
-              >
-                <CustomMenu.MenuItem
-                  onClick={() => {
-                    onChange("operational");
-                    handleFormChange();
-                  }}
-                  className="text-xs flex items-center gap-2"
-                >
-                  <span className="bg-blue-500 h-2 w-2 flex-shrink-0 rounded-full" />
-                  <span>Công việc vận hành</span>
-                </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem
-                  onClick={() => {
-                    if (isManager) {
-                      onChange("other");
-                      handleFormChange();
-                    }
-                  }}
-                  disabled={!isManager}
-                  className={cn("text-xs flex items-center gap-2", !isManager && "cursor-not-allowed opacity-50")}
-                >
-                  <span className="bg-amber-500 h-2 w-2 flex-shrink-0 rounded-full" />
-                  <span>Công việc khác {!isManager && "(Chỉ quản lý)"}</span>
-                </CustomMenu.MenuItem>
-              </CustomMenu>
-            </div>
-          );
-        }}
-      />
       <Controller
         control={control}
         name="state_id"
@@ -241,26 +181,6 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
               }}
               placeholder="Số phòng"
               className="text-xs w-20 bg-transparent text-primary outline-none placeholder:text-placeholder"
-            />
-          </div>
-        )}
-      />
-      {/* BWP-Notebook-v2 task notes */}
-      <Controller
-        control={control}
-        name="notes"
-        render={({ field: { value, onChange } }) => (
-          <div className="text-xs flex h-7 items-center rounded-sm border-[0.5px] border-strong bg-layer-2 px-2 text-secondary">
-            <span className="mr-1.5 font-medium whitespace-nowrap text-secondary">Ghi chú:</span>
-            <input
-              type="text"
-              value={value ?? ""}
-              onChange={(e) => {
-                onChange(e.target.value || null);
-                handleFormChange();
-              }}
-              placeholder="Ghi chú công việc"
-              className="text-xs w-36 bg-transparent text-primary outline-none placeholder:text-placeholder"
             />
           </div>
         )}

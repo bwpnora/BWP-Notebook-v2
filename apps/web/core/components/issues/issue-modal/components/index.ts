@@ -9,3 +9,5 @@ export * from "./parent-tag";
 export * from "./title-input";
 export * from "./description-editor";
 export * from "./default-properties";
+export * from "./task-type-select";
+export * from "./notes-input";
