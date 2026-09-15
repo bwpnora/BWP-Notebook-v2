@@ -11,6 +11,19 @@ from plane.db.models.project import ROLE
 from .base import is_super_admin
 
 
+def check_is_admin_or_manager(user, project):
+    if not user or user.is_anonymous:
+        return False
+    if is_super_admin(user):
+        return True
+    if WorkspaceMember.objects.filter(workspace_id=project.workspace_id, member=user, role__gte=20, is_active=True).exists():
+        return True
+    member = ProjectMember.objects.filter(project_id=project.id, member=user, is_active=True).first()
+    if member and member.role >= 20:
+        return True
+    return False
+
+
 class ProjectBasePermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
