@@ -23,7 +23,11 @@ export default observer(function WorkspaceLayout(props: Route.ComponentProps) {
   const router = useRouter();
   const { isMemberOnly, isLoading } = useMemberRole(workspaceSlug);
 
-  const isCreateTaskRoute = Boolean(pathname?.includes("/create-task"));
+  const isCreateTaskRoute = Boolean(
+    pathname === `/${workspaceSlug}/create-task` ||
+    pathname === `/${workspaceSlug}/create-task/` ||
+    pathname?.startsWith(`/${workspaceSlug}/create-task/`)
+  );
 
   // Route guard: intercept Member accounts navigating away from /create-task
   useEffect(() => {
@@ -62,7 +66,7 @@ export default observer(function WorkspaceLayout(props: Route.ComponentProps) {
 
   return (
     <AuthenticationWrapper>
-      <WorkspaceAuthWrapper>
+      <WorkspaceAuthWrapper isLoading={isLoading}>
         {isCreateTaskRoute ? (
           <>
             <GlobalModals workspaceSlug={workspaceSlug} />

@@ -49,8 +49,6 @@ export const useMemberRole = (workspaceSlug?: string): IUseMemberRoleResult => {
     (numericRole !== undefined && numericRole >= EUserPermissions.ADMIN) ||
     allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, activeWorkspaceSlug);
 
-  const isAdminOrAbove = Boolean(isSuperAdmin || isOwner || isAdmin);
-
   // Determine whether role information is still loading to avoid flash/redirect loops
   const isRoleLoaded = Boolean(
     isSuperAdmin ||
@@ -62,6 +60,11 @@ export const useMemberRole = (workspaceSlug?: string): IUseMemberRoleResult => {
 
   const isLoading = Boolean(!currentUser || isUserLoading || permissionsLoader || !isRoleLoaded);
 
+  const isAdminOrAbove = useMemo(() => {
+    if (isLoading) return false;
+    return Boolean(isSuperAdmin || isOwner || isAdmin);
+  }, [isLoading, isSuperAdmin, isOwner, isAdmin]);
+
   const isMemberOnly = useMemo(() => {
     if (isLoading) return false;
     return !isAdminOrAbove;
@@ -69,7 +72,7 @@ export const useMemberRole = (workspaceSlug?: string): IUseMemberRoleResult => {
 
   return {
     isMemberOnly,
-    isAdminOrAbove: !isMemberOnly,
+    isAdminOrAbove,
     isLoading,
   };
 };
