@@ -141,3 +141,34 @@ def test_admin_retains_full_privileges(client: Client):
     # Admin can retrieve
     get_resp = client.get(f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/")
     assert get_resp.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_member_create_enforces_operational_task_type(client: Client):
+    user = User.objects.create(email="member_task_type@example.com", username="member_tt")
+    workspace = Workspace.objects.create(name="WS", slug="ws-test-tt")
+    WorkspaceMember.objects.create(workspace=workspace, member=user, role=15)
+    project = Project.objects.create(name="Dept", identifier="DEPTT", workspace=workspace)
+    ProjectMember.objects.create(project=project, member=user, workspace=workspace, role=15)
+
+    client.force_login(user)
+    # Attempt to forge task_type as "other" and type_id as "other"
+    payload = {
+        "name": "Member Task With Forged Type",
+        "priority": "medium",
+        "task_type": "other",
+        "type_id": "other",
+    }
+    response = client.post(
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/",
+        data=payload,
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_201_CREATED
+    issue_data = response.json()
+    assert issue_data["name"] == "Member Task With Forged Type"
+    # Verify the issue in DB has operational issue_type
+    created_issue = Issue.objects.get(pk=issue_data["id"])
+    assert created_issue.type is not None
+    assert created_issue.type.external_id == "operational"
+

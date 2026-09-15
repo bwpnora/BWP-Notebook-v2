@@ -470,26 +470,51 @@ class IssueViewSet(BaseViewSet):
         data = request.data.copy() if hasattr(request.data, "copy") else dict(request.data)
         is_admin_or_manager = check_is_admin_or_manager(request.user, project)
 
-        operational_type, _ = IssueType.objects.get_or_create(
-            workspace_id=project.workspace_id,
-            external_id="operational",
-            defaults={
-                "name": "Công việc vận hành",
-                "description": "Công việc phát sinh hằng ngày, thực hiện trong ngày",
-                "is_default": True,
-                "is_active": True,
-            },
+        # Look for operational type in project first, then workspace
+        operational_type = (
+            IssueType.objects.filter(
+                projectissuetype__project=project,
+                external_id="operational",
+            ).first()
+            or IssueType.objects.filter(
+                workspace_id=project.workspace_id,
+                external_id="operational",
+            ).first()
         )
-        other_type, _ = IssueType.objects.get_or_create(
-            workspace_id=project.workspace_id,
-            external_id="other",
-            defaults={
-                "name": "Công việc khác",
-                "description": "Công việc được nhận từ cấp trên hoặc người có thẩm quyền giao việc",
-                "is_default": False,
-                "is_active": True,
-            },
+        if not operational_type:
+            operational_type, _ = IssueType.objects.get_or_create(
+                workspace_id=project.workspace_id,
+                external_id="operational",
+                defaults={
+                    "name": "Công việc vận hành",
+                    "description": "Công việc phát sinh hằng ngày, thực hiện trong ngày",
+                    "is_default": True,
+                    "is_active": True,
+                },
+            )
+
+        other_type = (
+            IssueType.objects.filter(
+                projectissuetype__project=project,
+                external_id="other",
+            ).first()
+            or IssueType.objects.filter(
+                workspace_id=project.workspace_id,
+                external_id="other",
+            ).first()
         )
+        if not other_type:
+            other_type, _ = IssueType.objects.get_or_create(
+                workspace_id=project.workspace_id,
+                external_id="other",
+                defaults={
+                    "name": "Công việc khác",
+                    "description": "Công việc được nhận từ cấp trên hoặc người có thẩm quyền giao việc",
+                    "is_default": False,
+                    "is_active": True,
+                },
+            )
+
         ProjectIssueType.objects.get_or_create(
             project=project,
             issue_type=operational_type,
@@ -504,14 +529,27 @@ class IssueViewSet(BaseViewSet):
         # Rule 1: Regular users creating tasks -> always Operational Task
         if not is_admin_or_manager:
             data["type_id"] = str(operational_type.id)
+            data["task_type"] = "operational"
+            if hasattr(request, "data"):
+                try:
+                    if hasattr(request.data, "_mutable") and not request.data._mutable:
+                        request.data._mutable = True
+                    request.data["task_type"] = "operational"
+                    request.data["type_id"] = str(operational_type.id)
+                except Exception:
+                    pass
         # Rule 2: Manager creating and assigning task -> default to Other Task if not set
         else:
-            if not data.get("type_id"):
-                data["type_id"] = str(other_type.id)
-            elif data.get("type_id") == "operational":
+            task_type_val = data.get("task_type") or data.get("type_id")
+            if task_type_val == "operational" or data.get("type_id") == str(operational_type.id):
                 data["type_id"] = str(operational_type.id)
-            elif data.get("type_id") == "other":
+                data["task_type"] = "operational"
+            elif task_type_val == "other" or data.get("type_id") == str(other_type.id):
                 data["type_id"] = str(other_type.id)
+                data["task_type"] = "other"
+            elif not data.get("type_id"):
+                data["type_id"] = str(other_type.id)
+                data["task_type"] = "other"
 
         serializer = IssueCreateSerializer(
             data=data,

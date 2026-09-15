@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
@@ -14,6 +14,10 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // types
 import type { TIssuePriorities } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
+import type { EditorRefApi } from "@plane/editor";
+// i18n
+import { useTranslation } from "@plane/i18n";
 // ui & utils
 import { Avatar } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
@@ -21,31 +25,26 @@ import { getFileURL } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useFileSize } from "@/hooks/use-file-size";
 import { useMemberRole } from "@/hooks/use-member-role";
 // services
 import { IssueService, IssueAttachmentService } from "@/services/issue";
+import { WorkspaceService } from "@/services/workspace.service";
 
 const issueService = new IssueService();
 const issueAttachmentService = new IssueAttachmentService();
+const workspaceService = new WorkspaceService();
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
 export type MemberTaskFormProps = {
@@ -55,8 +54,14 @@ export type MemberTaskFormProps = {
 export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTaskFormProps) {
   const params = useParams();
   const routeWorkspaceSlug = Array.isArray(params?.workspaceSlug) ? params.workspaceSlug[0] : params?.workspaceSlug;
-  const { currentWorkspace } = useWorkspace();
+  const { currentWorkspace, getWorkspaceBySlug } = useWorkspace();
   const activeWorkspaceSlug = props.workspaceSlug || routeWorkspaceSlug || currentWorkspace?.slug || "";
+  const activeWorkspace =
+    currentWorkspace || (activeWorkspaceSlug ? getWorkspaceBySlug(activeWorkspaceSlug) : undefined);
+  const activeWorkspaceId = activeWorkspace?.id ?? "";
+
+  const { currentLocale } = useTranslation();
+  const isVietnamese = currentLocale === "vi-VN" || currentLocale?.startsWith("vi") || !currentLocale;
 
   // store hooks
   const {
@@ -73,14 +78,17 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
     project: { fetchProjectMembers },
   } = useMember();
 
+  const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { isAdminOrAbove } = useMemberRole(activeWorkspaceSlug);
   const { maxFileSize } = useFileSize();
+
+  const editorRef = useRef<EditorRefApi>(null);
 
   // form states
   const [selectedProjectId, setSelectedProjectId] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [room, setRoom] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  const [description, setDescription] = useState<string>("<p></p>");
   const [assignees, setAssignees] = useState<string[]>([]);
   const [supporters, setSupporters] = useState<string[]>([]);
   const [priority, setPriority] = useState<TIssuePriorities>("none");
@@ -168,7 +176,7 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
     if (!activeWorkspaceSlug) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Không tìm thấy thông tin không gian làm việc",
+        title: isVietnamese ? "Không tìm thấy thông tin không gian làm việc" : "Workspace information not found",
       });
       return;
     }
@@ -176,7 +184,7 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
     if (!selectedProjectId) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Vui lòng chọn phòng ban",
+        title: isVietnamese ? "Vui lòng chọn phòng ban" : "Please select a department",
       });
       return;
     }
@@ -185,7 +193,7 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
     if (!trimmedTitle) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Vui lòng nhập tiêu đề công việc",
+        title: isVietnamese ? "Vui lòng nhập tiêu đề công việc" : "Please enter a task title",
       });
       return;
     }
@@ -196,20 +204,15 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
       if (Number.isNaN(parsed)) {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Số phòng phải là một số hợp lệ",
+          title: isVietnamese ? "Số phòng phải là một số hợp lệ" : "Room number must be a valid number",
         });
         return;
       }
       parsedRoom = parsed;
     }
 
-    const descriptionHtml = description.trim()
-      ? description
-          .trim()
-          .split("\n")
-          .map((line) => `<p>${escapeHtml(line) || "<br>"}</p>`)
-          .join("")
-      : "<p></p>";
+    const descriptionHtml =
+      description && description.trim() !== "" && description !== "<p></p>" ? description : "<p></p>";
 
     const payload = {
       name: trimmedTitle,
@@ -243,14 +246,15 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
 
       // success toast without view issue link
       setToast({
-        title: "Công việc đã được tạo thành công",
+        title: isVietnamese ? "Công việc đã được tạo thành công" : "Task created successfully",
         type: TOAST_TYPE.SUCCESS,
       });
 
       // reset form fields while retaining selected department
       setTitle("");
       setRoom("");
-      setDescription("");
+      setDescription("<p></p>");
+      editorRef.current?.clearEditor();
       setAssignees([]);
       setSupporters([]);
       setPriority("none");
@@ -261,9 +265,13 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
         error?.error ||
         error?.detail ||
         error?.message ||
-        (typeof error === "string" ? error : "Đã xảy ra lỗi khi tạo công việc. Vui lòng thử lại.");
+        (typeof error === "string"
+          ? error
+          : isVietnamese
+            ? "Đã xảy ra lỗi khi tạo công việc. Vui lòng thử lại."
+            : "An error occurred while creating the task. Please try again.");
       setToast({
-        title: "Không thể tạo công việc",
+        title: isVietnamese ? "Không thể tạo công việc" : "Unable to create task",
         message: errorMessage,
         type: TOAST_TYPE.ERROR,
       });
@@ -279,7 +287,9 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
     return (
       <div className="text-custom-text-300 flex items-center justify-center gap-3 py-12">
         <LogoSpinner />
-        <span className="text-sm">Đang tải thông tin phòng ban...</span>
+        <span className="text-sm">
+          {isVietnamese ? "Đang tải thông tin phòng ban..." : "Loading department information..."}
+        </span>
       </div>
     );
   }
@@ -287,8 +297,9 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
   if (availableProjects.length === 0) {
     return (
       <div className="border-yellow-500/30 bg-yellow-500/10 text-sm text-yellow-500 rounded-md border p-4">
-        Bạn chưa được gán vào phòng ban nào. Vui lòng liên hệ Quản trị viên để được thêm vào phòng ban trước khi tạo
-        công việc.
+        {isVietnamese
+          ? "Bạn chưa được gán vào phòng ban nào. Vui lòng liên hệ Quản trị viên để được thêm vào phòng ban trước khi tạo công việc."
+          : "You have not been assigned to any department. Please contact an Administrator to be added to a department before creating tasks."}
       </div>
     );
   }
@@ -299,22 +310,28 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
       <div className="flex flex-col gap-1.5">
         {availableProjects.length === 1 ? (
           <>
-            <span className="text-sm text-custom-text-100 font-medium">Phòng ban</span>
+            <span className="text-sm text-custom-text-100 font-medium">
+              {isVietnamese ? "Phòng ban" : "Department"}
+            </span>
             <div className="border-custom-border-200 bg-custom-background-80 text-sm text-custom-text-100 flex items-center gap-2 rounded-md border px-3 py-2">
               <Lock className="text-custom-text-300 h-4 w-4" />
-              <span className="font-medium">{selectedProject?.name || "Phòng ban"}</span>
+              <span className="font-medium">
+                {selectedProject?.name || (isVietnamese ? "Phòng ban" : "Department")}
+              </span>
               {selectedProject?.identifier && (
                 <span className="bg-custom-background-90 text-xs text-custom-text-300 rounded px-1.5 py-0.5">
                   {selectedProject.identifier}
                 </span>
               )}
-              <span className="text-xs text-custom-text-300 ml-auto italic">(Được khóa theo phòng ban của bạn)</span>
+              <span className="text-xs text-custom-text-300 ml-auto italic">
+                {isVietnamese ? "(Được khóa theo phòng ban của bạn)" : "(Locked to your department)"}
+              </span>
             </div>
           </>
         ) : (
           <>
             <label htmlFor="department-select" className="text-sm text-custom-text-100 font-medium">
-              Phòng ban
+              {isVietnamese ? "Phòng ban" : "Department"}
             </label>
             <select
               id="department-select"
@@ -336,12 +353,12 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
       {/* Task Title */}
       <div className="flex flex-col gap-1.5">
         <label htmlFor="task-title" className="text-sm text-custom-text-100 font-medium">
-          Tiêu đề công việc <span className="text-red-500">*</span>
+          {isVietnamese ? "Tiêu đề công việc" : "Task title"} <span className="text-red-500">*</span>
         </label>
         <input
           id="task-title"
           type="text"
-          placeholder="Nhập tiêu đề công việc..."
+          placeholder={isVietnamese ? "Nhập tiêu đề công việc..." : "Enter task title..."}
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -355,7 +372,7 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
         {/* Room number */}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="task-room" className="text-sm text-custom-text-200 font-medium">
-            Số phòng (Room)
+            {isVietnamese ? "Số phòng (Room)" : "Room number"}
           </label>
           <div className="relative flex items-center">
             <DoorClosed className="text-custom-text-300 pointer-events-none absolute left-2.5 h-4 w-4" />
@@ -363,7 +380,7 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
               id="task-room"
               type="number"
               min="0"
-              placeholder="Ví dụ: 101"
+              placeholder={isVietnamese ? "Ví dụ: 101" : "e.g. 101"}
               value={room}
               onChange={(e) => setRoom(e.target.value)}
               disabled={isSubmitting}
@@ -374,7 +391,9 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
 
         {/* Priority */}
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm text-custom-text-200 font-medium">Mức độ ưu tiên</span>
+          <span className="text-sm text-custom-text-200 font-medium">
+            {isVietnamese ? "Mức độ ưu tiên" : "Priority"}
+          </span>
           <div className="h-9">
             <PriorityDropdown
               value={priority}
@@ -392,14 +411,16 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Assignees */}
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm text-custom-text-200 font-medium">Người thực hiện</span>
+          <span className="text-sm text-custom-text-200 font-medium">
+            {isVietnamese ? "Người thực hiện" : "Assignees"}
+          </span>
           <div className="h-9">
             <MemberDropdown
               projectId={selectedProjectId}
               value={assignees}
               onChange={setAssignees}
               multiple
-              placeholder="Chọn người thực hiện"
+              placeholder={isVietnamese ? "Chọn người thực hiện" : "Select assignees"}
               buttonVariant="border-with-text"
               buttonClassName="h-9 w-full justify-start text-left text-xs"
               disabled={isSubmitting || !selectedProjectId}
@@ -435,14 +456,16 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
 
         {/* Supporters */}
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm text-custom-text-200 font-medium">Người hỗ trợ</span>
+          <span className="text-sm text-custom-text-200 font-medium">
+            {isVietnamese ? "Người hỗ trợ" : "Supporters"}
+          </span>
           <div className="h-9">
             <MemberDropdown
               projectId={selectedProjectId}
               value={supporters}
               onChange={setSupporters}
               multiple
-              placeholder="Chọn người hỗ trợ"
+              placeholder={isVietnamese ? "Chọn người hỗ trợ" : "Select supporters"}
               buttonVariant="border-with-text"
               buttonClassName="h-9 w-full justify-start text-left text-xs"
               disabled={isSubmitting || !selectedProjectId}
@@ -479,23 +502,76 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
 
       {/* Description */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="task-description" className="text-sm text-custom-text-200 font-medium">
-          Mô tả chi tiết
+        <label htmlFor="task-description-editor" className="text-sm text-custom-text-200 font-medium">
+          {isVietnamese ? "Mô tả chi tiết" : "Detailed Description"}
         </label>
-        <textarea
-          id="task-description"
-          rows={4}
-          placeholder="Nhập nội dung mô tả chi tiết công việc hoặc yêu cầu vận hành..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          disabled={isSubmitting}
-          className="border-custom-border-200 bg-custom-background-100 text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:border-custom-primary-100 w-full resize-y rounded-md border px-3 py-2 focus:outline-none"
-        />
+        <div className="border-custom-border-200 bg-custom-background-100 focus-within:border-custom-primary-100 min-h-[140px] overflow-hidden rounded-md border">
+          <RichTextEditor
+            ref={editorRef}
+            id="task-description-editor"
+            editable={!isSubmitting}
+            initialValue="<p></p>"
+            value={description}
+            workspaceSlug={activeWorkspaceSlug}
+            workspaceId={activeWorkspaceId}
+            projectId={selectedProjectId}
+            dragDropEnabled
+            onChange={(_doc: object, html: string) => {
+              setDescription(html);
+            }}
+            placeholder={
+              isVietnamese
+                ? "Nhập nội dung mô tả chi tiết công việc hoặc yêu cầu vận hành..."
+                : "Enter detailed task description or operational request..."
+            }
+            containerClassName="min-h-[140px] p-3"
+            searchMentionCallback={async (payload) =>
+              await workspaceService.searchEntity(activeWorkspaceSlug, {
+                ...payload,
+                project_id: selectedProjectId || undefined,
+              })
+            }
+            uploadFile={async (blockId, file) => {
+              try {
+                const { asset_id } = await uploadEditorAsset({
+                  blockId,
+                  data: {
+                    entity_identifier: "",
+                    entity_type: EFileAssetType.ISSUE_DESCRIPTION,
+                  },
+                  file,
+                  projectId: selectedProjectId,
+                  workspaceSlug: activeWorkspaceSlug,
+                });
+                return asset_id;
+              } catch (error) {
+                console.error("Error in uploading task description asset:", error);
+                throw new Error("Asset upload failed. Please try again later.", { cause: error });
+              }
+            }}
+            duplicateFile={async (assetId: string) => {
+              try {
+                const { asset_id } = await duplicateEditorAsset({
+                  assetId,
+                  entityType: EFileAssetType.ISSUE_DESCRIPTION,
+                  projectId: selectedProjectId,
+                  workspaceSlug: activeWorkspaceSlug,
+                });
+                return asset_id;
+              } catch (error) {
+                console.error("Error in duplicating task description asset:", error);
+                throw new Error("Asset duplication failed. Please try again later.", { cause: error });
+              }
+            }}
+          />
+        </div>
       </div>
 
       {/* Attachments Dropzone */}
       <div className="flex flex-col gap-1.5">
-        <span className="text-sm text-custom-text-200 font-medium">Tệp đính kèm</span>
+        <span className="text-sm text-custom-text-200 font-medium">
+          {isVietnamese ? "Tệp đính kèm" : "Attachments"}
+        </span>
         <div
           {...getRootProps()}
           className={`text-xs flex flex-col items-center justify-center rounded-md border-2 border-dashed p-4 transition-colors ${
@@ -507,10 +583,18 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
           <input {...getInputProps()} />
           <UploadCloud className="text-custom-text-300 mb-1 h-6 w-6" />
           <p className="text-custom-text-200 font-medium">
-            {isDragActive ? "Thả tệp vào đây..." : "Kéo thả tệp vào đây, hoặc nhấn để chọn tệp"}
+            {isDragActive
+              ? isVietnamese
+                ? "Thả tệp vào đây..."
+                : "Drop files here..."
+              : isVietnamese
+                ? "Kéo thả tệp vào đây, hoặc nhấn để chọn tệp"
+                : "Drag & drop files here, or click to browse"}
           </p>
           <p className="text-custom-text-400 mt-0.5 text-[11px]">
-            Tối đa {(maxFileSize / (1024 * 1024)).toFixed(0)}MB mỗi tệp
+            {isVietnamese
+              ? `Tối đa ${(maxFileSize / (1024 * 1024)).toFixed(0)}MB mỗi tệp`
+              : `Max ${(maxFileSize / (1024 * 1024)).toFixed(0)}MB per file`}
           </p>
         </div>
 
@@ -549,7 +633,13 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
           loading={isSubmitting}
           disabled={isSubmitting || !selectedProjectId || !title.trim()}
         >
-          {isSubmitting ? "Đang tạo công việc..." : "Tạo công việc"}
+          {isSubmitting
+            ? isVietnamese
+              ? "Đang tạo công việc..."
+              : "Creating task..."
+            : isVietnamese
+              ? "Tạo công việc"
+              : "Create task"}
         </Button>
       </div>
     </form>
