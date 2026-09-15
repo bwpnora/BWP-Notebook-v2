@@ -30,7 +30,7 @@ export const MemberPortalHeader = observer(function MemberPortalHeader(props: Me
   const activeWorkspaceSlug = workspaceSlug || routeWorkspaceSlug || currentWorkspace?.slug || "";
 
   const { data: currentUser, signOut } = useUser();
-  const { isMemberOnly } = useMemberRole(activeWorkspaceSlug);
+  const { isAdminOrAbove } = useMemberRole(activeWorkspaceSlug);
 
   const fullName = [currentUser?.first_name, currentUser?.last_name].filter(Boolean).join(" ");
   const userDisplayName = currentUser?.display_name || fullName || currentUser?.email || "";
@@ -57,7 +57,7 @@ export const MemberPortalHeader = observer(function MemberPortalHeader(props: Me
             {currentWorkspace?.name || "BWP Notebook"}
           </h1>
         </div>
-        {!isMemberOnly && (
+        {isAdminOrAbove && activeWorkspaceSlug && (
           <Link
             href={`/${activeWorkspaceSlug}`}
             className="text-sm text-custom-primary-100 ml-2 flex shrink-0 items-center gap-1 text-accent-primary hover:underline"

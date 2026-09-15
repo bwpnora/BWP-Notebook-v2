@@ -51,6 +51,9 @@ export const coreRoutes: RouteConfigEntry[] = [
     // WORKSPACE-SCOPED ROUTES
     // ======================================================================
     layout("./(all)/[workspaceSlug]/layout.tsx", [
+      // Create Task (Member Portal)
+      route(":workspaceSlug/create-task", "./(all)/[workspaceSlug]/create-task/page.tsx"),
+
       // ====================================================================
       // PROJECTS APP SECTION - WORKSPACE LEVEL ROUTES
       // ====================================================================

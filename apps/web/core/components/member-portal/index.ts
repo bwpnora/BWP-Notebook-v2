@@ -5,3 +5,4 @@
  */
 
 export * from "./member-portal-header";
+export * from "./member-task-form";
