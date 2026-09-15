@@ -7,11 +7,11 @@
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { usePowerK } from "@/hooks/store/use-power-k";
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useMemberRole } from "@/hooks/use-member-role";
 // plane web imports
 import { ProjectLevelModals } from "@/components/modals/project-level";
 import { WorkItemLevelModals } from "@/components/modals/work-item-level";
@@ -75,6 +75,12 @@ export const ProjectsAppPowerKProvider = observer(function ProjectsAppPowerKProv
       setActivePage,
     ]
   );
+
+  const { isMemberOnly } = useMemberRole(workspaceSlug?.toString());
+
+  if (isMemberOnly) {
+    return null;
+  }
 
   return (
     <>
