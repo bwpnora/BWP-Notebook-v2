@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo } from "react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -26,49 +25,47 @@ export const useMemberRole = (workspaceSlug?: string): IUseMemberRoleResult => {
     getWorkspaceRoleByWorkspaceSlug,
     allowPermissions,
     workspaceUserInfo,
-    loader: permissionsLoader,
   } = useUserPermissions();
-  const { currentWorkspace, getWorkspaceBySlug } = useWorkspace();
+  const { currentWorkspace, getWorkspaceBySlug, workspaces } = useWorkspace();
 
   const activeWorkspaceSlug = workspaceSlug || currentWorkspace?.slug;
   const workspace = activeWorkspaceSlug
-    ? (getWorkspaceBySlug(activeWorkspaceSlug) ?? currentWorkspace)
+    ? (getWorkspaceBySlug(activeWorkspaceSlug) ??
+      Object.values(workspaces ?? {}).find((w) => w.slug?.toLowerCase() === activeWorkspaceSlug?.toLowerCase()) ??
+      currentWorkspace)
     : currentWorkspace;
 
+  // 1. SuperAdmin & Owner privileges
   const isSuperAdmin = Boolean(currentUser?.is_super_admin || currentUser?.is_superuser || storeIsSuperAdmin);
-
   const isOwner = Boolean(
     currentUser && workspace && (workspace.owner?.id === currentUser.id || workspace.created_by === currentUser.id)
   );
 
-  const role = activeWorkspaceSlug ? getWorkspaceRoleByWorkspaceSlug(activeWorkspaceSlug) : currentWorkspace?.role;
+  // 2. Resolve workspace role: prioritize store, fallback to workspace object
+  const roleFromStore = activeWorkspaceSlug ? getWorkspaceRoleByWorkspaceSlug(activeWorkspaceSlug) : undefined;
+  const roleFromWorkspace = workspace?.role;
+  const effectiveRole = roleFromStore !== undefined && roleFromStore !== null ? roleFromStore : roleFromWorkspace;
+  const numericRole = effectiveRole !== undefined && effectiveRole !== null ? Number(effectiveRole) : undefined;
 
-  const numericRole = role !== undefined && role !== null ? Number(role) : undefined;
+  const isAdminRole = numericRole !== undefined && numericRole >= EUserPermissions.ADMIN;
+  const hasWorkspaceAdminPerm = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.WORKSPACE,
+    activeWorkspaceSlug
+  );
+  const isAdminOrAbove = Boolean(isSuperAdmin || isOwner || isAdminRole || hasWorkspaceAdminPerm);
 
-  const isAdmin =
-    (numericRole !== undefined && numericRole >= EUserPermissions.ADMIN) ||
-    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, activeWorkspaceSlug);
-
-  // Determine whether role information is still loading to avoid flash/redirect loops
-  const isRoleLoaded = Boolean(
+  // 3. Check if role is resolved
+  const hasResolvedRole = Boolean(
     isSuperAdmin ||
     isOwner ||
-    (activeWorkspaceSlug
-      ? (workspaceUserInfo && activeWorkspaceSlug in workspaceUserInfo) || numericRole !== undefined
-      : true)
+    numericRole !== undefined ||
+    (activeWorkspaceSlug && workspaceUserInfo && activeWorkspaceSlug in workspaceUserInfo)
   );
 
-  const isLoading = Boolean(!currentUser || isUserLoading || permissionsLoader || !isRoleLoaded);
+  const isLoading = Boolean(!currentUser || isUserLoading || !hasResolvedRole);
 
-  const isAdminOrAbove = useMemo(() => {
-    if (isLoading) return false;
-    return Boolean(isSuperAdmin || isOwner || isAdmin);
-  }, [isLoading, isSuperAdmin, isOwner, isAdmin]);
-
-  const isMemberOnly = useMemo(() => {
-    if (isLoading) return false;
-    return !isAdminOrAbove;
-  }, [isLoading, isAdminOrAbove]);
+  const isMemberOnly = Boolean(!isLoading && !isAdminOrAbove);
 
   return {
     isMemberOnly,

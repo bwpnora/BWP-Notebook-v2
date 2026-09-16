@@ -58,22 +58,47 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
   const getWorkspaceRedirectionUrl = (): string => {
     let redirectionRoute = "/create-workspace";
 
-    // validating the nextPath from the router query
-    if (nextPath && isValidURL(nextPath.toString())) {
-      redirectionRoute = nextPath.toString();
-      return redirectionRoute;
-    }
-
+    const allWorkspaces = Object.values(workspaces || {});
     // validate the last and fallback workspace_slug
     const currentWorkspaceSlug =
       currentUserSettings?.workspace?.last_workspace_slug || currentUserSettings?.workspace?.fallback_workspace_slug;
 
-    // validate the current workspace_slug is available in the user's workspace list
-    const isCurrentWorkspaceValid = Object.values(workspaces || {}).findIndex(
-      (workspace) => workspace.slug === currentWorkspaceSlug
-    );
+    let targetWorkspace =
+      allWorkspaces.find((workspace) => workspace.slug === currentWorkspaceSlug) || allWorkspaces[0];
 
-    if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
+    const isMemberRole = (ws?: (typeof allWorkspaces)[0]): boolean => {
+      if (!ws) return false;
+      const isSuperAdmin = Boolean(currentUser?.is_super_admin || currentUser?.is_superuser);
+      const isOwner = Boolean(currentUser && (ws.owner?.id === currentUser.id || ws.created_by === currentUser.id));
+      if (isSuperAdmin || isOwner) return false;
+      const role = ws.role !== undefined && ws.role !== null ? Number(ws.role) : undefined;
+      return role !== undefined && role <= 15;
+    };
+
+    // validating the nextPath from the router query
+    if (nextPath && isValidURL(nextPath.toString())) {
+      const nextPathStr = nextPath.toString();
+      const firstSegment = nextPathStr.split("/").find(Boolean);
+      const matchedByNextPath = allWorkspaces.find((w) => w.slug === firstSegment);
+      if (matchedByNextPath) {
+        targetWorkspace = matchedByNextPath;
+      }
+
+      if (targetWorkspace && isMemberRole(targetWorkspace)) {
+        return `/${targetWorkspace.slug}/create-task`;
+      }
+
+      redirectionRoute = nextPathStr;
+      return redirectionRoute;
+    }
+
+    if (targetWorkspace) {
+      if (isMemberRole(targetWorkspace)) {
+        redirectionRoute = `/${targetWorkspace.slug}/create-task`;
+      } else {
+        redirectionRoute = `/${targetWorkspace.slug}`;
+      }
+    }
 
     return redirectionRoute;
   };

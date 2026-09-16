@@ -6,7 +6,7 @@
 
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Outlet } from "react-router";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { GlobalModals } from "@/components/common/modal/global";
@@ -15,12 +15,12 @@ import { useMemberRole } from "@/hooks/use-member-role";
 import { WorkspaceAuthWrapper } from "@/layouts/auth-layout/workspace-wrapper";
 import { AppRailVisibilityProvider } from "@/lib/app-rail";
 import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
+import CreateTaskPage from "./create-task/page";
 import type { Route } from "./+types/layout";
 
 export default observer(function WorkspaceLayout(props: Route.ComponentProps) {
   const { workspaceSlug } = props.params;
   const pathname = usePathname();
-  const router = useRouter();
   const { isMemberOnly, isLoading } = useMemberRole(workspaceSlug);
 
   const isCreateTaskRoute = Boolean(
@@ -29,12 +29,14 @@ export default observer(function WorkspaceLayout(props: Route.ComponentProps) {
     pathname?.startsWith(`/${workspaceSlug}/create-task/`)
   );
 
-  // Route guard: intercept Member accounts navigating away from /create-task
+  // Sync browser URL to /create-task if a Member lands on any other route
   useEffect(() => {
     if (!isLoading && isMemberOnly && !isCreateTaskRoute) {
-      router.replace(`/${workspaceSlug}/create-task`);
+      if (typeof window !== "undefined") {
+        window.history.replaceState(null, "", `/${workspaceSlug}/create-task`);
+      }
     }
-  }, [isLoading, isMemberOnly, isCreateTaskRoute, workspaceSlug, router]);
+  }, [isLoading, isMemberOnly, isCreateTaskRoute, workspaceSlug]);
 
   // Shortcut interceptor: suppress Cmd+K / Ctrl+K keyboard shortcuts for Member accounts
   useEffect(() => {
@@ -53,20 +55,36 @@ export default observer(function WorkspaceLayout(props: Route.ComponentProps) {
     };
   }, [isMemberOnly]);
 
-  // Loading/hydration guard to avoid flash of protected routes before redirect
-  if (!isLoading && isMemberOnly && !isCreateTaskRoute) {
+  // 1. Loading state: NEVER leak protected routes/views or sidebar while role is resolving
+  if (isLoading) {
     return (
-      <div className="grid h-screen place-items-center">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <LogoSpinner />
+      <AuthenticationWrapper>
+        <div className="grid h-screen place-items-center">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <LogoSpinner />
+          </div>
         </div>
-      </div>
+      </AuthenticationWrapper>
     );
   }
 
+  // 2. Member accounts: strictly render the dedicated task creation form.
+  // NEVER mount WorkspaceContentWrapper, AppRailVisibilityProvider, sidebar, or Outlet.
+  if (isMemberOnly) {
+    return (
+      <AuthenticationWrapper>
+        <WorkspaceAuthWrapper isLoading={false}>
+          <GlobalModals workspaceSlug={workspaceSlug} />
+          <CreateTaskPage params={{ workspaceSlug }} />
+        </WorkspaceAuthWrapper>
+      </AuthenticationWrapper>
+    );
+  }
+
+  // 3. Admin & SuperAdmin accounts: full workspace access
   return (
     <AuthenticationWrapper>
-      <WorkspaceAuthWrapper isLoading={isLoading}>
+      <WorkspaceAuthWrapper isLoading={false}>
         {isCreateTaskRoute ? (
           <>
             <GlobalModals workspaceSlug={workspaceSlug} />

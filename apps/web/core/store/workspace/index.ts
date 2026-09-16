@@ -133,12 +133,26 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       this.user.userSettings?.data?.workspace?.last_workspace_slug ||
       this.user.userSettings?.data?.workspace?.fallback_workspace_slug;
 
-    // validate the current workspace_slug is available in the user's workspace list
-    const isCurrentWorkspaceValid = Object.values(this.workspaces || {}).findIndex(
-      (workspace) => workspace.slug === currentWorkspaceSlug
-    );
+    const allWorkspaces = Object.values(this.workspaces || {});
+    const targetWorkspace =
+      allWorkspaces.find((workspace) => workspace.slug === currentWorkspaceSlug) || allWorkspaces[0];
 
-    if (isCurrentWorkspaceValid >= 0) redirectionRoute = `/${currentWorkspaceSlug}`;
+    if (targetWorkspace) {
+      const isSuperAdmin = Boolean(this.user.data?.is_super_admin || this.user.data?.is_superuser);
+      const isOwner = Boolean(
+        this.user.data &&
+        (targetWorkspace.owner?.id === this.user.data.id || targetWorkspace.created_by === this.user.data.id)
+      );
+      const role =
+        targetWorkspace.role !== undefined && targetWorkspace.role !== null ? Number(targetWorkspace.role) : undefined;
+      const isMemberOnly = !isSuperAdmin && !isOwner && role !== undefined && role <= 15;
+
+      if (isMemberOnly) {
+        redirectionRoute = `/${targetWorkspace.slug}/create-task`;
+      } else {
+        redirectionRoute = `/${targetWorkspace.slug}`;
+      }
+    }
     return redirectionRoute;
   };
 
