@@ -218,13 +218,9 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
       name: trimmedTitle,
       description_html: descriptionHtml,
       priority: priority || "none",
-      assignees,
       assignee_ids: assignees,
-      supporters,
       supporter_ids: supporters,
       room: parsedRoom,
-      task_type: "operational",
-      type_id: "operational",
     };
 
     setIsSubmitting(true);

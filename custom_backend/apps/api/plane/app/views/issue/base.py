@@ -473,7 +473,7 @@ class IssueViewSet(BaseViewSet):
         # Look for operational type in project first, then workspace
         operational_type = (
             IssueType.objects.filter(
-                projectissuetype__project=project,
+                project_issue_types__project=project,
                 external_id="operational",
             ).first()
             or IssueType.objects.filter(
@@ -495,7 +495,7 @@ class IssueViewSet(BaseViewSet):
 
         other_type = (
             IssueType.objects.filter(
-                projectissuetype__project=project,
+                project_issue_types__project=project,
                 external_id="other",
             ).first()
             or IssueType.objects.filter(
@@ -515,16 +515,20 @@ class IssueViewSet(BaseViewSet):
                 },
             )
 
-        ProjectIssueType.objects.get_or_create(
-            project=project,
-            issue_type=operational_type,
-            defaults={"workspace": project.workspace, "is_default": True},
-        )
-        ProjectIssueType.objects.get_or_create(
-            project=project,
-            issue_type=other_type,
-            defaults={"workspace": project.workspace, "is_default": False},
-        )
+        if not ProjectIssueType.objects.filter(project=project, issue_type=operational_type).exists():
+            ProjectIssueType.objects.create(
+                project=project,
+                issue_type=operational_type,
+                workspace=project.workspace,
+                is_default=True,
+            )
+        if not ProjectIssueType.objects.filter(project=project, issue_type=other_type).exists():
+            ProjectIssueType.objects.create(
+                project=project,
+                issue_type=other_type,
+                workspace=project.workspace,
+                is_default=False,
+            )
 
         # Rule 1: Regular users creating tasks -> always Operational Task
         if not is_admin_or_manager:
@@ -563,18 +567,22 @@ class IssueViewSet(BaseViewSet):
         if serializer.is_valid():
             serializer.save()
 
-            # Track the issue
-            issue_activity.delay(
-                type="issue.activity.created",
-                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                actor_id=str(request.user.id),
-                issue_id=str(serializer.data.get("id", None)),
-                project_id=str(project_id),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp()),
-                notification=True,
-                origin=base_host(request=request, is_app=True),
-            )
+            # Track the issue safely without breaking HTTP response
+            try:
+                issue_activity.delay(
+                    type="issue.activity.created",
+                    requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    actor_id=str(request.user.id),
+                    issue_id=str(serializer.data.get("id", None)),
+                    project_id=str(project_id),
+                    current_instance=None,
+                    epoch=int(timezone.now().timestamp()),
+                    notification=True,
+                    origin=base_host(request=request, is_app=True),
+                )
+            except Exception as e:
+                logger.warning(f"Could not queue issue_activity: {e}")
+
             queryset = self.get_queryset()
             queryset = self.apply_annotations(queryset)
             issue = (
@@ -619,23 +627,27 @@ class IssueViewSet(BaseViewSet):
             )
             datetime_fields = ["created_at", "updated_at"]
             issue = user_timezone_converter(issue, datetime_fields, request.user.user_timezone)
-            # Send the model activity
-            model_activity.delay(
-                model_name="issue",
-                model_id=str(serializer.data["id"]),
-                requested_data=request.data,
-                current_instance=None,
-                actor_id=request.user.id,
-                slug=slug,
-                origin=base_host(request=request, is_app=True),
-            )
-            # updated issue description version
-            issue_description_version_task.delay(
-                updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
-                issue_id=str(serializer.data["id"]),
-                user_id=request.user.id,
-                is_creating=True,
-            )
+            # Send the model activity safely
+            try:
+                model_activity.delay(
+                    model_name="issue",
+                    model_id=str(serializer.data["id"]),
+                    requested_data=request.data,
+                    current_instance=None,
+                    actor_id=request.user.id,
+                    slug=slug,
+                    origin=base_host(request=request, is_app=True),
+                )
+                # updated issue description version
+                issue_description_version_task.delay(
+                    updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
+                    issue_id=str(serializer.data["id"]),
+                    user_id=request.user.id,
+                    is_creating=True,
+                )
+            except Exception as e:
+                logger.warning(f"Could not queue model activity / description task: {e}")
+
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

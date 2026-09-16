@@ -31,11 +31,13 @@ function CreateTaskPage(props: CreateTaskPageProps) {
   const isVietnamese = currentLocale === "vi-VN" || currentLocale?.startsWith("vi") || !currentLocale;
 
   return (
-    <div className="bg-custom-background-90 flex min-h-screen flex-col">
+    <div className="bg-custom-background-90 flex h-full w-full flex-col overflow-y-auto">
       <PageHead title={isVietnamese ? "Tạo công việc mới - BWP Notebook" : "Create New Task - BWP Notebook"} />
-      <MemberPortalHeader workspaceSlug={workspaceSlug} />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
-        <div className="bg-custom-background-100 border-custom-border-200 shadow-sm rounded-lg border p-6">
+      <div className="shadow-xs sticky top-0 z-20 shrink-0">
+        <MemberPortalHeader workspaceSlug={workspaceSlug} />
+      </div>
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 pb-24 sm:px-6">
+        <div className="bg-custom-background-100 border-custom-border-200 shadow-sm rounded-lg border p-6 sm:p-8">
           <div className="mb-6">
             <h2 className="text-custom-text-100 text-xl font-bold">
               {isVietnamese ? "Tạo công việc mới" : "Create New Task"}

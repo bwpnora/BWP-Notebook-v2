@@ -221,8 +221,24 @@ class IssueCreateSerializer(BaseSerializer):
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
+        if assignees is None:
+            assignees = validated_data.pop("assignees", None)
+        else:
+            validated_data.pop("assignees", None)
+
         labels = validated_data.pop("label_ids", None)
+        if labels is None:
+            labels = validated_data.pop("labels", None)
+        else:
+            validated_data.pop("labels", None)
+
         supporters = validated_data.pop("supporter_ids", None)
+        if supporters is None:
+            supporters = validated_data.pop("supporters", None)
+        else:
+            validated_data.pop("supporters", None)
+
+        validated_data.pop("task_type", None)
 
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
