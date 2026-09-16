@@ -21,6 +21,7 @@ from plane.db.models import (
     IssueAssignee,
     ModuleIssue,
     IssueLabel,
+    IssueSupporter,
 )
 from typing import Optional, Dict, Tuple, Any, Union, List
 
@@ -56,6 +57,16 @@ def issue_queryset_grouper(
         .values("arr")
     )
 
+    issue_supporter_subquery = Subquery(
+        IssueSupporter.objects.filter(
+            issue_id=OuterRef("pk"),
+            deleted_at__isnull=True,
+        )
+        .values("issue_id")
+        .annotate(arr=ArrayAgg("supporter_id", distinct=True))
+        .values("arr")
+    )
+
     issue_module_subquery = Subquery(
         ModuleIssue.objects.filter(
             issue_id=OuterRef("pk"),
@@ -76,6 +87,7 @@ def issue_queryset_grouper(
 
     annotations_map: Dict[str, Tuple[str, Q]] = {
         "assignee_ids": Coalesce(issue_assignee_subquery, Value([], output_field=ArrayField(UUIDField()))),
+        "supporter_ids": Coalesce(issue_supporter_subquery, Value([], output_field=ArrayField(UUIDField()))),
         "label_ids": Coalesce(issue_label_subquery, Value([], output_field=ArrayField(UUIDField()))),
         "module_ids": Coalesce(issue_module_subquery, Value([], output_field=ArrayField(UUIDField()))),
     }
@@ -101,7 +113,7 @@ def issue_on_results(
         "issue_module__module_id": "module_ids",
     }
 
-    original_list: List[str] = ["assignee_ids", "label_ids", "module_ids"]
+    original_list: List[str] = ["assignee_ids", "supporter_ids", "label_ids", "module_ids"]
 
     required_fields: List[str] = [
         "id",

@@ -196,6 +196,7 @@ services:
       - ./custom_backend/apps/api/plane/app/permissions/workspace.py:/code/plane/app/permissions/workspace.py
       - ./custom_backend/apps/api/plane/authentication/urls.py:/code/plane/authentication/urls.py
       - ./custom_backend/apps/api/plane/urls.py:/code/plane/urls.py
+      - ./custom_backend/apps/api/plane/utils/grouper.py:/code/plane/utils/grouper.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -245,6 +246,7 @@ services:
       - ./custom_backend/apps/api/plane/app/permissions/workspace.py:/code/plane/app/permissions/workspace.py
       - ./custom_backend/apps/api/plane/authentication/urls.py:/code/plane/authentication/urls.py
       - ./custom_backend/apps/api/plane/urls.py:/code/plane/urls.py
+      - ./custom_backend/apps/api/plane/utils/grouper.py:/code/plane/utils/grouper.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -290,6 +292,7 @@ services:
       - ./custom_backend/apps/api/plane/app/permissions/workspace.py:/code/plane/app/permissions/workspace.py
       - ./custom_backend/apps/api/plane/authentication/urls.py:/code/plane/authentication/urls.py
       - ./custom_backend/apps/api/plane/urls.py:/code/plane/urls.py
+      - ./custom_backend/apps/api/plane/utils/grouper.py:/code/plane/utils/grouper.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:

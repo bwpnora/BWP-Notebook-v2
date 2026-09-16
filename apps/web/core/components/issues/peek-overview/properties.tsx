@@ -21,6 +21,9 @@ import {
   EstimatePropertyIcon,
   ParentPropertyIcon,
 } from "@plane/propel/icons";
+import { Hash, FileText, Layers } from "lucide-react";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { CustomMenu } from "@plane/ui";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
 // components
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -35,6 +38,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
 import type { TIssueOperations } from "../issue-detail";
@@ -74,10 +78,79 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
   const maxDate = getDate(issue.target_date);
   maxDate?.setDate(maxDate.getDate());
 
+  const { allowPermissions, isSuperAdmin } = useUserPermissions();
+  const isManager = Boolean(
+    isSuperAdmin ||
+    (workspaceSlug && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug)) ||
+    (workspaceSlug &&
+      projectId &&
+      allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId))
+  );
+
+  const isOther =
+    (issue?.type_id === "other" ||
+      issue?.type_detail?.external_id === "other" ||
+      issue?.type_detail?.name === "Công việc khác") &&
+    issue?.type_id !== "operational";
+
   return (
     <div>
       <h6 className="text-body-xs-medium">{t("common.properties")}</h6>
       <div className={`mt-3 w-full space-y-3 ${disabled ? "opacity-60" : ""}`}>
+        {/* BWP-Notebook-v2 Task Type */}
+        <SidebarPropertyListItem icon={Layers as any} label="Loại công việc">
+          <CustomMenu
+            customButton={
+              <button
+                type="button"
+                className={cn(
+                  "flex h-7 items-center gap-1.5 rounded border px-2 text-body-xs-medium font-medium transition-colors",
+                  isOther
+                    ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                    : "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                )}
+                disabled={disabled || !isManager}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                <span>{isOther ? "Công việc khác" : "Công việc vận hành"}</span>
+              </button>
+            }
+            closeOnSelect
+            disabled={disabled || !isManager}
+          >
+            <CustomMenu.MenuItem
+              onClick={() => {
+                if (isManager) {
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    type_id: "operational",
+                    type_detail: { id: "operational", name: "Công việc vận hành", external_id: "operational" },
+                  });
+                }
+              }}
+              disabled={!isManager}
+              className={cn("text-xs flex items-center gap-2", !isManager && "cursor-not-allowed opacity-50")}
+            >
+              <span className="bg-blue-500 h-2 w-2 rounded-full" />
+              <span>Công việc vận hành {!isManager && "(Chỉ quản lý)"}</span>
+            </CustomMenu.MenuItem>
+            <CustomMenu.MenuItem
+              onClick={() => {
+                if (isManager) {
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    type_id: "other",
+                    type_detail: { id: "other", name: "Công việc khác", external_id: "other" },
+                  });
+                }
+              }}
+              disabled={!isManager}
+              className={cn("text-xs flex items-center gap-2", !isManager && "cursor-not-allowed opacity-50")}
+            >
+              <span className="bg-amber-500 h-2 w-2 rounded-full" />
+              <span>Công việc khác {!isManager && "(Chỉ quản lý)"}</span>
+            </CustomMenu.MenuItem>
+          </CustomMenu>
+        </SidebarPropertyListItem>
+
         <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
           <StateDropdown
             value={issue?.state_id}
@@ -108,6 +181,58 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             hideIcon={issue.assignee_ids?.length === 0}
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+          />
+        </SidebarPropertyListItem>
+
+        {/* BWP-Notebook-v2 Supporters */}
+        <SidebarPropertyListItem icon={MembersPropertyIcon} label="Người hỗ trợ">
+          <MemberDropdown
+            value={issue?.supporter_ids ?? []}
+            onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { supporter_ids: val })}
+            disabled={disabled}
+            projectId={projectId}
+            placeholder="Thêm người hỗ trợ"
+            multiple
+            buttonVariant={
+              issue?.supporter_ids && issue.supporter_ids.length > 1
+                ? "transparent-without-text"
+                : "transparent-with-text"
+            }
+            className="group w-full grow"
+            buttonContainerClassName="w-full text-left h-7.5"
+            buttonClassName={`text-body-xs-medium justify-between ${issue?.supporter_ids && issue.supporter_ids.length > 0 ? "" : "text-placeholder"}`}
+            hideIcon={!issue?.supporter_ids || issue.supporter_ids.length === 0}
+            dropdownArrow
+            dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+          />
+        </SidebarPropertyListItem>
+
+        {/* BWP-Notebook-v2 Room Number */}
+        <SidebarPropertyListItem icon={Hash as any} label="Số phòng">
+          <input
+            type="number"
+            value={issue?.room ?? ""}
+            disabled={disabled}
+            onChange={(e) => {
+              const val = e.target.value ? parseInt(e.target.value, 10) : null;
+              issueOperations.update(workspaceSlug, projectId, issueId, { room: val });
+            }}
+            placeholder="Chưa có số phòng"
+            className="h-7.5 w-full bg-transparent px-2 text-body-xs-medium text-primary outline-none placeholder:text-placeholder"
+          />
+        </SidebarPropertyListItem>
+
+        {/* BWP-Notebook-v2 Notes */}
+        <SidebarPropertyListItem icon={FileText as any} label="Ghi chú">
+          <input
+            type="text"
+            value={issue?.notes ?? ""}
+            disabled={disabled}
+            onChange={(e) => {
+              issueOperations.update(workspaceSlug, projectId, issueId, { notes: e.target.value || null });
+            }}
+            placeholder="Thêm ghi chú công việc"
+            className="h-7.5 w-full truncate bg-transparent px-2 text-body-xs-medium text-primary outline-none placeholder:text-placeholder"
           />
         </SidebarPropertyListItem>
 

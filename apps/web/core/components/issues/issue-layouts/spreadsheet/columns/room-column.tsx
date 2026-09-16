@@ -23,6 +23,12 @@ export const SpreadsheetRoomColumn = observer(function SpreadsheetRoomColumn(pro
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
+    if (!isEditing) {
+      setVal(issue.room !== null && issue.room !== undefined ? String(issue.room) : "");
+    }
+  }, [issue.room, isEditing]);
+
+  useEffect(() => {
     if (isEditing) {
       inputRef.current?.focus();
     }
@@ -30,8 +36,10 @@ export const SpreadsheetRoomColumn = observer(function SpreadsheetRoomColumn(pro
 
   const handleSave = () => {
     setIsEditing(false);
-    const parsed = val.trim() ? parseInt(val.trim(), 10) : null;
-    if (parsed !== issue.room) {
+    const trimmed = val.trim();
+    const parsed = trimmed ? parseInt(trimmed, 10) : null;
+    const currentRoom = issue.room !== null && issue.room !== undefined ? issue.room : null;
+    if (parsed !== currentRoom) {
       onChange(
         issue,
         { room: parsed },

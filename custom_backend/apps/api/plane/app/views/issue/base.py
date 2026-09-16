@@ -1182,6 +1182,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "module_ids",
             "label_ids",
             "assignee_ids",
+            "supporter_ids",
             "link_count",
             "attachment_count",
             "sub_issues_count",
@@ -1235,6 +1236,18 @@ class IssuePaginatedViewSet(BaseViewSet):
                     )
                     .values("issue_id")
                     .annotate(arr=ArrayAgg("assignee_id", distinct=True))
+                    .values("arr")
+                ),
+                Value([], output_field=ArrayField(UUIDField())),
+            ),
+            supporter_ids=Coalesce(
+                Subquery(
+                    IssueSupporter.objects.filter(
+                        issue_id=OuterRef("pk"),
+                        supporter__member_project__is_active=True,
+                    )
+                    .values("issue_id")
+                    .annotate(arr=ArrayAgg("supporter_id", distinct=True))
                     .values("arr")
                 ),
                 Value([], output_field=ArrayField(UUIDField())),
