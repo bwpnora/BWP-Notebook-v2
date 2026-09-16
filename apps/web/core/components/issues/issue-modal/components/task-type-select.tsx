@@ -4,12 +4,11 @@ import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { ChevronDown } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useMemberRole } from "@/hooks/use-member-role";
 
 type TIssueTaskTypeSelectProps = {
   control: Control<TIssue>;
@@ -20,19 +19,16 @@ type TIssueTaskTypeSelectProps = {
 
 export const IssueTaskTypeSelect = observer(function IssueTaskTypeSelect(props: TIssueTaskTypeSelectProps) {
   const { control, projectId, workspaceSlug, handleFormChange } = props;
-  const { allowPermissions, isSuperAdmin } = useUserPermissions();
-  const isManager = Boolean(
-    isSuperAdmin ||
-    (workspaceSlug && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug)) ||
-    (projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId))
-  );
+  const { isMemberOnly, isAdminOrAbove } = useMemberRole(workspaceSlug, projectId ?? undefined);
+  const isManager = isAdminOrAbove;
 
   return (
     <Controller
       control={control}
       name="type_id"
       render={({ field: { value, onChange } }) => {
-        const currentType = value === "other" ? "other" : "operational";
+        const effectiveValue = isMemberOnly ? "operational" : value;
+        const currentType = effectiveValue === "other" ? "other" : "operational";
         const typeLabel = currentType === "other" ? "Công việc khác" : "Công việc vận hành";
 
         return (

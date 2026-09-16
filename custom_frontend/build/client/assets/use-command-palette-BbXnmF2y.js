@@ -1,1 +1,0 @@
-import{F as e,V as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{t as n}from"./store-context-DlLtF3tr.js";var r=t(e()),i=()=>{let e=(0,r.useContext)(n);if(e===void 0)throw Error(`useCommandPalette must be used within StoreProvider`);return e.commandPalette};export{i as t};

@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-noaePsda.js";import{r as t}from"./use-navigation-preferences-CWCyX4oB.js";import{t as n}from"./project-CYJ1RLay.js";var r=e();function i(e){let{workspaceSlug:i,projectId:a}=e,{preferences:o}=t();return o.navigationMode===`TABBED`?null:(0,r.jsx)(n,{workspaceSlug:i,projectId:a})}export{i as t};

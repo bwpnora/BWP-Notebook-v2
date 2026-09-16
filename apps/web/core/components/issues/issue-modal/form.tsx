@@ -47,6 +47,7 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
+import { useMemberRole } from "@/hooks/use-member-role";
 
 export interface IssueFormProps {
   data?: Partial<TIssue>;
@@ -150,6 +151,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   } = methods;
 
   const projectId = watch("project_id");
+  const { isMemberOnly } = useMemberRole(workspaceSlug?.toString(), projectId ?? undefined);
   const activeAdditionalPropertiesLength = getActiveAdditionalPropertiesLength({
     projectId: projectId,
     workspaceSlug: workspaceSlug?.toString(),
@@ -243,6 +245,11 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
     // this condition helps to move the issues from draft to project issues
     if (formData.hasOwnProperty("is_draft")) submitData.is_draft = formData.is_draft;
+
+    if (isMemberOnly) {
+      (submitData as any).task_type = "operational";
+      submitData.type_id = "operational";
+    }
 
     await onSubmit(submitData, is_draft_issue)
       .then(() => {
@@ -383,7 +390,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   />
                 </div>
               </div>
-              {watch("parent_id") && selectedParentIssue && (
+              {!isMemberOnly && watch("parent_id") && selectedParentIssue && (
                 <div className="pb-4">
                   <IssueParentTag
                     control={control}
@@ -431,9 +438,11 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   onClose={onClose}
                 />
               </div>
-              <div className="px-5">
-                <IssueNotesInput control={control} handleFormChange={handleFormChange} />
-              </div>
+              {!isMemberOnly && (
+                <div className="px-5">
+                  <IssueNotesInput control={control} handleFormChange={handleFormChange} />
+                </div>
+              )}
             </div>
             <div
               className={cn(

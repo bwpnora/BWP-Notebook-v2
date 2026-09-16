@@ -12,6 +12,7 @@ import { copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import { useMemberRole } from "@/hooks/use-member-role";
 
 type TCreateIssueToastActionItems = {
   workspaceSlug: string;
@@ -23,7 +24,8 @@ type TCreateIssueToastActionItems = {
 export const CreateIssueToastActionItems = observer(function CreateIssueToastActionItems(
   props: TCreateIssueToastActionItems
 ) {
-  const { workspaceSlug, issueId, isEpic = false } = props;
+  const { workspaceSlug, projectId, issueId, isEpic = false } = props;
+  const { isMemberOnly } = useMemberRole(workspaceSlug, projectId);
   // state
   const [copied, setCopied] = useState(false);
   // store hooks
@@ -36,7 +38,7 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
   const issue = getIssueById(issueId);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
-  if (!issue) return null;
+  if (isMemberOnly || !issue) return null;
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug,
