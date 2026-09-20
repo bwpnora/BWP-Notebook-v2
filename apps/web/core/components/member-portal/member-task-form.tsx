@@ -8,7 +8,7 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from "react"
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useDropzone } from "react-dropzone";
-import { Lock, DoorClosed, UploadCloud, Paperclip, X } from "lucide-react";
+import { Lock, DoorClosed, UploadCloud, Paperclip, X, FileText } from "lucide-react";
 // propel
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -25,10 +25,12 @@ import { getFileURL } from "@plane/utils";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
+import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 import { useFileSize } from "@/hooks/use-file-size";
@@ -78,6 +80,8 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
     project: { fetchProjectMembers },
   } = useMember();
 
+  const { fetchProjectStates, getProjectDefaultStateId } = useProjectState();
+
   const { uploadEditorAsset, duplicateEditorAsset } = useEditorAsset();
   const { isAdminOrAbove } = useMemberRole(activeWorkspaceSlug);
   const { maxFileSize } = useFileSize();
@@ -92,6 +96,8 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
   const [assignees, setAssignees] = useState<string[]>([]);
   const [supporters, setSupporters] = useState<string[]>([]);
   const [priority, setPriority] = useState<TIssuePriorities>("none");
+  const [selectedStateId, setSelectedStateId] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
   const [attachments, setAttachments] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -138,11 +144,31 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
     }
   }, [activeWorkspaceSlug, selectedProjectId, fetchProjectMembers]);
 
+  // proactively fetch states and set default state whenever selected project changes
+  useEffect(() => {
+    if (!activeWorkspaceSlug || !selectedProjectId) return;
+    const loadStates = async () => {
+      try {
+        const states = await fetchProjectStates(activeWorkspaceSlug, selectedProjectId);
+        if (states && states.length > 0) {
+          const defaultState = states.find((s) => s.default) || states[0];
+          if (defaultState) {
+            setSelectedStateId(defaultState.id);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch project states:", err);
+      }
+    };
+    loadStates();
+  }, [activeWorkspaceSlug, selectedProjectId, fetchProjectStates]);
+
   // handle department change
   const handleDepartmentChange = (projectId: string) => {
     setSelectedProjectId(projectId);
     setAssignees([]);
     setSupporters([]);
+    setSelectedStateId("");
   };
 
   // dropzone configuration
@@ -218,6 +244,8 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
       name: trimmedTitle,
       description_html: descriptionHtml,
       priority: priority || "none",
+      state_id: selectedStateId || undefined,
+      notes: notes.trim() || undefined,
       assignee_ids: assignees,
       supporter_ids: supporters,
       room: parsedRoom,
@@ -255,6 +283,11 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
       setSupporters([]);
       setPriority("none");
       setAttachments([]);
+      setNotes("");
+      const defaultStateId = getProjectDefaultStateId(selectedProjectId);
+      if (defaultStateId) {
+        setSelectedStateId(defaultStateId);
+      }
     } catch (error: any) {
       console.error("Task creation failed", error);
       const errorMessage =
@@ -363,8 +396,8 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
         />
       </div>
 
-      {/* Room and Priority row */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {/* Room, Priority and Status row */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {/* Room number */}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="task-room" className="text-sm text-custom-text-200 font-medium">
@@ -398,6 +431,22 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
               buttonClassName="h-9 w-full justify-start text-left text-xs"
               dropdownArrow
               disabled={isSubmitting}
+            />
+          </div>
+        </div>
+
+        {/* Task Status */}
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm text-custom-text-200 font-medium">{isVietnamese ? "Trạng thái" : "Status"}</span>
+          <div className="h-9">
+            <StateDropdown
+              projectId={selectedProjectId}
+              value={selectedStateId}
+              onChange={(val) => setSelectedStateId(val)}
+              buttonVariant="border-with-text"
+              buttonClassName="h-9 w-full justify-start text-left text-xs"
+              dropdownArrow
+              disabled={isSubmitting || !selectedProjectId}
             />
           </div>
         </div>
@@ -561,6 +610,27 @@ export const MemberTaskForm = observer(function MemberTaskForm(props: MemberTask
             }}
           />
         </div>
+      </div>
+
+      {/* Task Notes */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="task-notes" className="text-sm text-custom-text-200 flex items-center gap-1.5 font-medium">
+          <FileText className="text-custom-text-300 h-3.5 w-3.5" />
+          <span>{isVietnamese ? "Ghi chú công việc" : "Task notes"}</span>
+        </label>
+        <textarea
+          id="task-notes"
+          rows={3}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          disabled={isSubmitting}
+          placeholder={
+            isVietnamese
+              ? "Nhập ghi chú công việc, dặn dò hoặc lưu ý vận hành..."
+              : "Enter task notes, instructions, or operational remarks..."
+          }
+          className="border-custom-border-200 bg-custom-background-100 text-sm text-custom-text-100 placeholder:text-custom-text-400 focus:border-custom-primary-100 min-h-[72px] w-full resize-y rounded-md border p-3 focus:outline-none"
+        />
       </div>
 
       {/* Attachments Dropzone */}

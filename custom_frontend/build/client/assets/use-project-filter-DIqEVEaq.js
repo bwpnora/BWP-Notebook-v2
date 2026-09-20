@@ -1,1 +1,0 @@
-import{F as e,V as t}from"./chunk-KS7C4IRE-CMpS5gbI.js";import{t as n}from"./store-context-BuZXY8-W.js";var r=t(e()),i=()=>{let e=(0,r.useContext)(n);if(e===void 0)throw Error(`useProjectFilter must be used within StoreProvider`);return e.projectRoot.projectFilter};export{i as t};
