@@ -182,6 +182,10 @@ CORS_ALLOW_CREDENTIALS = True
 cors_origins_raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
 # filter out empty strings
 cors_allowed_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
+web_url_env = os.environ.get("WEB_URL", "").strip()
+if web_url_env and web_url_env not in cors_allowed_origins:
+    cors_allowed_origins.append(web_url_env)
+
 if cors_allowed_origins:
     CORS_ALLOWED_ORIGINS = cors_allowed_origins
     secure_origins = False if [origin for origin in cors_allowed_origins if "http:" in origin] else True

@@ -94,11 +94,27 @@ def get_allowed_hosts() -> list[str]:
     # Include every configured base URL; WEB_URL and APP_BASE_URL may differ
     # (e.g. WEB_URL points at the API host, APP_BASE_URL at the web app), and
     # both need to be allowed for redirects to either origin to pass safety checks.
-    for setting in (settings.WEB_URL, settings.APP_BASE_URL, settings.ADMIN_BASE_URL, settings.SPACE_BASE_URL):
+    for setting in (
+        getattr(settings, "WEB_URL", None),
+        getattr(settings, "APP_BASE_URL", None),
+        getattr(settings, "ADMIN_BASE_URL", None),
+        getattr(settings, "SPACE_BASE_URL", None),
+    ):
         if setting:
             host = urlparse(setting).netloc
             if host and host not in allowed_hosts:
                 allowed_hosts.append(host)
+
+    for origin in getattr(settings, "CORS_ALLOWED_ORIGINS", []):
+        if origin:
+            host = urlparse(origin).netloc
+            if host and host not in allowed_hosts:
+                allowed_hosts.append(host)
+
+    for host in getattr(settings, "ALLOWED_HOSTS", []):
+        if host and host != "*" and host not in allowed_hosts:
+            allowed_hosts.append(host)
+
     return allowed_hosts
 
 
@@ -173,8 +189,13 @@ def get_safe_redirect_url(base_url: str, next_path: str = "", params: dict = {})
     else:
         url = base_url
 
+    allowed_hosts = get_allowed_hosts()
+    base_host_netloc = urlparse(base_url).netloc
+    if base_host_netloc and base_host_netloc not in allowed_hosts:
+        allowed_hosts.append(base_host_netloc)
+
     # Check if the URL is allowed
-    if url_has_allowed_host_and_scheme(url, allowed_hosts=get_allowed_hosts()):
+    if url_has_allowed_host_and_scheme(url, allowed_hosts=allowed_hosts):
         return url
 
     # Return the base URL if the URL is not allowed
