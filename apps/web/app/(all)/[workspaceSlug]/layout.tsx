@@ -18,8 +18,7 @@ import { AuthenticationWrapper } from "@/lib/wrappers/authentication-wrapper";
 import CreateTaskPage from "./create-task/page";
 import type { Route } from "./+types/layout";
 
-export default observer(function WorkspaceLayout(props: Route.ComponentProps) {
-  const { workspaceSlug } = props.params;
+const WorkspaceInnerLayout = observer(function WorkspaceInnerLayout({ workspaceSlug }: { workspaceSlug: string }) {
   const pathname = usePathname();
   const { isMemberOnly, isLoading } = useMemberRole(workspaceSlug);
 
@@ -55,16 +54,14 @@ export default observer(function WorkspaceLayout(props: Route.ComponentProps) {
     };
   }, [isMemberOnly]);
 
-  // 1. Loading state: NEVER leak protected routes/views or sidebar while role is resolving
+  // 1. Loading state: while user role / project permissions are resolving
   if (isLoading) {
     return (
-      <AuthenticationWrapper>
-        <div className="grid h-screen place-items-center">
-          <div className="flex flex-col items-center gap-3 text-center">
-            <LogoSpinner />
-          </div>
+      <div className="grid h-screen place-items-center">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <LogoSpinner />
         </div>
-      </AuthenticationWrapper>
+      </div>
     );
   }
 
@@ -72,32 +69,36 @@ export default observer(function WorkspaceLayout(props: Route.ComponentProps) {
   // NEVER mount WorkspaceContentWrapper, AppRailVisibilityProvider, sidebar, or Outlet.
   if (isMemberOnly) {
     return (
-      <AuthenticationWrapper>
-        <WorkspaceAuthWrapper isLoading={false}>
-          <GlobalModals workspaceSlug={workspaceSlug} />
-          <CreateTaskPage params={{ workspaceSlug }} />
-        </WorkspaceAuthWrapper>
-      </AuthenticationWrapper>
+      <>
+        <GlobalModals workspaceSlug={workspaceSlug} />
+        <CreateTaskPage params={{ workspaceSlug }} />
+      </>
     );
   }
 
-  // 3. Admin & SuperAdmin accounts: full workspace access
+  // 3. Admin, Department Admin & SuperAdmin accounts: full workspace access
+  return isCreateTaskRoute ? (
+    <>
+      <GlobalModals workspaceSlug={workspaceSlug} />
+      <Outlet />
+    </>
+  ) : (
+    <AppRailVisibilityProvider>
+      <WorkspaceContentWrapper>
+        <GlobalModals workspaceSlug={workspaceSlug} />
+        <Outlet />
+      </WorkspaceContentWrapper>
+    </AppRailVisibilityProvider>
+  );
+});
+
+export default observer(function WorkspaceLayout(props: Route.ComponentProps) {
+  const { workspaceSlug } = props.params;
+
   return (
     <AuthenticationWrapper>
-      <WorkspaceAuthWrapper isLoading={false}>
-        {isCreateTaskRoute ? (
-          <>
-            <GlobalModals workspaceSlug={workspaceSlug} />
-            <Outlet />
-          </>
-        ) : (
-          <AppRailVisibilityProvider>
-            <WorkspaceContentWrapper>
-              <GlobalModals workspaceSlug={workspaceSlug} />
-              <Outlet />
-            </WorkspaceContentWrapper>
-          </AppRailVisibilityProvider>
-        )}
+      <WorkspaceAuthWrapper>
+        <WorkspaceInnerLayout workspaceSlug={workspaceSlug} />
       </WorkspaceAuthWrapper>
     </AuthenticationWrapper>
   );

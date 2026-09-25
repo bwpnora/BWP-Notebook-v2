@@ -66,15 +66,6 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
     let targetWorkspace =
       allWorkspaces.find((workspace) => workspace.slug === currentWorkspaceSlug) || allWorkspaces[0];
 
-    const isMemberRole = (ws?: (typeof allWorkspaces)[0]): boolean => {
-      if (!ws) return false;
-      const isSuperAdmin = Boolean(currentUser?.is_super_admin || currentUser?.is_superuser);
-      const isOwner = Boolean(currentUser && (ws.owner?.id === currentUser.id || ws.created_by === currentUser.id));
-      if (isSuperAdmin || isOwner) return false;
-      const role = ws.role !== undefined && ws.role !== null ? Number(ws.role) : undefined;
-      return role !== undefined && role <= 15;
-    };
-
     // validating the nextPath from the router query
     if (nextPath && isValidURL(nextPath.toString())) {
       const nextPathStr = nextPath.toString();
@@ -84,20 +75,12 @@ export const AuthenticationWrapper = observer(function AuthenticationWrapper(pro
         targetWorkspace = matchedByNextPath;
       }
 
-      if (targetWorkspace && isMemberRole(targetWorkspace)) {
-        return `/${targetWorkspace.slug}/create-task`;
-      }
-
       redirectionRoute = nextPathStr;
       return redirectionRoute;
     }
 
     if (targetWorkspace) {
-      if (isMemberRole(targetWorkspace)) {
-        redirectionRoute = `/${targetWorkspace.slug}/create-task`;
-      } else {
-        redirectionRoute = `/${targetWorkspace.slug}`;
-      }
+      redirectionRoute = `/${targetWorkspace.slug}`;
     }
 
     return redirectionRoute;

@@ -311,11 +311,14 @@ export class BaseUserPermissionStore implements IBaseUserPermissionStore {
     try {
       const response = await workspaceService.getWorkspaceUserProjectsRole(workspaceSlug);
       runInAction(() => {
-        set(this.workspaceProjectsPermissions, [workspaceSlug], response);
+        set(this.workspaceProjectsPermissions, [workspaceSlug], response || {});
       });
       return response;
     } catch (error) {
       console.error("Error fetching user project permissions", error);
+      runInAction(() => {
+        set(this.workspaceProjectsPermissions, [workspaceSlug], {});
+      });
       throw error;
     }
   };
