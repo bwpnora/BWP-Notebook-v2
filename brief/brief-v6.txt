@@ -1,0 +1,4 @@
+UI/UX Requirements for Member Accounts:
+- A member account is only allowed to create new tasks within their own department.
+- The sole function is to add/create tasks only. Members cannot view, delete, edit, or perform any other actions.
+- Specifically, there should be a dedicated page exclusively for members to add tasks. Admin and super-admin accounts remain unchanged and retain full privileges.

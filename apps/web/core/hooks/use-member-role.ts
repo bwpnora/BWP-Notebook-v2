@@ -68,6 +68,11 @@ export const useMemberRole = (workspaceSlug?: string, projectId?: string): IUseM
   );
 
   // Determine admin status
+  const workspaceProjects = activeWorkspaceSlug ? workspaceProjectsPermissions?.[activeWorkspaceSlug] : undefined;
+  const isAnyProjectAdmin = Boolean(
+    workspaceProjects && Object.values(workspaceProjects).some((role) => Number(role) >= EUserPermissions.ADMIN)
+  );
+
   let isAdminOrAbove = false;
   if (isSuperAdmin || isOwner) {
     isAdminOrAbove = true;
@@ -79,16 +84,23 @@ export const useMemberRole = (workspaceSlug?: string, projectId?: string): IUseM
       (numericProjectRole !== undefined && numericProjectRole >= EUserPermissions.ADMIN)
     );
   } else {
-    isAdminOrAbove = Boolean(isWorkspaceAdminRole || hasWorkspaceAdminPerm);
+    isAdminOrAbove = Boolean(isWorkspaceAdminRole || hasWorkspaceAdminPerm || isAnyProjectAdmin);
   }
 
   // 4. Check if role is resolved
+  // SuperAdmin, Owner, and Workspace Admin have full authority immediately.
+  // For accounts with workspace role <= 15, we must wait until project-level roles
+  // are loaded to know whether they are a Department Admin or strictly a task creator.
+  const hasWorkspaceRoleLoaded = Boolean(
+    numericRole !== undefined || (activeWorkspaceSlug && workspaceUserInfo && activeWorkspaceSlug in workspaceUserInfo)
+  );
+  const hasProjectRolesLoaded = Boolean(activeWorkspaceSlug && activeWorkspaceSlug in workspaceProjectsPermissions);
+  const isWorkspaceLevelAdmin = Boolean(isSuperAdmin || isOwner || isWorkspaceAdminRole);
+
   const hasResolvedRole = Boolean(
-    isSuperAdmin ||
-    isOwner ||
-    numericRole !== undefined ||
-    (activeWorkspaceSlug && workspaceUserInfo && activeWorkspaceSlug in workspaceUserInfo) ||
-    (activeWorkspaceSlug && projectId && workspaceProjectsPermissions?.[activeWorkspaceSlug]?.[projectId] !== undefined)
+    isWorkspaceLevelAdmin ||
+    (hasWorkspaceRoleLoaded &&
+      (projectId ? numericProjectRole !== undefined || hasProjectRolesLoaded : hasProjectRolesLoaded))
   );
 
   const isLoading = Boolean(!currentUser || isUserLoading || !hasResolvedRole);

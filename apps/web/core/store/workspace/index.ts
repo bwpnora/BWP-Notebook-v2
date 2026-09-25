@@ -145,7 +145,13 @@ export class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       );
       const role =
         targetWorkspace.role !== undefined && targetWorkspace.role !== null ? Number(targetWorkspace.role) : undefined;
-      const isMemberOnly = !isSuperAdmin && !isOwner && role !== undefined && role <= 15;
+      const workspaceProjects = targetWorkspace.slug
+        ? this.user.permission?.workspaceProjectsPermissions?.[targetWorkspace.slug]
+        : undefined;
+      const isAnyProjectAdmin = Boolean(
+        workspaceProjects && Object.values(workspaceProjects).some((pRole) => Number(pRole) >= 20)
+      );
+      const isMemberOnly = !isSuperAdmin && !isOwner && !isAnyProjectAdmin && role !== undefined && role <= 15;
 
       if (isMemberOnly) {
         redirectionRoute = `/${targetWorkspace.slug}/create-task`;
