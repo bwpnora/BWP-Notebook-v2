@@ -26,6 +26,7 @@ import { IssueTypeSwitcher } from "@/components/issues/issue-type-switcher";
 import { WorkItemVersionService } from "@/services/issue";
 // local components
 import type { TIssueOperations } from "../issue-detail";
+import { IssueDetailNotes } from "../issue-detail/notes";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
@@ -167,6 +168,15 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
           />
         )}
       </div>
+
+      <IssueDetailNotes
+        workspaceSlug={workspaceSlug}
+        projectId={issue.project_id}
+        issueId={issueId}
+        issueOperations={issueOperations}
+        disabled={disabled || isArchived}
+        className="mt-2"
+      />
     </div>
   );
 });

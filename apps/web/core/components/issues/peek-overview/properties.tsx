@@ -21,7 +21,7 @@ import {
   EstimatePropertyIcon,
   ParentPropertyIcon,
 } from "@plane/propel/icons";
-import { Hash, FileText, Layers } from "lucide-react";
+import { Hash, Layers, ChevronDown } from "lucide-react";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { CustomMenu } from "@plane/ui";
 import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
@@ -101,20 +101,22 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         <SidebarPropertyListItem icon={Layers as any} label="Loại công việc">
           <CustomMenu
             customButton={
-              <button
-                type="button"
+              <span
                 className={cn(
-                  "flex h-7 items-center gap-1.5 rounded border px-2 text-body-xs-medium font-medium transition-colors",
+                  "inline-flex h-7 items-center gap-1.5 rounded border px-2 text-body-xs-medium font-medium whitespace-nowrap transition-colors select-none",
                   isOther
                     ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                    : "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                    : "border-blue-500/40 bg-blue-500/10 text-blue-600 dark:text-blue-400",
+                  !isManager && "cursor-default"
                 )}
-                disabled={disabled || !isManager}
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                <span>{isOther ? "Công việc khác" : "Công việc vận hành"}</span>
-              </button>
+                <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-current" />
+                <span className="whitespace-nowrap">{isOther ? "Công việc khác" : "Công việc vận hành"}</span>
+                {isManager && !disabled && <ChevronDown className="ml-0.5 h-3 w-3 flex-shrink-0 opacity-60" />}
+              </span>
             }
+            className="w-auto"
+            customButtonClassName="flex items-center"
             closeOnSelect
             disabled={disabled || !isManager}
           >
@@ -219,20 +221,6 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
             }}
             placeholder="Chưa có số phòng"
             className="h-7.5 w-full bg-transparent px-2 text-body-xs-medium text-primary outline-none placeholder:text-placeholder"
-          />
-        </SidebarPropertyListItem>
-
-        {/* BWP-Notebook-v2 Notes */}
-        <SidebarPropertyListItem icon={FileText as any} label="Ghi chú">
-          <input
-            type="text"
-            value={issue?.notes ?? ""}
-            disabled={disabled}
-            onChange={(e) => {
-              issueOperations.update(workspaceSlug, projectId, issueId, { notes: e.target.value || null });
-            }}
-            placeholder="Thêm ghi chú công việc"
-            className="h-7.5 w-full truncate bg-transparent px-2 text-body-xs-medium text-primary outline-none placeholder:text-placeholder"
           />
         </SidebarPropertyListItem>
 
