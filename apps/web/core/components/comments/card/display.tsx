@@ -14,7 +14,7 @@ import { useHashScroll } from "@plane/hooks";
 import { GlobeIcon, LockIcon } from "@plane/propel/icons";
 import { EIssueCommentAccessSpecifier } from "@plane/types";
 import type { TCommentsOperations, TIssueComment } from "@plane/types";
-import { calculateTimeAgo, cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
+import { cn, getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 // local imports
@@ -127,7 +127,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
               position="bottom"
             >
               <span className="text-tertiary">
-                {calculateTimeAgo(comment.created_at)}
+                {renderFormattedDate(comment.created_at)}, {renderFormattedTime(comment.created_at)}
                 {comment.edited_at && " (edited)"}
               </span>
             </Tooltip>

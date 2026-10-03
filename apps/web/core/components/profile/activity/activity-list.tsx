@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 import { History, MessageSquare } from "lucide-react";
 // plane imports
 import type { IUserActivityResponse } from "@plane/types";
-import { calculateTimeAgo, getFileURL } from "@plane/utils";
+import { getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { ActivityIcon, ActivityMessage, IssueLink } from "@/components/core/activity";
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -72,7 +72,8 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                             : activityItem.actor_detail.display_name}
                         </div>
                         <p className="mt-0.5 text-11 text-secondary">
-                          Commented {calculateTimeAgo(activityItem.created_at)}
+                          Commented {renderFormattedDate(activityItem.created_at)},{" "}
+                          {renderFormattedTime(activityItem.created_at)}
                         </p>
                       </div>
                       <div className="issue-comments-section p-0">
@@ -163,7 +164,8 @@ export const ActivityList = observer(function ActivityList(props: Props) {
                             <div className="inline gap-1">
                               {message}{" "}
                               <span className="flex-shrink-0 whitespace-nowrap">
-                                {calculateTimeAgo(activityItem.created_at)}
+                                {renderFormattedDate(activityItem.created_at)},{" "}
+                                {renderFormattedTime(activityItem.created_at)}
                               </span>
                             </div>
                           </div>

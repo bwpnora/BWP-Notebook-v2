@@ -12,7 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/propel/avatar";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { Loader, Card } from "@plane/ui";
-import { calculateTimeAgo, getFileURL } from "@plane/utils";
+import { getFileURL, renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { ActivityMessage, IssueLink } from "@/components/core/activity";
 // constants
@@ -78,7 +78,9 @@ export const ProfileActivity = observer(function ProfileActivity() {
                       </span>
                     )}
                   </p>
-                  <p className="text-11 whitespace-nowrap text-secondary">{calculateTimeAgo(activity.created_at)}</p>
+                  <p className="text-11 whitespace-nowrap text-secondary">
+                    {renderFormattedDate(activity.created_at)}, {renderFormattedTime(activity.created_at)}
+                  </p>
                 </div>
               </div>
             ))}

@@ -11,7 +11,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { TWorkspaceBaseActivity } from "@plane/types";
 // ui
 // helpers
-import { renderFormattedTime, renderFormattedDate, calculateTimeAgo } from "@plane/utils";
+import { renderFormattedTime, renderFormattedDate } from "@plane/utils";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // local components
@@ -50,7 +50,7 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
             tooltipContent={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
           >
             <span className="cursor-help font-medium whitespace-nowrap text-tertiary">
-              {calculateTimeAgo(activity.created_at)}
+              {renderFormattedDate(activity.created_at)}, {renderFormattedTime(activity.created_at)}
             </span>
           </Tooltip>
         </div>
