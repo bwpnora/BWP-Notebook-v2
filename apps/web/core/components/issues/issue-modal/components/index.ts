@@ -11,3 +11,4 @@ export * from "./description-editor";
 export * from "./default-properties";
 export * from "./task-type-select";
 export * from "./notes-input";
+export * from "./room-number-input";

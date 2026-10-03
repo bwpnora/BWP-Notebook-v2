@@ -10,7 +10,6 @@ import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { DoorClosed } from "lucide-react";
 import { ParentPropertyIcon } from "@plane/propel/icons";
 // types
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
@@ -28,6 +27,7 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueLabelSelect } from "@/components/issues/select";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { RoomNumberInput } from "./room-number-input";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
@@ -175,21 +175,14 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         control={control}
         name="room"
         render={({ field: { value, onChange } }) => (
-          <div className="focus-within:border-secondary flex h-7 items-center gap-1 rounded-sm border-[0.5px] border-strong bg-transparent px-2 py-0.5 text-caption-sm-regular text-secondary transition-colors hover:bg-layer-1">
-            <DoorClosed className="h-3.5 w-3.5 flex-shrink-0 text-secondary" />
-            <span className="whitespace-nowrap text-secondary">Phòng:</span>
-            <input
-              type="number"
-              value={value ?? ""}
-              onChange={(e) => {
-                const val = e.target.value ? parseInt(e.target.value, 10) : null;
-                onChange(val);
-                handleFormChange();
-              }}
-              placeholder="Số"
-              className="w-10 [appearance:textfield] bg-transparent text-caption-sm-regular text-primary outline-none placeholder:text-placeholder [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-            />
-          </div>
+          <RoomNumberInput
+            value={value}
+            onChange={(val) => {
+              onChange(val);
+              handleFormChange();
+            }}
+            onFormChange={handleFormChange}
+          />
         )}
       />
       {!isMemberOnly && (
