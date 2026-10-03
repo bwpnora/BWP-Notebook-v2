@@ -114,11 +114,6 @@ class IssueListEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
-        if not check_is_admin_or_manager(request.user, Project.objects.get(pk=project_id, workspace__slug=slug)):
-            return Response(
-                {"error": "You do not have permission to view or modify tasks. Members can only submit new tasks."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         issue_ids = request.GET.get("issues", False)
 
         if not issue_ids:
@@ -318,13 +313,6 @@ class IssueViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
-        # Enforce brief-v6: Members are not allowed to view or list tasks
-        if not check_is_admin_or_manager(request.user, Project.objects.get(pk=project_id, workspace__slug=slug)):
-            return Response(
-                {"error": "You do not have permission to view or modify tasks. Members can only submit new tasks."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         extra_filters = {}
         if request.GET.get("updated_at__gt", None) is not None:
             extra_filters = {"updated_at__gt": request.GET.get("updated_at__gt")}
@@ -653,12 +641,6 @@ class IssueViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue)
     def retrieve(self, request, slug, project_id, pk=None):
-        # Enforce brief-v6: Members are not allowed to view issue details
-        if not check_is_admin_or_manager(request.user, Project.objects.get(pk=project_id, workspace__slug=slug)):
-            return Response(
-                {"error": "You do not have permission to view or modify tasks. Members can only submit new tasks."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         issue = (
@@ -806,21 +788,8 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def update(self, request, slug, project_id, pk=None):
-        if not check_is_admin_or_manager(request.user, Project.objects.get(pk=project_id, workspace__slug=slug)):
-            return Response(
-                {"error": "You do not have permission to view or modify tasks. Members can only submit new tasks."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        return super().update(request, slug, project_id, pk=pk)
-
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk=None):
-        if not check_is_admin_or_manager(request.user, Project.objects.get(pk=project_id, workspace__slug=slug)):
-            return Response(
-                {"error": "You do not have permission to view or modify tasks. Members can only submit new tasks."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         queryset = self.get_queryset()
         queryset = self.apply_annotations(queryset)
 
@@ -995,11 +964,6 @@ class IssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
     def destroy(self, request, slug, project_id, pk=None):
-        if not check_is_admin_or_manager(request.user, Project.objects.get(pk=project_id, workspace__slug=slug)):
-            return Response(
-                {"error": "You do not have permission to view or modify tasks. Members can only submit new tasks."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
         issue.delete()
@@ -1148,11 +1112,6 @@ class IssuePaginatedViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id):
-        if not check_is_admin_or_manager(request.user, Project.objects.get(pk=project_id, workspace__slug=slug)):
-            return Response(
-                {"error": "You do not have permission to view or modify tasks. Members can only submit new tasks."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         cursor = request.GET.get("cursor", None)
         is_description_required = request.GET.get("description", "false")
         updated_at = request.GET.get("updated_at__gt", None)
@@ -1332,11 +1291,6 @@ class IssueDetailEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
-        if not check_is_admin_or_manager(request.user, Project.objects.get(pk=project_id, workspace__slug=slug)):
-            return Response(
-                {"error": "You do not have permission to view or modify tasks. Members can only submit new tasks."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         filters = issue_filters(request.query_params, "GET")
 
         # check for the project member role, if the role is 5 then check for the guest_view_all_features

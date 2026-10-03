@@ -17,7 +17,7 @@ from plane.db.models import (
 
 
 @pytest.mark.django_db
-def test_member_cannot_list_issues(client: Client):
+def test_member_can_list_issues(client: Client):
     user = User.objects.create(email="member@example.com", username="member")
     workspace = Workspace.objects.create(name="WS", slug="ws-test")
     WorkspaceMember.objects.create(workspace=workspace, member=user, role=15)
@@ -26,13 +26,11 @@ def test_member_cannot_list_issues(client: Client):
 
     client.force_login(user)
     response = client.get(f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/")
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert "error" in response.json()
-    assert response.json()["error"] == "You do not have permission to view or modify tasks. Members can only submit new tasks."
+    assert response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
-def test_member_cannot_retrieve_issue_detail(client: Client):
+def test_member_can_retrieve_issue_detail(client: Client):
     user = User.objects.create(email="member2@example.com", username="member2")
     workspace = Workspace.objects.create(name="WS", slug="ws-test-2")
     WorkspaceMember.objects.create(workspace=workspace, member=user, role=15)
@@ -42,9 +40,8 @@ def test_member_cannot_retrieve_issue_detail(client: Client):
 
     client.force_login(user)
     response = client.get(f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/")
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert "error" in response.json()
-    assert response.json()["error"] == "You do not have permission to view or modify tasks. Members can only submit new tasks."
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["name"] == "Secret Task"
 
 
 @pytest.mark.django_db
@@ -67,28 +64,7 @@ def test_member_can_create_issue_in_assigned_project(client: Client):
 
 
 @pytest.mark.django_db
-def test_member_cannot_update_issue(client: Client):
-    user = User.objects.create(email="member4@example.com", username="member4")
-    workspace = Workspace.objects.create(name="WS", slug="ws-test-4")
-    WorkspaceMember.objects.create(workspace=workspace, member=user, role=15)
-    project = Project.objects.create(name="Dept", identifier="DEPT4", workspace=workspace)
-    ProjectMember.objects.create(project=project, member=user, workspace=workspace, role=15)
-    issue = Issue.objects.create(name="Task To Update", project=project, workspace=workspace)
-
-    client.force_login(user)
-    payload = {"name": "Hacked Task"}
-    response = client.put(
-        f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/",
-        data=payload,
-        content_type="application/json",
-    )
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert "error" in response.json()
-    assert response.json()["error"] == "You do not have permission to view or modify tasks. Members can only submit new tasks."
-
-
-@pytest.mark.django_db
-def test_member_cannot_partial_update_issue(client: Client):
+def test_member_can_partial_update_issue(client: Client):
     user = User.objects.create(email="member5@example.com", username="member5")
     workspace = Workspace.objects.create(name="WS", slug="ws-test-5")
     WorkspaceMember.objects.create(workspace=workspace, member=user, role=15)
@@ -103,25 +79,45 @@ def test_member_cannot_partial_update_issue(client: Client):
         data=payload,
         content_type="application/json",
     )
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert "error" in response.json()
-    assert response.json()["error"] == "You do not have permission to view or modify tasks. Members can only submit new tasks."
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["name"] == "Patched Task"
 
 
 @pytest.mark.django_db
-def test_member_cannot_delete_issue(client: Client):
+def test_member_cannot_change_task_type(client: Client):
+    user = User.objects.create(email="member4@example.com", username="member4")
+    workspace = Workspace.objects.create(name="WS", slug="ws-test-4")
+    WorkspaceMember.objects.create(workspace=workspace, member=user, role=15)
+    project = Project.objects.create(name="Dept", identifier="DEPT4", workspace=workspace)
+    ProjectMember.objects.create(project=project, member=user, workspace=workspace, role=15)
+    op_type = IssueType.objects.create(workspace=workspace, external_id="operational", name="Operational")
+    other_type = IssueType.objects.create(workspace=workspace, external_id="other", name="Other")
+    issue = Issue.objects.create(name="Task With Type", project=project, workspace=workspace, type=op_type)
+
+    client.force_login(user)
+    payload = {"type_id": str(other_type.id)}
+    response = client.patch(
+        f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/",
+        data=payload,
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.json()["error"] == "Bạn không có quyền thay đổi loại công việc."
+
+
+@pytest.mark.django_db
+def test_member_cannot_delete_issue_created_by_others(client: Client):
     user = User.objects.create(email="member6@example.com", username="member6")
+    admin = User.objects.create(email="admin6@example.com", username="admin6")
     workspace = Workspace.objects.create(name="WS", slug="ws-test-6")
     WorkspaceMember.objects.create(workspace=workspace, member=user, role=15)
     project = Project.objects.create(name="Dept", identifier="DEPT6", workspace=workspace)
     ProjectMember.objects.create(project=project, member=user, workspace=workspace, role=15)
-    issue = Issue.objects.create(name="Task To Delete", project=project, workspace=workspace, created_by=user)
+    issue = Issue.objects.create(name="Task To Delete", project=project, workspace=workspace, created_by=admin)
 
     client.force_login(user)
     response = client.delete(f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/")
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert "error" in response.json()
-    assert response.json()["error"] == "You do not have permission to view or modify tasks. Members can only submit new tasks."
 
 
 @pytest.mark.django_db
