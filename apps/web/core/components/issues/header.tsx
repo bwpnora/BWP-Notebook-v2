@@ -7,7 +7,7 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // icons
-import { Circle } from "lucide-react";
+import { Circle, Plus } from "lucide-react";
 // plane imports
 import {
   EUserPermissions,
@@ -122,17 +122,37 @@ export const IssuesHeader = observer(function IssuesHeader() {
           />
         </div>
         {canUserCreateIssue && (
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => {
-              toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
-            }}
-            data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
-          >
-            <div className="block sm:hidden">{t("issue.label", { count: 1 })}</div>
-            <div className="hidden sm:block">{t("issue.add.label")}</div>
-          </Button>
+          <>
+            <div className="flex sm:hidden">
+              <Tooltip isMobile={isMobile} tooltipContent={t("issue.add.label")}>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center p-0"
+                  onClick={() => {
+                    toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                  }}
+                  data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </Tooltip>
+            </div>
+            <div className="hidden sm:flex">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => {
+                  toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
+                }}
+                data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.WORK_ITEMS}
+                className="flex shrink-0 items-center gap-1.5"
+              >
+                <Plus className="h-4 w-4" />
+                <span>{t("issue.add.label")}</span>
+              </Button>
+            </div>
+          </>
         )}
       </Header.RightItem>
     </Header>
