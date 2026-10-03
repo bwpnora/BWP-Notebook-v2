@@ -5,22 +5,12 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-provider";
-import { useMemberRole } from "@/hooks/use-member-role";
 
 /**
- * CommandPalette wrapper with Member role suppression
+ * CommandPalette wrapper
  */
 export const CommandPalette = observer(function CommandPalette() {
-  const params = useParams();
-  const { workspaceSlug } = params;
-  const { isMemberOnly } = useMemberRole(workspaceSlug?.toString());
-
-  if (isMemberOnly) {
-    return null;
-  }
-
   return <ProjectsAppPowerKProvider />;
 });
 
