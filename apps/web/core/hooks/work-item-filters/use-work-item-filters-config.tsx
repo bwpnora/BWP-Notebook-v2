@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useMemo } from "react";
-import { AtSign, Briefcase } from "lucide-react";
+import { AtSign, Briefcase, DoorOpen, Layers } from "lucide-react";
 // plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
@@ -45,12 +45,15 @@ import {
   getModuleFilterConfig,
   getPriorityFilterConfig,
   getProjectFilterConfig,
+  getRoomSearchFilterConfig,
   getStartDateFilterConfig,
   getStateFilterConfig,
   getStateGroupFilterConfig,
   getSubscriberFilterConfig,
+  getSupporterFilterConfig,
   getTargetDateFilterConfig,
   getUpdatedAtFilterConfig,
+  getWorkTypeFilterConfig,
   isLoaderReady,
 } from "@plane/utils";
 // store hooks
@@ -76,6 +79,7 @@ export type TWorkItemFiltersEntityProps = {
 
 export type TUseWorkItemFiltersConfigProps = {
   allowedFilters: TWorkItemFilterProperty[];
+  roomSearchValues?: string[];
 } & TWorkItemFiltersEntityProps;
 
 export type TWorkItemFiltersConfig = {
@@ -89,8 +93,18 @@ export type TWorkItemFiltersConfig = {
 };
 
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
-  const { allowedFilters, cycleIds, labelIds, memberIds, moduleIds, projectId, projectIds, stateIds, workspaceSlug } =
-    props;
+  const {
+    allowedFilters,
+    cycleIds,
+    labelIds,
+    memberIds,
+    moduleIds,
+    projectId,
+    projectIds,
+    roomSearchValues,
+    stateIds,
+    workspaceSlug,
+  } = props;
   // store hooks
   const { loader: projectLoader, getProjectById } = useProject();
   const { getCycleById } = useCycle();
@@ -131,10 +145,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [moduleIds, getModuleById]
   );
   const projects = useMemo(
-    () =>
-      projectIds
-        ? (projectIds.map((projectId) => getProjectById(projectId)).filter((project) => project) as IProject[])
-        : [],
+    () => (projectIds ? (projectIds.map((id) => getProjectById(id)).filter((p) => p) as IProject[]) : []),
     [projectIds, getProjectById]
   );
   const areAllConfigsInitialized = useMemo(() => isLoaderReady(projectLoader), [projectLoader]);
@@ -293,6 +304,54 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [isFilterEnabled, members, operatorConfigs]
   );
 
+  // BWP-Notebook-v2: supporter filter config
+  const supporterFilterConfig = useMemo(
+    () =>
+      getSupporterFilterConfig<TWorkItemFilterProperty>("supporter_id")({
+        isEnabled: isFilterEnabled("supporter_id") && members !== undefined,
+        filterIcon: MembersPropertyIcon,
+        members: members ?? [],
+        getOptionIcon: (memberDetails) => (
+          <Avatar
+            name={memberDetails.display_name}
+            src={getFileURL(memberDetails.avatar_url)}
+            showTooltip={false}
+            size="sm"
+          />
+        ),
+        ...operatorConfigs,
+      }),
+    [isFilterEnabled, members, operatorConfigs]
+  );
+
+  // BWP-Notebook-v2: work type filter config
+  const workTypeFilterConfig = useMemo(
+    () =>
+      getWorkTypeFilterConfig<TWorkItemFilterProperty>("work_type")({
+        isEnabled: isFilterEnabled("work_type"),
+        filterIcon: Layers,
+        getOptionIcon: (workType) => (
+          <span
+            className={`size-2 flex-shrink-0 rounded-full ${workType === "other" ? "bg-amber-500" : "bg-blue-500"}`}
+          />
+        ),
+        ...operatorConfigs,
+      }),
+    [isFilterEnabled, operatorConfigs]
+  );
+
+  // BWP-Notebook-v2: room search filter config (edited from the spreadsheet column menu)
+  const roomSearchFilterConfig = useMemo(
+    () =>
+      getRoomSearchFilterConfig<TWorkItemFilterProperty>("room_search")({
+        isEnabled: false,
+        filterIcon: DoorOpen,
+        roomSearchValues: roomSearchValues ?? [],
+        ...operatorConfigs,
+      }),
+    [roomSearchValues, operatorConfigs]
+  );
+
   // priority filter config
   const priorityFilterConfig = useMemo(
     () =>
@@ -356,7 +415,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         isEnabled: isFilterEnabled("project_id") && projects !== undefined,
         filterIcon: Briefcase,
         projects: projects,
-        getOptionIcon: (project) => <Logo logo={project.logo_props} size={12} />,
+        getOptionIcon: (projectDetails) => <Logo logo={projectDetails.logo_props} size={12} />,
         ...operatorConfigs,
       }),
     [isFilterEnabled, projects, operatorConfigs]
@@ -380,6 +439,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       updatedAtFilterConfig,
       createdByFilterConfig,
       subscriberFilterConfig,
+      supporterFilterConfig,
+      workTypeFilterConfig,
+      roomSearchFilterConfig,
     ],
     configMap: {
       project_id: projectFilterConfig,
@@ -392,6 +454,9 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       mention_id: mentionFilterConfig,
       created_by_id: createdByFilterConfig,
       subscriber_id: subscriberFilterConfig,
+      supporter_id: supporterFilterConfig,
+      work_type: workTypeFilterConfig,
+      room_search: roomSearchFilterConfig,
       priority: priorityFilterConfig,
       start_date: startDateFilterConfig,
       target_date: targetDateFilterConfig,
