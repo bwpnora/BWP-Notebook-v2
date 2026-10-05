@@ -220,6 +220,7 @@ class IssueListEndpoint(BaseAPIView):
                 "module_ids",
                 "label_ids",
                 "assignee_ids",
+                "supporter_ids",
                 "sub_issues_count",
                 "created_at",
                 "updated_at",

@@ -151,6 +151,7 @@ services:
       - ./custom_backend/apps/api/plane/app/permissions/workspace.py:/code/plane/app/permissions/workspace.py
       - ./custom_backend/apps/api/plane/authentication/urls.py:/code/plane/authentication/urls.py
       - ./custom_backend/apps/api/plane/urls.py:/code/plane/urls.py
+      - ./custom_backend/apps/api/plane/utils/filters/filterset.py:/code/plane/utils/filters/filterset.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -200,6 +201,7 @@ services:
       - ./custom_backend/apps/api/plane/authentication/utils/host.py:/code/plane/authentication/utils/host.py
       - ./custom_backend/apps/api/plane/utils/host.py:/code/plane/utils/host.py
       - ./custom_backend/apps/api/plane/utils/path_validator.py:/code/plane/utils/path_validator.py
+      - ./custom_backend/apps/api/plane/utils/filters/filterset.py:/code/plane/utils/filters/filterset.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -253,6 +255,7 @@ services:
       - ./custom_backend/apps/api/plane/authentication/utils/host.py:/code/plane/authentication/utils/host.py
       - ./custom_backend/apps/api/plane/utils/host.py:/code/plane/utils/host.py
       - ./custom_backend/apps/api/plane/utils/path_validator.py:/code/plane/utils/path_validator.py
+      - ./custom_backend/apps/api/plane/utils/filters/filterset.py:/code/plane/utils/filters/filterset.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:
@@ -302,6 +305,7 @@ services:
       - ./custom_backend/apps/api/plane/authentication/utils/host.py:/code/plane/authentication/utils/host.py
       - ./custom_backend/apps/api/plane/utils/host.py:/code/plane/utils/host.py
       - ./custom_backend/apps/api/plane/utils/path_validator.py:/code/plane/utils/path_validator.py
+      - ./custom_backend/apps/api/plane/utils/filters/filterset.py:/code/plane/utils/filters/filterset.py
     environment:
       <<: [*app-env, *db-env, *redis-env, *minio-env, *aws-s3-env, *proxy-env]
     networks:

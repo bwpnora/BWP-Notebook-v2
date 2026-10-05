@@ -5,7 +5,8 @@
 import copy
 
 from django.db import models
-from django.db.models import Q
+from django.db.models import CharField, Q
+from django.db.models.functions import Cast
 from django_filters import FilterSet, filters
 
 from plane.db.models import Issue
@@ -28,6 +29,15 @@ class DateCSVRangeFilter(filters.BaseCSVFilter, filters.DateFilter):
     """
 
     pass
+
+
+WORK_TYPE_OPERATIONAL = "operational"
+WORK_TYPE_OTHER = "other"
+WORK_TYPE_OTHER_NAME = "Công việc khác"
+
+
+def _work_type_other_q():
+    return Q(type__external_id=WORK_TYPE_OTHER) | Q(type__name=WORK_TYPE_OTHER_NAME)
 
 
 class BaseFilterSet(FilterSet):
@@ -149,6 +159,20 @@ class IssueFilterSet(BaseFilterSet):
 
     label_id = filters.UUIDFilter(method="filter_label_id")
     label_id__in = UUIDInFilter(method="filter_label_id_in", lookup_expr="in")
+
+    # BWP-Notebook-v2 spreadsheet column filters
+    supporter_id = filters.UUIDFilter(method="filter_supporter_id")
+    supporter_id__exact = filters.UUIDFilter(method="filter_supporter_id")
+    supporter_id__in = UUIDInFilter(method="filter_supporter_id_in", lookup_expr="in")
+
+    work_type = filters.CharFilter(method="filter_work_type")
+    work_type__exact = filters.CharFilter(method="filter_work_type")
+    work_type__in = CharInFilter(method="filter_work_type_in", lookup_expr="in")
+
+    # The rich filter UI has no "contains" operator, so the search term travels as
+    # `room_search__exact` and is matched as a substring of the room number here.
+    room_search = filters.CharFilter(method="filter_room_search")
+    room_search__exact = filters.CharFilter(method="filter_room_search")
 
     # Direct field lookups remain the same
     created_by_id = filters.UUIDFilter(field_name="created_by_id")
@@ -295,3 +319,40 @@ class IssueFilterSet(BaseFilterSet):
             issue_subscribers__subscriber_id__in=value,
             issue_subscribers__deleted_at__isnull=True,
         )
+
+    def filter_supporter_id(self, queryset, name, value):
+        """Filter by supporter ID, excluding soft deleted supporter links"""
+        return Q(issue_supporter__supporter_id=value, issue_supporter__deleted_at__isnull=True)
+
+    def filter_supporter_id_in(self, queryset, name, value):
+        """Filter by supporter IDs (in), excluding soft deleted supporter links"""
+        return Q(issue_supporter__supporter_id__in=value, issue_supporter__deleted_at__isnull=True)
+
+    def _work_type_q(self, values):
+        selected = {v for v in values if v in (WORK_TYPE_OPERATIONAL, WORK_TYPE_OTHER)}
+        if not selected or len(selected) == 2:
+            return Q()
+        other_q = _work_type_other_q()
+        if selected == {WORK_TYPE_OTHER}:
+            return other_q
+        # operational = not "other", including issues without a type
+        return Q(type__isnull=True) | (~Q(type__external_id=WORK_TYPE_OTHER) & ~Q(type__name=WORK_TYPE_OTHER_NAME))
+
+    def filter_work_type(self, queryset, name, value):
+        return self._work_type_q([value] if value else [])
+
+    def filter_work_type_in(self, queryset, name, value):
+        return self._work_type_q(value or [])
+
+    def filter_room_search(self, queryset, name, value):
+        term = (value or "").strip()
+        if not term.isdigit():
+            return Q()
+        matching = (
+            Issue.objects.filter(room__isnull=False)
+            .annotate(room_text=Cast("room", CharField()))
+            .filter(room_text__contains=term)
+            .values("pk")
+        )
+        return Q(pk__in=matching)
+
