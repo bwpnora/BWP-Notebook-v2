@@ -11,15 +11,19 @@ import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/cons
 // types
 import type { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
+import type { TColumnFilterableIssue } from "@plane/utils";
+import { matchesColumnFilters } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
 // local imports
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "../quick-add";
+import { useSpreadsheetColumnFilters } from "./column-filters";
 import { SpreadsheetTable } from "./spreadsheet-table";
 
 type Props = {
@@ -38,6 +42,7 @@ type Props = {
   disableIssueCreation?: boolean;
   isWorkspaceLevel?: boolean;
   isEpic?: boolean;
+  isRefreshing?: boolean;
 };
 
 export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
@@ -56,12 +61,17 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
     loadMoreIssues,
     isWorkspaceLevel = false,
     isEpic = false,
+    isRefreshing,
   } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
   const portalRef = useRef<HTMLDivElement | null>(null);
   // store hooks
   const { currentProjectDetails } = useProject();
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail();
+  const columnFilters = useSpreadsheetColumnFilters();
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
 
@@ -75,14 +85,26 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
         return true;
       });
 
+  // Instant client-side pass over loaded rows; the server result (refetched after the
+  // debounced commit) replaces issueIds. Re-applying the predicate on top also hides rows
+  // from any stale/failed response.
+  const visibleIssueIds = columnFilters.hasActiveFilters
+    ? (issueIds ?? []).filter((id) => {
+        const issue = getIssueById(id);
+        return !issue || matchesColumnFilters(issue as unknown as TColumnFilterableIssue, columnFilters.values);
+      })
+    : (issueIds ?? []);
+  const isFilteredEmpty = !!issueIds?.length && visibleIssueIds.length === 0;
+
   if (!issueIds || issueIds.length === 0) return <></>;
   return (
     <div className="relative flex h-full w-full flex-col overflow-x-hidden bg-layer-1 whitespace-nowrap text-secondary">
       <div ref={portalRef} className="spreadsheet-menu-portal" />
+      {isRefreshing && <div className="absolute top-0 left-0 z-[20] h-0.5 w-full animate-pulse bg-accent-primary" />}
       <MultipleSelectGroup
         containerRef={containerRef}
         entities={{
-          [SPREADSHEET_SELECT_GROUP]: issueIds,
+          [SPREADSHEET_SELECT_GROUP]: visibleIssueIds,
         }}
         disabled={!isBulkOperationsEnabled || isEpic}
       >
@@ -93,7 +115,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 displayProperties={displayProperties}
                 displayFilters={displayFilters}
                 handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-                issueIds={issueIds}
+                issueIds={visibleIssueIds}
                 isEstimateEnabled={isEstimateEnabled}
                 portalElement={portalRef}
                 quickActions={quickActions}
@@ -106,6 +128,18 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 selectionHelpers={helpers}
                 isEpic={isEpic}
               />
+              {isFilteredEmpty && (
+                <div className="flex flex-col items-center gap-2 py-10 text-13 text-tertiary">
+                  <span>Không có công việc khớp bộ lọc</span>
+                  <button
+                    type="button"
+                    className="rounded-sm border-[0.5px] border-subtle px-3 py-1 text-13 text-primary hover:bg-layer-1"
+                    onClick={columnFilters.clearAll}
+                  >
+                    Xóa tất cả bộ lọc
+                  </button>
+                </div>
+              )}
             </div>
             <div className="border-t border-subtle">
               <div className="sticky bottom-0 left-0 z-5">

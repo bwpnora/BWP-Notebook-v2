@@ -20,6 +20,7 @@ import { useIssuesActions } from "@/hooks/use-issues-actions";
 // local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
+import { SpreadsheetColumnFiltersProvider } from "./column-filters";
 import { SpreadsheetView } from "./spreadsheet-view";
 
 export type SpreadsheetStoreType =
@@ -71,9 +72,11 @@ export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: 
   }, [fetchIssues, storeType, viewId]);
 
   const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
+    (targetProjectId: string | undefined) => {
       const isEditingAllowedBasedOnProject =
-        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+        canEditPropertiesBasedOnProject && targetProjectId
+          ? canEditPropertiesBasedOnProject(targetProjectId)
+          : isEditingAllowed;
 
       return enableInlineEditing && isEditingAllowedBasedOnProject;
     },
@@ -108,28 +111,40 @@ export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: 
         placements={placement}
       />
     ),
-    [isCompletedCycle, canEditProperties, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
+    [
+      QuickActions,
+      isCompletedCycle,
+      canEditProperties,
+      removeIssue,
+      updateIssue,
+      removeIssueFromView,
+      archiveIssue,
+      restoreIssue,
+    ]
   );
 
   if (!Array.isArray(issueIds)) return null;
 
   return (
     <IssueLayoutHOC layout={EIssueLayoutTypes.SPREADSHEET}>
-      <SpreadsheetView
-        displayProperties={issuesFilter.issueFilters?.displayProperties ?? {}}
-        displayFilters={issuesFilter.issueFilters?.displayFilters ?? {}}
-        handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-        issueIds={issueIds}
-        quickActions={renderQuickActions}
-        updateIssue={updateIssue}
-        canEditProperties={canEditProperties}
-        quickAddCallback={quickAddIssue}
-        enableQuickCreateIssue={enableQuickAdd}
-        disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-        canLoadMoreIssues={!!nextPageResults}
-        loadMoreIssues={fetchNextIssues}
-        isEpic={isEpic}
-      />
+      <SpreadsheetColumnFiltersProvider entityType={storeType} entityId={viewId ?? projectId?.toString()}>
+        <SpreadsheetView
+          displayProperties={issuesFilter.issueFilters?.displayProperties ?? {}}
+          displayFilters={issuesFilter.issueFilters?.displayFilters ?? {}}
+          handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+          issueIds={issueIds}
+          quickActions={renderQuickActions}
+          updateIssue={updateIssue}
+          canEditProperties={canEditProperties}
+          quickAddCallback={quickAddIssue}
+          enableQuickCreateIssue={enableQuickAdd}
+          disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
+          canLoadMoreIssues={!!nextPageResults}
+          loadMoreIssues={fetchNextIssues}
+          isEpic={isEpic}
+          isRefreshing={issues.getIssueLoader() === "mutation"}
+        />
+      </SpreadsheetColumnFiltersProvider>
     </IssueLayoutHOC>
   );
 });
