@@ -109,6 +109,10 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "project_id",
   "created_at",
   "updated_at",
+  // BWP-Notebook-v2 spreadsheet column filters
+  "supporter_id",
+  "work_type",
+  "room_search",
 ] as const;
 export type TWorkItemFilterProperty = (typeof WORK_ITEM_FILTER_PROPERTY_KEYS)[number];
 
