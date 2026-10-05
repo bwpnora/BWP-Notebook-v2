@@ -23,10 +23,13 @@ export function ColumnFilterDateRange({ value, onChange }: Props) {
   const [from, setFrom] = useState(value?.[0] ?? "");
   const [to, setTo] = useState(value?.[1] ?? "");
 
+  const valueFrom = value?.[0];
+  const valueTo = value?.[1];
+
   useEffect(() => {
-    setFrom(value?.[0] ?? "");
-    setTo(value?.[1] ?? "");
-  }, [value]);
+    setFrom(valueFrom ?? "");
+    setTo(valueTo ?? "");
+  }, [valueFrom, valueTo]);
 
   const isInvalid = !from || !to || from > to;
   const inputClass = "w-full rounded-sm border-[0.5px] border-subtle bg-surface-2 px-2 py-1 text-13 outline-none";
@@ -53,6 +56,7 @@ export function ColumnFilterDateRange({ value, onChange }: Props) {
           value={from}
           max={to || undefined}
           onChange={(e) => setFrom(e.target.value)}
+          onKeyDown={(e) => e.stopPropagation()}
         />
       </label>
       <label className="flex flex-col gap-0.5 text-11 text-tertiary">
@@ -63,6 +67,7 @@ export function ColumnFilterDateRange({ value, onChange }: Props) {
           value={to}
           min={from || undefined}
           onChange={(e) => setTo(e.target.value)}
+          onKeyDown={(e) => e.stopPropagation()}
         />
       </label>
       {from && to && from > to && (
