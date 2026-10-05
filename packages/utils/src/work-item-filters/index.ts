@@ -5,3 +5,4 @@
  */
 
 export * from "./configs";
+export * from "./column-filters";
