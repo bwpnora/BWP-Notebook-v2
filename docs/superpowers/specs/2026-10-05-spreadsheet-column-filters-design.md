@@ -179,3 +179,16 @@ New `apps/api/plane/tests/unit/utils/test_issue_filterset_bwp.py`:
 5. `useSpreadsheetColumnFilter` hook + column filter components.
 6. Header menu popover, active indicator, empty state.
 7. Default-on `room` / `issue_type` columns.
+
+## 8. Implementation Notes (added during planning)
+
+Findings from the codebase that refine sections 2–5:
+
+- **No `contains` operator.** The rich filter system only supports `exact`, `in` and `range`. The room filter therefore uses the property **`room_search`** with operator `exact`. The value is the digit search term, and the backend filter (`room_search` / `room_search__exact`) performs the substring match on `CAST(room AS text)`.
+- **Work type key** is `work_type` with operator `in` (`work_type`, `work_type__exact`, `work_type__in`), values `operational` / `other`.
+- **`supporter_ids` is already returned** by the main list endpoint (`IssueViewSet.list` via `issue_on_results`). Only `IssueListEndpoint` needs it added.
+- **Header filters row:** `supporter_id` and `work_type` get rich filter configs and appear in "Add filter". `room_search` gets a config that is not shown in "Add filter" (no text input exists there). It is edited only from the column menu, and the header row displays it as "Số phòng: chứa 17".
+- **Stale / failed responses:** instead of request ids and a toast, the client predicate is always re-applied on top of whatever the store holds. Rows from an outdated or failed fetch that do not match are therefore never shown. Fetch errors are already logged by the issue store.
+- **Empty state:** when the server returns zero rows, the existing layout empty state (with "clear filters") is shown. The new in-table "Không có công việc khớp bộ lọc" row covers the client-side-only zero case.
+- **Default columns:** `issue_type` is already default-on. `supporter` and `room` are made default-on.
+- **Implementation plan:** `docs/superpowers/plans/2026-10-05-spreadsheet-column-filters.md`.
