@@ -4,7 +4,7 @@
  * Code & Architecture by BWP Engineering Team
  */
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import type { IWorkItemFilterInstance } from "@plane/shared-state";
 import type { EIssuesStoreType } from "@plane/types";
@@ -36,11 +36,19 @@ const commitToFilter = (filter: IWorkItemFilterInstance, key: TColumnFilterKey, 
   const { property, operator } = COLUMN_FILTER_CONDITION[key];
   const existing =
     filter.findFirstConditionByPropertyAndOperator(property, operator) ??
-    (operator === "in" ? filter.findFirstConditionByPropertyAndOperator(property, "exact") : undefined);
+    (operator === "in" || operator === "range"
+      ? filter.findFirstConditionByPropertyAndOperator(property, "exact")
+      : undefined);
   const isEmpty = isEmptyColumnFilterValue(value);
   if (existing) {
-    if (isEmpty) filter.removeCondition(existing.id);
-    else filter.updateConditionValue(existing.id, value as string | string[]);
+    if (isEmpty) {
+      filter.removeCondition(existing.id);
+    } else {
+      if (existing.operator !== operator) {
+        filter.updateConditionOperator(existing.id, operator, false);
+      }
+      filter.updateConditionValue(existing.id, value as string | string[]);
+    }
     return;
   }
   if (!isEmpty)
@@ -116,29 +124,22 @@ export const SpreadsheetColumnFiltersProvider = observer(function SpreadsheetCol
     []
   );
 
-  const values = useMemo(() => {
-    const committed = columnFiltersFromConditions(filter?.allConditions ?? []);
-    const merged: TColumnFilterValues = { ...committed };
-    (Object.keys(drafts) as TColumnFilterKey[]).forEach((key) => {
-      const draft = drafts[key];
-      if (isEmptyColumnFilterValue(draft)) delete merged[key];
-      else (merged as Record<string, unknown>)[key] = draft;
-    });
-    return merged;
-  }, [filter?.allConditions, drafts]);
-
-  const hasActiveFilters = useMemo(
-    () => Object.values(values).some((value) => !isEmptyColumnFilterValue(value)),
-    [values]
-  );
-
-  const contextValue = useMemo(
-    () => ({ isAvailable: !!filter, values, hasActiveFilters, setValue, clearAll }),
-    [filter, values, hasActiveFilters, setValue, clearAll]
-  );
+  const committed = columnFiltersFromConditions(filter?.allConditions ?? []);
+  const values: TColumnFilterValues = { ...committed };
+  (Object.keys(drafts) as TColumnFilterKey[]).forEach((key) => {
+    const draft = drafts[key];
+    if (isEmptyColumnFilterValue(draft)) delete values[key];
+    else (values as Record<string, unknown>)[key] = draft;
+  });
+  const hasActiveFilters = Object.values(values).some((value) => !isEmptyColumnFilterValue(value));
 
   return (
-    <SpreadsheetColumnFiltersContext.Provider value={contextValue}>{children}</SpreadsheetColumnFiltersContext.Provider>
+    <SpreadsheetColumnFiltersContext.Provider
+      // oxlint-disable-next-line react/jsx-no-constructed-context-values
+      value={{ isAvailable: !!filter, values, hasActiveFilters, setValue, clearAll }}
+    >
+      {children}
+    </SpreadsheetColumnFiltersContext.Provider>
   );
 });
 
