@@ -89,27 +89,25 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {!isMemberOnly && (
-        <Controller
-          control={control}
-          name="state_id"
-          render={({ field: { value, onChange } }) => (
-            <div className="h-7">
-              <StateDropdown
-                value={value}
-                onChange={(stateId) => {
-                  onChange(stateId);
-                  handleFormChange();
-                }}
-                projectId={projectId ?? undefined}
-                buttonVariant="border-with-text"
-                tabIndex={getIndex("state_id")}
-                isForWorkItemCreation={!id}
-              />
-            </div>
-          )}
-        />
-      )}
+      <Controller
+        control={control}
+        name="state_id"
+        render={({ field: { value, onChange } }) => (
+          <div className="h-7">
+            <StateDropdown
+              value={value}
+              onChange={(stateId) => {
+                onChange(stateId);
+                handleFormChange();
+              }}
+              projectId={projectId ?? undefined}
+              buttonVariant="border-with-text"
+              tabIndex={getIndex("state_id")}
+              isForWorkItemCreation={!id}
+            />
+          </div>
+        )}
+      />
       <Controller
         control={control}
         name="priority"

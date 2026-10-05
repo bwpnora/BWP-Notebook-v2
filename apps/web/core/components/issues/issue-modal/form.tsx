@@ -438,11 +438,9 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   onClose={onClose}
                 />
               </div>
-              {!isMemberOnly && (
-                <div className="px-5">
-                  <IssueNotesInput control={control} handleFormChange={handleFormChange} />
-                </div>
-              )}
+              <div className="px-5">
+                <IssueNotesInput control={control} handleFormChange={handleFormChange} />
+              </div>
             </div>
             <div
               className={cn(
