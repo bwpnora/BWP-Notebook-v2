@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-noaePsda.js";import{_ as t}from"./dist-DdZfw_LS.js";var n=e();function r({children:e,gradient:r=!1,className:i}){return(0,n.jsx)(`div`,{className:t(`h-screen w-full overflow-hidden ${r?``:`bg-surface-1`}`,i),children:e})}export{r as t};

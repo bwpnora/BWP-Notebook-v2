@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-noaePsda.js";import{_ as t}from"./dist-DdZfw_LS.js";import{B as n,et as r}from"./icons-B7O065Wh.js";var i=e();function a(e){let{iconKey:a,className:o}=e,s=(()=>{switch(a){case`Lock`:return r;case`Globe2`:return n;default:return null}})();return s?(0,i.jsx)(s,{className:t(`h-3 w-3`,o)}):null}export{a as t};
