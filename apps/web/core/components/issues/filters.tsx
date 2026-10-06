@@ -6,7 +6,7 @@
 
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
-import { ChartNoAxesColumn, SlidersHorizontal } from "lucide-react";
+import { ChartNoAxesColumn, FileDown, SlidersHorizontal } from "lucide-react";
 // plane imports
 import { EIssueFilterType, ISSUE_STORE_TO_FILTERS_MAP } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -15,6 +15,7 @@ import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane
 import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
+import { useSpreadsheetCsvExport } from "@/hooks/use-spreadsheet-csv-export";
 // plane web imports
 import type { TProject } from "@plane/types";
 // local imports
@@ -58,6 +59,12 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
   const {
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(storeType);
+  const { isExporting, handleExportCsv } = useSpreadsheetCsvExport({
+    workspaceSlug,
+    projectId,
+    currentProjectDetails,
+    storeType,
+  });
   // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
   const layoutDisplayFiltersOptions = ISSUE_STORE_TO_FILTERS_MAP[storeType]?.layoutOptions[activeLayout];
@@ -125,6 +132,24 @@ export const HeaderFilters = observer(function HeaderFilters(props: Props) {
           isEpic={storeType === EIssuesStoreType.EPIC}
         />
       </FiltersDropdown>
+      {activeLayout === EIssueLayoutTypes.SPREADSHEET && (
+        <Button
+          className="hidden px-2 md:block"
+          onClick={handleExportCsv}
+          variant="secondary"
+          size="lg"
+          disabled={isExporting}
+          loading={isExporting}
+        >
+          <div className="hidden items-center gap-1.5 @4xl:flex">
+            <FileDown className="size-3.5" />
+            <span>Xuất CSV</span>
+          </div>
+          <div className="flex @4xl:hidden">
+            <FileDown className="size-3.5" />
+          </div>
+        </Button>
+      )}
       {canUserCreateIssue ? (
         <Button className="hidden px-2 md:block" onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
           <div className="hidden @4xl:flex">{t("common.analytics")}</div>
